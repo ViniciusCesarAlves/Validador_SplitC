@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SplitC | Validador de dados</title>
+    <link rel="icon" type="image/png" href="/static/images/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+        (function() {
+            try {
+                var theme = localStorage.getItem('splitc_theme');
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch(e) {}
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- Header com Navegação e Título Oficial SplitC -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="header-left">
+                <span class="version-tag">v1.3</span>
+                <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+                    <svg class="theme-icon-svg" width="19" height="19" viewBox="0 0 24 24">
+                        <defs>
+                            <linearGradient id="theme-grad-orange" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#ffa84b"/>
+                                <stop offset="100%" stop-color="#f87f06"/>
+                            </linearGradient>
+                        </defs>
+                        <path class="moon-icon-path" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="header-brand-center">
+                <img src="/static/images/logo.png" alt="SplitC Logo" class="brand-logo brand-logo-light">
+                <img src="/static/images/logo-white.png" alt="SplitC Logo" class="brand-logo brand-logo-dark">
+                <div class="brand-text">
+                    <div class="header-title-row">
+                        <h1 class="header-title">Validador de dados</h1>
+                    </div>
+                    <p class="header-subtitle">Auditoria e conferência de planilhas SplitC</p>
+                </div>
+            </div>
+
+            <div class="header-right-spacer"></div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+
+        <!-- ETAPA 1: Upload dos Arquivos -->
+        <section class="card step-card" id="step-upload">
+            <div class="card-header">
+                <div class="step-indicator">Passo 1</div>
+                <div>
+                    <h2>Carregar Arquivos para Validação</h2>
+                    <p class="subtext">Selecione as duas planilhas (.xlsx, .xls ou .csv) que você deseja bater e validar.</p>
+                </div>
+            </div>
+
+            <div class="upload-grid">
+                <!-- Upload Base Antiga / Referência -->
+                <div class="dropzone" id="dropzone-a">
+                    <input type="file" id="file-a" accept=".xlsx,.xls,.csv" class="file-input">
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg class="dropzone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                        </div>
+                        <h3>Base Antiga (ou Referência)</h3>
+                        <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo aqui</p>
+                        <div class="file-meta" id="file-meta-a" style="display: none;">
+                            <span class="filename" id="filename-a">arquivo.xlsx</span>
+                            <span class="filesize" id="filesize-a">0 KB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Base Nova / Comparação -->
+                <div class="dropzone" id="dropzone-b">
+                    <input type="file" id="file-b" accept=".xlsx,.xls,.csv" class="file-input">
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg class="dropzone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <path d="M12 12v6"/>
+                                <path d="m9 15 3 3 3-3"/>
+                            </svg>
+                        </div>
+                        <h3>Base Nova (ou Comparação)</h3>
+                        <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo aqui</p>
+                        <div class="file-meta" id="file-meta-b" style="display: none;">
+                            <span class="filename" id="filename-b">arquivo.xlsx</span>
+                            <span class="filesize" id="filesize-b">0 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button type="button" class="btn btn-pill-gradient" id="btn-read-headers" disabled>
+                    <span class="btn-text">Ler Cabeçalhos e Continuar</span>
+                    <span class="spinner" style="display: none;"></span>
+                    <span class="btn-circle-icon">→</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ETAPA 2: Configuração de Chaves e Tolerâncias (Oculto até ler arquivos) -->
+        <section class="card step-card" id="step-config" style="display: none;">
+            <div class="card-header">
+                <div class="step-indicator">Passo 2</div>
+                <div>
+                    <h2>Definir Identificadores e Regras de Validação</h2>
+                    <p class="subtext">Escolha a coluna única que conecta os registros entre as duas planilhas.</p>
+                </div>
+            </div>
+
+            <div class="keys-grid">
+                <!-- Coluna da Esquerda: Chave Primária (Seletor Único) -->
+                <div class="form-group">
+                    <label for="primary-key">
+                        <strong>Chave Identificadora Principal (Coluna da Esquerda) *</strong>
+                        <span class="help-text">Seletor único de referência (Ex: Matrícula, Ticket, ID, Sequencial)</span>
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="primary-key" class="form-select">
+                            <option value="">Selecione a chave primária...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Coluna da Direita: Seleção Múltipla de Colunas para Comparação -->
+                <div class="form-group">
+                    <label>
+                        <strong>Colunas Complementares de Validação (Coluna da Direita)</strong>
+                        <span class="help-text">Selecione 1 ou mais colunas para refinar os parâmetros de comparação</span>
+                    </label>
+                    
+                    <div class="multiselect-container" id="multiselect-container">
+                        <div class="multiselect-trigger" id="sec-keys-trigger" tabindex="0">
+                            <span id="sec-keys-label">Nenhuma coluna complementar selecionada</span>
+                            <span class="multiselect-arrow">▾</span>
+                        </div>
+                        
+                        <div class="multiselect-dropdown" id="sec-keys-dropdown" style="display: none;">
+                            <div class="multiselect-search-box input-search-wrapper">
+                                <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="7"/>
+                                    <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                                </svg>
+                                <input type="text" id="sec-keys-search" placeholder="Filtrar colunas..." class="multiselect-search-input">
+                            </div>
+                            <div class="multiselect-options" id="sec-keys-options-list">
+                                <!-- Checkboxes preenchidos dinamicamente -->
+                            </div>
+                            <div class="multiselect-footer">
+                                <button type="button" class="btn-link" id="btn-clear-sec-keys">Limpar seleção</button>
+                                <button type="button" class="btn btn-sm btn-pill-gradient" id="btn-close-sec-keys">Confirmar</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Chips / Tags das colunas selecionadas -->
+                        <div class="selected-tags" id="selected-sec-keys-tags"></div>
+                    </div>
+                    <p class="field-hint">
+                        <svg class="splitc-icon splitc-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                            <path d="M9 18h6"/>
+                            <path d="M10 22h4"/>
+                        </svg>
+                        <span>Se selecionar 1 coluna, ela será usada como 2º parâmetro. Se selecionar 2 ou mais, todas serão combinadas com a chave principal para formar o identificador de validação.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Regras de Tolerância Inteligente -->
+            <div class="tolerance-box">
+                <div class="tolerance-header">
+                    <h4>
+                        <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                        <span>Regras de Normalização Automática (Evita falsos positivos)</span>
+                    </h4>
+                </div>
+                <div class="tolerance-options">
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="norm-currency" checked>
+                        <div>
+                            <strong>Normalizar Moedas e Números Decimais</strong>
+                            <p>Equipara "15.650,00", "15650.00", "15650" e "R$ 15.650,00".</p>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="norm-dates" checked>
+                        <div>
+                            <strong>Normalizar Formatos de Data</strong>
+                            <p>Equipara formatos ISO ("2026-08-01"), brasileiro ("01/08/2026") e timestamps com horário zerado.</p>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="norm-case" checked>
+                        <div>
+                            <strong>Ignorar Diferenças de Maiúsculas/Minúsculas</strong>
+                            <p>Equipara "Ativo" com "ATIVO" ou "ativo".</p>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-card">
+                        <input type="checkbox" id="norm-trim" checked>
+                        <div>
+                            <strong>Ignorar Espaços Extras no Início e Fim</strong>
+                            <p>Equipara " 12345 " com "12345" e valores vazios (NaN com "").</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Mapeamento de Colunas (Resumo Colapsável) -->
+            <details class="mapping-details" id="mapping-details" open>
+                <summary class="mapping-summary">
+                    <span class="summary-title-wrapper">
+                        <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2"/>
+                            <path d="M9 3v18"/>
+                            <path d="M3 9h18"/>
+                            <path d="M3 15h18"/>
+                        </svg>
+                        <span>Mapeamento de Colunas (<span id="mapped-cols-count">0</span> colunas mapeadas)</span>
+                    </span>
+                </summary>
+                <div class="mapping-content">
+                    <div class="mapping-toolbar">
+                        <p class="mapping-hint">O sistema associou automaticamente colunas similares. Caso alguma coluna tenha nome diferente nas duas bases, clique em <strong>"+ Adicionar Coluna"</strong> para associá-las manualmente.</p>
+                        <div class="mapping-toolbar-actions">
+                            <button type="button" class="btn btn-sm btn-pill-outline btn-add-mapping" id="btn-add-mapping" title="Adicionar novo par de colunas para correlacionar">
+                                <span class="btn-plus-icon">+</span> Adicionar Coluna
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mapping-table-wrapper">
+                        <table class="table-mapping" id="mapping-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 44%;">Coluna na Base Antiga (ou Referência)</th>
+                                    <th style="width: 6%; text-align: center;"></th>
+                                    <th style="width: 44%;">Coluna na Base Nova (ou Comparação)</th>
+                                    <th style="width: 6%; text-align: center;">Remover</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mapping-table-body">
+                                <!-- Preenchido dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="unmapped-hint" class="unmapped-hint" style="display: none;"></div>
+                </div>
+            </details>
+
+            <div class="action-footer action-footer-between">
+                <div class="action-footer-left">
+                    <button type="button" class="btn btn-sm btn-restore-mapping" id="btn-restore-mapping" title="Restaurar todos os mapeamentos automáticos">
+                        <svg class="btn-sheet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="3" y1="15" x2="21" y2="15"></line>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                            <line x1="15" y1="3" x2="15" y2="21"></line>
+                        </svg>
+                        <span>Restaurar Mapeamento</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-clear-mapping" id="btn-clear-mapping" title="Apagar todas as colunas mapeadas e selecionar manualmente">
+                        <svg class="btn-trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                        <span>Limpar Mapeamentos</span>
+                    </button>
+                </div>
+                <div class="action-footer-right">
+                    <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-run-compare">
+                        <span class="btn-text">Rodar Validação Completa</span>
+                        <span class="spinner" style="display: none;"></span>
+                        <span class="btn-circle-icon">→</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETAPA 3: Resultado da Validação -->
+        <section class="card step-card" id="step-results" style="display: none;">
+            <div class="card-header">
+                <div class="step-indicator">Passo 3</div>
+                <div>
+                    <h2>Resultado da Validação</h2>
+                    <p class="subtext">Relatório consolidado e divergências célula por célula.</p>
+                </div>
+            </div>
+
+            <!-- Banner Sucesso (100% Iguais) -->
+            <div class="result-banner banner-success" id="banner-identical" style="display: none;">
+                <div class="banner-icon">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                </div>
+                <div class="banner-content">
+                    <h3>Excelente! As bases estão 100% IDÊNTICAS!</h3>
+                    <p id="identical-desc">Todas as linhas e colunas coincidiram perfeitamente com as regras de normalização aplicadas. Nenhuma divergência de valores foi detectada.</p>
+                </div>
+            </div>
+
+            <!-- Banner Alerta (Com Diferenças) -->
+            <div class="result-banner banner-alert" id="banner-diffs" style="display: none;">
+                <div class="banner-icon">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+                <div class="banner-content">
+                    <h3>Atenção: Foram encontradas divergências entre as planilhas!</h3>
+                    <p id="diffs-desc">Confira o resumo das divergências abaixo ou baixe a planilha Excel completa com as células pintadas.</p>
+                </div>
+            </div>
+
+            <!-- Painel de KPIs / Estatísticas -->
+            <div class="kpi-grid" id="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Linhas Comparadas</div>
+                    <div class="kpi-val" id="kpi-rows-matched">0</div>
+                    <div class="kpi-sub" id="kpi-rows-total">de 0 linhas</div>
+                </div>
+
+                <div class="kpi-card" id="kpi-card-diff-rows">
+                    <div class="kpi-label">Linhas com Diferenças</div>
+                    <div class="kpi-val text-danger" id="kpi-rows-diff">0</div>
+                    <div class="kpi-sub" id="kpi-pct-diff">0% do total</div>
+                </div>
+
+                <div class="kpi-card" id="kpi-card-diff-cells">
+                    <div class="kpi-label">Células Divergentes</div>
+                    <div class="kpi-val text-danger" id="kpi-cells-diff">0</div>
+                    <div class="kpi-sub">valores com divergência</div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-label">Colunas com Diferenças</div>
+                    <div class="kpi-val text-warning" id="kpi-cols-diff">0</div>
+                    <div class="kpi-sub" id="kpi-cols-total">de 0 colunas</div>
+                </div>
+            </div>
+
+            <!-- Botão de Download do Relatório Excel -->
+            <div class="download-section">
+                <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-download-excel">
+                    <span class="btn-text">Baixar Relatório Excel (.xlsx) com Células Pintadas</span>
+                    <span class="btn-circle-icon">↓</span>
+                </button>
+                <p class="download-hint">Gera um arquivo Excel formatado com resumo e marcação colorida nas células que divergiram.</p>
+            </div>
+
+            <!-- Seção de Tags de Colunas Divergentes -->
+            <div class="diff-cols-section" id="diff-cols-section" style="display: none;">
+                <h4>Colunas que apresentaram divergência:</h4>
+                <div class="diff-tags" id="diff-tags-container">
+                    <!-- Badges dinâmicas -->
+                </div>
+            </div>
+
+            <!-- Alternador de Visualização (Abas do Resultado) -->
+            <div class="result-nav-tabs" id="result-nav-tabs" style="display: none;">
+                <button type="button" class="result-nav-tab-btn active" id="tab-btn-diffs" data-view="diffs">
+                    <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="7"/>
+                        <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                    </svg>
+                    <span>Divergências Detalhadas</span>
+                    <span class="tab-btn-badge" id="badge-diff-count">0</span>
+                </button>
+                <button type="button" class="result-nav-tab-btn" id="tab-btn-financial" data-view="financial" style="display: none;">
+                    <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <span>Sumarização Financeira dos Pares</span>
+                    <span class="tab-btn-badge" id="badge-fin-count">0</span>
+                </button>
+            </div>
+
+            <!-- Tabela Interativa de Diferenças -->
+            <div class="diff-table-section" id="diff-table-section" style="display: none;">
+                <div class="diff-table-header">
+                    <h4>Visualização Detalhada das Divergências</h4>
+                    <div class="table-search input-search-wrapper">
+                        <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"/>
+                            <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                        </svg>
+                        <input type="text" id="diff-search" placeholder="Filtrar por chave ou valor..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-diff" id="diff-table">
+                        <thead>
+                            <tr>
+                                <th>Chave Identificadora</th>
+                                <th style="text-align: center; width: 120px;">Linha</th>
+                                <th>Coluna</th>
+                                <th>Valor na Base Antiga</th>
+                                <th style="width: 30px;"></th>
+                                <th>Valor na Base Nova</th>
+                            </tr>
+                        </thead>
+                        <tbody id="diff-table-body">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-hint" id="diff-preview-hint">
+                    Exibindo as primeiras ocorrências encontradas. Baixe o relatório Excel para a auditoria completa.
+                </div>
+            </div>
+
+            <!-- Seção de Sumarização Financeira dos Pares -->
+            <div class="financial-table-section" id="financial-table-section" style="display: none;">
+                <div class="diff-table-header">
+                    <div>
+                        <h4>Sumarização das Colunas Monetárias e Diferença dos Pares</h4>
+                        <p class="subtext" style="margin-top: 2px; font-size: 13px;">Totais acumulados de cada coluna monetária mapeada e a diferença calculada entre as bases.</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-diff table-financial" id="financial-table">
+                        <thead>
+                            <tr>
+                                <th>Coluna Base Antiga</th>
+                                <th>Coluna Base Nova</th>
+                                <th style="text-align: right;">Total Base Antiga</th>
+                                <th style="text-align: right;">Total Base Nova</th>
+                                <th style="text-align: right;">Diferença (Nova - Antiga)</th>
+                                <th style="text-align: center;">% Variação</th>
+                                <th style="text-align: center;">Situação</th>
+                                <th style="text-align: center;">Linhas Diferentes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financial-table-body">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </tbody>
+                        <tfoot id="financial-table-footer">
+                            <!-- Linha de total consolidado preenchida via JS -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button type="button" class="btn btn-pill-outline" id="btn-restart">
+                    <span class="btn-text">Fazer Nova Validação</span>
+                    <span class="btn-circle-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>Validador interno SplitC - 2026</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Limpeza e Seleção de Mapeamento -->
+    <div id="modal-clear-mapping" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="modal-clear-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-header-icon-wrap">
+                    <svg class="modal-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </div>
+                <div class="modal-header-text">
+                    <h3 id="modal-clear-title">Gerenciar Limpeza de Mapeamento</h3>
+                    <p class="modal-header-subtitle">Escolha entre limpar toda a tabela para mapear do zero ou selecionar manualmente por checkbox as colunas que deseja manter.</p>
+                </div>
+                <button type="button" class="modal-btn-close" id="btn-modal-close" title="Fechar janela">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Opção 1: Limpar Tudo (Modo Manual) -->
+                <div class="modal-action-card">
+                    <div class="modal-action-info">
+                        <div class="modal-action-badge">Opção 1</div>
+                        <h4 class="modal-action-title">Limpar Tudo (Mapeamento Manual do Zero)</h4>
+                        <p class="modal-action-desc">Apaga todos os mapeamentos da tabela e deixa você associar coluna por coluna manualmente.</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-modal-danger" id="btn-modal-clear-all" title="Limpar todas as colunas e mapear manualmente">
+                        <svg class="btn-trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                        <span>Limpar Tudo</span>
+                    </button>
+                </div>
+
+                <div class="modal-divider">
+                    <span>OU SELECIONE AS COLUNAS DO MAPEAMENTO AUTOMÁTICO</span>
+                </div>
+
+                <!-- Opção 2: Seleção de Colunas por Checkbox -->
+                <div class="modal-selection-section">
+                    <div class="modal-selection-header">
+                        <div class="modal-action-badge modal-badge-orange">Opção 2</div>
+                        <h4 class="modal-action-title">Manter Apenas Colunas Selecionadas</h4>
+                    </div>
+                    <p class="modal-action-desc" style="margin-bottom: 12px;">Selecione abaixo as colunas que você deseja manter mapeadas para a comparação (com o mapeamento automático padrão já associado):</p>
+
+                    <div class="modal-selection-toolbar">
+                        <div class="modal-search-wrapper">
+                            <svg class="modal-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                            </svg>
+                            <input type="text" id="modal-search-input" class="modal-search-input" placeholder="Pesquisar coluna..." autocomplete="off">
+                            <button type="button" id="modal-search-clear" class="modal-search-clear" style="display: none;">✕</button>
+                        </div>
+                        <div class="modal-selection-buttons">
+                            <button type="button" class="btn-text-action" id="btn-modal-select-all">Marcar Todas</button>
+                            <span class="toolbar-sep">•</span>
+                            <button type="button" class="btn-text-action" id="btn-modal-deselect-all">Desmarcar Todas</button>
+                        </div>
+                    </div>
+
+                    <div class="modal-counter-row">
+                        <span class="modal-counter-badge">
+                            <strong id="modal-selected-count">0</strong> de <span id="modal-total-count">0</span> colunas marcadas
+                        </span>
+                        <span class="modal-hint-text">Dica: clique em uma linha para marcar ou desmarcar</span>
+                    </div>
+
+                    <div class="modal-columns-list" id="modal-columns-list">
+                        <!-- Itens gerados dinamicamente via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-modal-cancel" id="btn-modal-cancel">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-modal-apply" id="btn-modal-apply">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Aplicar Mapeamento Selecionado (<span id="modal-btn-apply-count">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal do Dropdown Pesquisável de Colunas -->
+    <div id="mapping-dropdown-portal" class="mapping-dropdown-portal" style="display: none;">
+        <div class="dropdown-search-wrapper">
+            <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+            </svg>
+            <input type="text" id="mapping-dropdown-search" class="dropdown-search-input" placeholder="Pesquisar coluna..." autocomplete="off">
+            <button type="button" id="mapping-dropdown-clear-btn" class="dropdown-clear-btn" style="display: none;">✕</button>
+        </div>
+        <div id="mapping-dropdown-options" class="dropdown-options-list">
+            <!-- Opções renderizadas dinamicamente -->
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
