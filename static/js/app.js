@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyTheme(theme) {
         if (theme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.classList.add('dark-theme');
             document.body.classList.add('dark-theme');
             if (themeToggleBtn) {
                 themeToggleBtn.setAttribute('title', 'Mudar para tema claro');
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             document.documentElement.removeAttribute('data-theme');
+            document.documentElement.classList.remove('dark-theme');
             document.body.classList.remove('dark-theme');
             if (themeToggleBtn) {
                 themeToggleBtn.setAttribute('title', 'Mudar para tema escuro');
