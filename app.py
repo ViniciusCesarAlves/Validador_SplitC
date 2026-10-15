@@ -3,6 +3,7 @@ import uuid
 import json
 from flask import Flask, render_template, request, jsonify, send_file
 import comparator
+import single_auditor
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Suporta até 100MB de arquivo
@@ -210,6 +211,110 @@ def download_report(report_id):
         download_name=rep['filename'],
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
+
+# ========================================================
+# ROTAS DO VALIDADOR / AUDITORIA DE ARQUIVO ÚNICO
+# ========================================================
+
+@app.route('/api/single/upload-headers', methods=['POST'])
+def single_upload_headers():
+    try:
+        file = request.files.get('file')
+        if not file:
+            return jsonify({'error': 'Nenhum arquivo enviado. Selecione uma planilha (.xlsx, .xls ou .csv).'}), 400
+
+        session_id = str(uuid.uuid4())
+        session_folder = os.path.join(UPLOAD_DIR, session_id)
+        os.makedirs(session_folder, exist_ok=True)
+
+        filename = file.filename
+        filepath = os.path.join(session_folder, filename)
+        file.save(filepath)
+
+        df = comparator.read_tabular_file(filepath, filename)
+        cols = list(df.columns)
+
+        # Amostra das primeiras 5 linhas para preview
+        sample_rows = []
+        for _, row in df.head(5).iterrows():
+            row_dict = {}
+            for c in cols:
+                val = row[c]
+                row_dict[c] = "" if (val is None or (hasattr(val, '__iter__') and False) or str(val) == 'nan') else str(val)
+            sample_rows.append(row_dict)
+
+        SESSIONS[session_id] = {
+            'mode': 'single',
+            'path': filepath,
+            'filename': filename,
+            'cols': cols,
+            'total_rows': len(df)
+        }
+
+        return jsonify({
+            'session_id': session_id,
+            'filename': filename,
+            'total_rows': len(df),
+            'total_cols': len(cols),
+            'cols': cols,
+            'sample_data': sample_rows
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Falha ao carregar arquivo: {str(e)}'}), 500
+
+@app.route('/api/single/audit', methods=['POST'])
+def single_audit():
+    try:
+        data = request.json or {}
+        session_id = data.get('session_id')
+        rules = data.get('rules', [])
+
+        if not session_id or session_id not in SESSIONS:
+            return jsonify({'error': 'Sessão inválida ou expirada. Faça o upload novamente.'}), 400
+
+        if not rules or not isinstance(rules, list):
+            return jsonify({'error': 'Configure ao menos uma regra de auditoria antes de continuar.'}), 400
+
+        sess = SESSIONS[session_id]
+        df = comparator.read_tabular_file(sess['path'], sess['filename'])
+
+        summary, preview_rows, invalid_cells_by_row, cols = single_auditor.audit_single_dataset(
+            df, rules, max_preview_rows=300
+        )
+
+        # Gera o relatório Excel estilizado SplitC
+        report_id = str(uuid.uuid4())
+        report_filename = f"Relatorio_Auditoria_{report_id[:8]}.xlsx"
+        report_path = os.path.join(REPORT_DIR, report_filename)
+
+        single_auditor.generate_single_audit_excel(
+            df=df,
+            summary=summary,
+            invalid_cells_by_row=invalid_cells_by_row,
+            cols=cols,
+            output_path=report_path
+        )
+
+        REPORTS[report_id] = {
+            'path': report_path,
+            'filename': report_filename
+        }
+
+        return jsonify({
+            'success': True,
+            'report_id': report_id,
+            'summary': summary,
+            'preview_rows': preview_rows,
+            'cols': cols
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Erro ao executar auditoria: {str(e)}'}), 500
+
+@app.route('/api/single/download-report/<report_id>', methods=['GET'])
+def single_download_report(report_id):
+    return download_report(report_id)
 
 if __name__ == '__main__':
     print("Iniciando Validador de Dados em http://127.0.0.1:5000")

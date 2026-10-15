@@ -28,7 +28,7 @@
     <header class="navbar">
         <div class="container nav-content">
             <div class="header-left">
-                <span class="version-tag">v1.3</span>
+                <span class="version-tag">v2.0</span>
                 <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro" aria-label="Alternar tema">
                     <svg class="theme-icon-svg" width="19" height="19" viewBox="0 0 24 24">
                         <defs>
@@ -70,13 +70,42 @@
 
     <main class="container main-content">
 
+        <!-- ======================================================== -->
+        <!-- MODO 1: COMPARADOR DE 2 BASES / PLANILHAS (PADRÃO)        -->
+        <!-- ======================================================== -->
+        <div id="mode-dual-container">
+
         <!-- ETAPA 1: Upload dos Arquivos -->
         <section class="card step-card" id="step-upload">
-            <div class="card-header">
-                <div class="step-indicator">Passo 1</div>
-                <div>
-                    <h2>Carregar Arquivos para Validação</h2>
-                    <p class="subtext">Selecione as duas planilhas (.xlsx, .xls ou .csv) que você deseja bater e validar.</p>
+            <div class="card-header card-header-with-toggle">
+                <div class="card-header-left">
+                    <div class="step-indicator">Passo 1</div>
+                    <div>
+                        <h2>Carregar Arquivos para Validação</h2>
+                        <p class="subtext">Selecione as duas planilhas (.xlsx, .xls ou .csv) que você deseja bater e validar.</p>
+                    </div>
+                </div>
+
+                <!-- Toggle Switch de Modo (Padrão: 2 Planilhas) -->
+                <div class="mode-toggle-pill" role="tablist" aria-label="Modo de Validação">
+                    <button type="button" class="mode-btn active" data-mode="dual" id="btn-mode-dual-1" title="Comparar duas planilhas entre si">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="8" height="18" rx="2"/>
+                            <rect x="14" y="3" width="8" height="18" rx="2"/>
+                            <path d="m6 12 2-2-2-2"/>
+                            <path d="m18 12-2 2 2 2"/>
+                        </svg>
+                        <span>Comparar 2 Bases</span>
+                    </button>
+                    <button type="button" class="mode-btn" data-mode="single" id="btn-mode-single-1" title="Auditar colunas internas de 1 planilha">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <circle cx="11.5" cy="14.5" r="2.5"/>
+                            <path d="m13.5 16.5 2.5 2.5"/>
+                        </svg>
+                        <span>Auditar 1 Base</span>
+                    </button>
                 </div>
             </div>
 
@@ -595,6 +624,635 @@
                 </button>
             </div>
         </section>
+
+        </div> <!-- fim mode-dual-container -->
+
+        <!-- ======================================================== -->
+        <!-- MODO 2: AUDITORIA DE ARQUIVO ÚNICO (COLUNAS INTERNAS)     -->
+        <!-- ======================================================== -->
+        <div id="mode-single-container" style="display: none;">
+
+            <!-- ETAPA 1 (SINGLE): Upload de 1 Arquivo -->
+            <section class="card step-card" id="single-step-upload">
+                <div class="card-header card-header-with-toggle">
+                    <div class="card-header-left">
+                        <div class="step-indicator">Passo 1</div>
+                        <div>
+                            <h2>Carregar Planilha para Auditoria Interna</h2>
+                            <p class="subtext">Selecione uma única planilha (.xlsx, .xls ou .csv) para validar regras e consistência entre suas colunas.</p>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Switch de Modo (1 Planilha Ativo) -->
+                    <div class="mode-toggle-pill" role="tablist" aria-label="Modo de Validação">
+                        <button type="button" class="mode-btn" data-mode="dual" id="btn-mode-dual-2" title="Comparar duas planilhas entre si">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="8" height="18" rx="2"/>
+                                <rect x="14" y="3" width="8" height="18" rx="2"/>
+                                <path d="m6 12 2-2-2-2"/>
+                                <path d="m18 12-2 2 2 2"/>
+                            </svg>
+                            <span>Comparar 2 Bases</span>
+                        </button>
+                        <button type="button" class="mode-btn active" data-mode="single" id="btn-mode-single-2" title="Auditar colunas internas de 1 planilha">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <circle cx="11.5" cy="14.5" r="2.5"/>
+                                <path d="m13.5 16.5 2.5 2.5"/>
+                            </svg>
+                            <span>Auditar 1 Base</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="single-upload-wrapper">
+                    <div class="dropzone single-dropzone" id="single-dropzone">
+                        <input type="file" id="single-file-input" accept=".xlsx,.xls,.csv" class="file-input">
+                        <div class="dropzone-content">
+                            <div class="dropzone-icon">
+                                <svg class="dropzone-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <circle cx="11.5" cy="14.5" r="3"/>
+                                    <path d="m13.7 16.7 2.8 2.8"/>
+                                </svg>
+                            </div>
+                            <h3>Planilha para Validação de Colunas</h3>
+                            <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo (.xlsx, .xls ou .csv) aqui</p>
+                            <div class="file-meta" id="single-file-meta" style="display: none;">
+                                <span class="filename" id="single-filename">arquivo.xlsx</span>
+                                <span class="filesize" id="single-filesize">0 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-footer">
+                    <button type="button" class="btn btn-pill-gradient" id="btn-single-read-file" disabled>
+                        <span class="btn-text">Ler Colunas e Configurar Regras</span>
+                        <span class="spinner" style="display: none;"></span>
+                        <span class="btn-circle-icon">→</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ETAPA 2 (SINGLE): Configuração de Regras de Auditoria Interna -->
+            <section class="card step-card" id="single-step-config" style="display: none;">
+                <div class="card-header">
+                    <div class="step-indicator">Passo 2</div>
+                    <div>
+                        <h2>Configurar Regras de Auditoria das Colunas</h2>
+                        <p class="subtext">Escolha as colunas e as regras que deseja aplicar: duplicatas, apenas letras, apenas números, comparações, etc.</p>
+                    </div>
+                </div>
+
+                <!-- Barra de Informações do Arquivo -->
+                <div class="single-file-info-bar">
+                    <div class="single-info-pill">
+                        <span class="info-label">Arquivo:</span>
+                        <strong class="info-val" id="single-info-name">planilha.xlsx</strong>
+                    </div>
+                    <div class="single-info-pill">
+                        <span class="info-label">Total de Linhas:</span>
+                        <strong class="info-val text-primary" id="single-info-rows">0</strong>
+                    </div>
+                    <div class="single-info-pill">
+                        <span class="info-label">Total de Colunas:</span>
+                        <strong class="info-val text-primary" id="single-info-cols">0</strong>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-single-change-file">Trocar Arquivo</button>
+                </div>
+
+                <!-- Formulário de Adicionar Regra -->
+                <div class="single-rule-builder-card">
+                    <div class="rule-builder-header">
+                        <div class="rule-builder-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3>Adicionar Nova Regra de Validação</h3>
+                    </div>
+
+                    <div class="rule-builder-grid">
+                        <!-- Coluna a ser validada -->
+                        <div class="form-group">
+                            <label for="single-rule-col">
+                                <strong>1. Selecione a Coluna *</strong>
+                                <span class="help-text">Coluna da planilha para auditar</span>
+                            </label>
+                            <div class="select-wrapper">
+                                <select id="single-rule-col" class="form-select">
+                                    <option value="">Selecione uma coluna...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Tipo de Regra -->
+                        <div class="form-group">
+                            <label for="single-rule-type">
+                                <strong>2. O que deseja validar / ler? *</strong>
+                                <span class="help-text">Critério de consistência para a coluna</span>
+                            </label>
+                            <div class="custom-rule-select-container" id="custom-rule-select-container">
+                                <!-- Trigger visível estilizado com o ícone padrão SplitC -->
+                                <div class="custom-select-trigger" id="custom-rule-trigger" tabindex="0" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+                                    <div class="trigger-content">
+                                        <span class="trigger-icon" id="custom-rule-trigger-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                            </svg>
+                                        </span>
+                                        <span class="trigger-label" id="custom-rule-trigger-label">Verificar Duplicatas (Valores Repetidos)</span>
+                                    </div>
+                                    <span class="custom-select-arrow">▾</span>
+                                </div>
+
+                                <!-- Menu Dropdown com os 12 tipos de validação e ícones SVG padrão SplitC -->
+                                <div class="custom-select-dropdown" id="custom-rule-dropdown" style="display: none;" role="listbox">
+                                    <div class="custom-select-option selected" data-value="duplicate" role="option" aria-selected="true">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Verificar Duplicatas</span>
+                                            <span class="option-desc">(Valores Repetidos)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="only_letters" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="4 7 4 4 20 4 20 7"/>
+                                                <line x1="9" y1="20" x2="15" y2="20"/>
+                                                <line x1="12" y1="4" x2="12" y2="20"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Apenas Letras</span>
+                                            <span class="option-desc">(Texto alfabético sem números)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="only_numbers" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="4" y1="9" x2="20" y2="9"/>
+                                                <line x1="4" y1="15" x2="20" y2="15"/>
+                                                <line x1="10" y1="3" x2="8" y2="21"/>
+                                                <line x1="16" y1="3" x2="14" y2="21"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Apenas Números</span>
+                                            <span class="option-desc">(Dígitos numéricos / Moeda)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="alphanumeric" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                                <path d="M7 8h4"/>
+                                                <path d="M7 12h10"/>
+                                                <path d="M7 16h6"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Letras e Números</span>
+                                            <span class="option-desc">(Alfanumérico)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="not_empty" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Campo Obrigatório</span>
+                                            <span class="option-desc">(Não pode ser vazio/nulo)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="compare_cols" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="17 1 21 5 17 9"/>
+                                                <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                                                <polyline points="7 23 3 19 7 15"/>
+                                                <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Comparar com Outra Coluna</span>
+                                            <span class="option-desc">(Entre colunas do arquivo)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="greater_than" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                                                <polyline points="17 6 23 6 23 12"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Maior que (&gt;)</span>
+                                            <span class="option-desc">Valor Fixo</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="less_than" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
+                                                <polyline points="17 18 23 18 23 12"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Menor que (&lt;)</span>
+                                            <span class="option-desc">Valor Fixo</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="equals" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <circle cx="12" cy="12" r="3"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Igual a (==)</span>
+                                            <span class="option-desc">Valor Fixo</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="not_equals" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Diferente de (!=)</span>
+                                            <span class="option-desc">Valor Fixo</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="count_equals" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                                <line x1="6" y1="20" x2="6" y2="14"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Contar Iguais</span>
+                                            <span class="option-desc">(Frequência de Repetições)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="custom-select-option" data-value="text_length" role="option">
+                                        <span class="option-icon">
+                                            <svg class="splitc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M2 12h20"/>
+                                                <path d="M20 12v6"/>
+                                                <path d="M4 12v6"/>
+                                                <path d="M12 12v4"/>
+                                                <path d="M8 12v2"/>
+                                                <path d="M16 12v2"/>
+                                            </svg>
+                                        </span>
+                                        <div class="option-text">
+                                            <span class="option-title">Tamanho do Texto</span>
+                                            <span class="option-desc">(Qtd. de Caracteres)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Native select mantido em background para total compatibilidade -->
+                                <select id="single-rule-type" class="form-select" style="display: none;">
+                                    <option value="duplicate" selected>Verificar Duplicatas (Valores Repetidos)</option>
+                                    <option value="only_letters">Apenas Letras (Texto alfabético sem números)</option>
+                                    <option value="only_numbers">Apenas Números (Dígitos numéricos / Moeda)</option>
+                                    <option value="alphanumeric">Letras e Números (Alfanumérico)</option>
+                                    <option value="not_empty">Campo Obrigatório (Não pode ser vazio/nulo)</option>
+                                    <option value="compare_cols">Comparar com Outra Coluna do Arquivo</option>
+                                    <option value="greater_than">Maior que (&gt;) Valor Fixo</option>
+                                    <option value="less_than">Menor que (&lt;) Valor Fixo</option>
+                                    <option value="equals">Igual a (==) Valor Fixo</option>
+                                    <option value="not_equals">Diferente de (!=) Valor Fixo</option>
+                                    <option value="count_equals">Contar Iguais / Frequência de Repetições</option>
+                                    <option value="text_length">Tamanho do Texto (Qtd. de Caracteres)</option>
+                                </select>
+                            </div>
+
+                            <!-- Parâmetros Condicionais (Renderizado dinamicamente logo abaixo do seletor 2) -->
+                            <div class="single-param-container" id="single-param-container" style="display: none;">
+                                <div class="single-param-label-wrap">
+                                    <strong id="single-param-label">Valor de Referência *</strong>
+                                    <span class="help-text" id="single-param-help">Defina o critério para a validação</span>
+                                </div>
+
+                                <!-- Sub-painel: Comparar 2 Colunas -->
+                                <div id="param-compare-cols" class="param-subgrid" style="display: none;">
+                                    <div class="select-wrapper select-short">
+                                        <select id="single-rule-op" class="form-select">
+                                            <option value="==">Igual a (==)</option>
+                                            <option value="!=">Diferente de (!=)</option>
+                                            <option value="&gt;">Maior que (&gt;)</option>
+                                            <option value="&gt;=">Maior ou Igual (&gt;=)</option>
+                                            <option value="&lt;">Menor que (&lt;)</option>
+                                            <option value="&lt;=">Menor ou Igual (&lt;=)</option>
+                                        </select>
+                                    </div>
+                                    <div class="select-wrapper">
+                                        <select id="single-rule-target-col" class="form-select">
+                                            <option value="">Selecione a 2ª coluna...</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Sub-painel: Valor de Referência -->
+                                <div id="param-threshold" style="display: none;">
+                                    <input type="text" id="single-rule-threshold" class="form-input" placeholder="Ex: 0, 100, 2026-08-01 ou Ativo">
+                                </div>
+
+                                <!-- Sub-painel: Contar Iguais -->
+                                <div id="param-count" style="display: none;">
+                                    <input type="number" id="single-rule-count" class="form-input" value="2" min="2" placeholder="Alertar repetições &gt;= 2">
+                                </div>
+
+                                <!-- Sub-painel: Tamanho do Texto -->
+                                <div id="param-length" class="param-subgrid" style="display: none;">
+                                    <div class="select-wrapper select-short">
+                                        <select id="single-rule-len-op" class="form-select">
+                                            <option value="==">Exatamente (==)</option>
+                                            <option value="&gt;=">No mínimo (&gt;=)</option>
+                                            <option value="&lt;=">No máximo (&lt;=)</option>
+                                        </select>
+                                    </div>
+                                    <input type="number" id="single-rule-len-val" class="form-input" placeholder="Ex: 11 (CPF)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-builder-actions">
+                        <button type="button" class="btn btn-pill-orange" id="btn-single-add-rule">
+                            <span class="btn-text">+ Adicionar Regra</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Regras Configuradas -->
+                <div class="single-rules-list-section">
+                    <div class="rules-list-header">
+                        <div class="rules-list-title-wrap">
+                            <h4>Regras Ativas para Auditoria</h4>
+                            <span class="rules-count-badge" id="single-rules-count-badge">0 regras</span>
+                        </div>
+
+                        <!-- Presets / Ações Rápidas -->
+                        <div class="rules-quick-actions">
+                            <button type="button" class="btn-quick-preset" id="preset-id-duplicates" title="Adiciona verificação de duplicatas em colunas como ID, CÓDIGO, TICKET, CPF">
+                                Auto: Duplicatas em Chaves (ID/Código)
+                            </button>
+                            <button type="button" class="btn-quick-preset" id="preset-all-not-empty" title="Marca todas as colunas como preenchimento obrigatório">
+                                Auto: Todas Não Vazias
+                            </button>
+                            <button type="button" class="btn-quick-clear" id="btn-single-clear-rules">
+                                Limpar Todas
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="single-rules-container" class="single-rules-container">
+                        <!-- Cards das regras gerados dinamicamente via JS -->
+                        <div class="empty-rules-msg" id="single-empty-rules-msg">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <p>Nenhuma regra configurada ainda. Selecione uma coluna e adicione acima ou use um atalho rápido.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-footer">
+                    <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-single-run-audit" disabled>
+                        <span class="btn-text">Executar Auditoria de Dados</span>
+                        <span class="spinner" style="display: none;"></span>
+                        <span class="btn-circle-icon">→</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ETAPA 3 (SINGLE): Resultados da Auditoria -->
+            <section class="card step-card" id="single-step-results" style="display: none;">
+                <div class="card-header">
+                    <div class="step-indicator">Passo 3</div>
+                    <div>
+                        <h2>Resultado da Auditoria Interna</h2>
+                        <p class="subtext">Relatório consolidado e divergências célula por célula da planilha.</p>
+                    </div>
+                </div>
+
+                <!-- Banner Informativo de Sucesso ou Alertas -->
+                <div class="result-banner banner-alert" id="single-alert-banner">
+                    <div class="banner-icon" id="single-alert-icon">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="banner-content">
+                        <h3 id="single-alert-title">Auditoria Concluída!</h3>
+                        <p id="single-alert-desc">Confira o resumo das validações abaixo ou baixe a planilha Excel completa com as células pintadas.</p>
+                    </div>
+                </div>
+
+                <!-- Grid de KPIs (2 linhas de 3 colunas) -->
+                <div class="kpi-grid" id="single-kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Linhas Auditadas</div>
+                        <div class="kpi-val" id="single-kpi-total-rows">0</div>
+                        <div class="kpi-sub">total da planilha</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Linhas em Conformidade</div>
+                        <div class="kpi-val text-success" id="single-kpi-valid-rows">0</div>
+                        <div class="kpi-sub" id="single-kpi-valid-pct">100% conformes</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Linhas com Inconsistências</div>
+                        <div class="kpi-val text-danger" id="single-kpi-invalid-rows">0</div>
+                        <div class="kpi-sub" id="single-kpi-invalid-pct">0% do total</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Células com Inconsistência</div>
+                        <div class="kpi-val text-danger" id="single-kpi-cells-errors">0</div>
+                        <div class="kpi-sub">valores com falha</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Regras Avaliadas</div>
+                        <div class="kpi-val text-warning" id="single-kpi-rules-count">0</div>
+                        <div class="kpi-sub">critérios checados</div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Taxa de Conformidade</div>
+                        <div class="kpi-val text-info" id="single-kpi-conformity-rate">100%</div>
+                        <div class="kpi-sub">índice global</div>
+                    </div>
+                </div>
+
+                <!-- Botão de Download do Relatório Excel -->
+                <div class="download-section">
+                    <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-single-download-excel">
+                        <span class="btn-text">Baixar Relatório Excel (.xlsx) com Células Pintadas</span>
+                        <span class="btn-circle-icon">↓</span>
+                    </button>
+                    <p class="download-hint">Gera um arquivo Excel formatado com resumo e marcação colorida nas células que violaram as regras.</p>
+                </div>
+
+                <!-- Abas de Navegação dos Resultados da Auditoria -->
+                <div class="result-nav-tabs" id="single-results-tabs">
+                    <button type="button" class="result-nav-tab-btn active" id="single-tab-btn-issues">
+                        <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"/>
+                            <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                        </svg>
+                        <span>Linhas com Inconsistências</span>
+                        <span class="tab-btn-badge" id="single-badge-issues">0</span>
+                    </button>
+                    <button type="button" class="result-nav-tab-btn" id="single-tab-btn-rules">
+                        <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 11 12 14 22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                        <span>Resumo por Regra</span>
+                        <span class="tab-btn-badge" id="single-badge-rules">0</span>
+                    </button>
+                    <button type="button" class="result-nav-tab-btn" id="single-tab-btn-freq" style="display: none;">
+                        <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                        <span>Frequência de Repetições</span>
+                    </button>
+                </div>
+
+                <!-- Conteúdo Aba 1: Linhas com Inconsistências -->
+                <div class="diff-table-section" id="single-pane-issues">
+                    <div class="diff-table-header">
+                        <div>
+                            <h4>Detalhamento das Linhas Inconsistentes</h4>
+                            <p class="subtext" style="margin-top: 2px; font-size: 13px;">Células que não atenderam às regras configuradas estão destacadas em vermelho.</p>
+                        </div>
+                        <div class="table-search input-search-wrapper">
+                            <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                            </svg>
+                            <input type="text" id="single-issues-search" placeholder="Filtrar por qualquer valor nas linhas..." class="search-input">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-diff table-only" id="single-issues-table">
+                            <thead>
+                                <tr id="single-issues-thead-tr">
+                                    <th style="width: 70px; text-align: center;">Linha</th>
+                                    <th style="width: 130px; text-align: center;">Situação</th>
+                                    <th style="min-width: 240px;">Inconsistências Detectadas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="single-issues-tbody">
+                                <!-- Linhas renderizadas dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-hint">
+                        Exibindo amostra das ocorrências encontradas. Baixe o relatório Excel completo para visualizar todas as linhas auditadas.
+                    </div>
+                </div>
+
+                <!-- Conteúdo Aba 2: Resumo por Regra -->
+                <div class="diff-table-section" id="single-pane-rules" style="display: none;">
+                    <div class="diff-table-header">
+                        <div>
+                            <h4>Consolidado por Regra de Auditoria</h4>
+                            <p class="subtext" style="margin-top: 2px; font-size: 13px;">Visão geral da taxa de aprovação de cada condição avaliada.</p>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-diff table-only" id="single-rules-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px; text-align: center;">Regra #</th>
+                                    <th>Coluna Auditada</th>
+                                    <th>Tipo de Validação</th>
+                                    <th>Critério / Descrição</th>
+                                    <th style="text-align: right; width: 140px;">Inconsistências</th>
+                                    <th style="text-align: center; width: 160px;">Situação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="single-rules-tbody">
+                                <!-- Regras renderizadas dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Conteúdo Aba 3: Frequência de Repetições -->
+                <div class="diff-table-section" id="single-pane-freq" style="display: none;">
+                    <div class="diff-table-header">
+                        <div>
+                            <h4>Ranking de Valores com Maior Repetição</h4>
+                            <p class="subtext" style="margin-top: 2px; font-size: 13px;">Listagem dos valores mais frequentes detectados nas regras de duplicidade e contagem.</p>
+                        </div>
+                    </div>
+                    <div id="single-freq-container" class="single-freq-grid">
+                        <!-- Rankings de repetição renderizados dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Rodapé / Reiniciar -->
+                <div class="action-footer" style="justify-content: center; margin-top: 28px;">
+                    <button type="button" class="btn btn-pill-outline" id="btn-single-restart">
+                        <span class="btn-text">Fazer Nova Auditoria</span>
+                        <span class="btn-circle-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </section>
+
+        </div> <!-- fim mode-single-container -->
 
     </main>
 

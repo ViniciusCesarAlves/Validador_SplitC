@@ -1547,4 +1547,852 @@ document.addEventListener('DOMContentLoaded', () => {
     btnRestart.addEventListener('click', () => {
         window.location.reload();
     });
+
+    // ========================================================
+    // CONTROLADOR DO TOGGLE SWITCH DE MODO (DUAL VS SINGLE)
+    // ========================================================
+    const modeDualContainer = document.getElementById('mode-dual-container');
+    const modeSingleContainer = document.getElementById('mode-single-container');
+    const allModeBtns = document.querySelectorAll('.mode-btn');
+
+    function setAppMode(targetMode) {
+        if (targetMode === 'single') {
+            if (modeDualContainer) modeDualContainer.style.display = 'none';
+            if (modeSingleContainer) modeSingleContainer.style.display = 'block';
+            allModeBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === 'single');
+            });
+            localStorage.setItem('splitc_validador_mode', 'single');
+        } else {
+            if (modeDualContainer) modeDualContainer.style.display = 'block';
+            if (modeSingleContainer) modeSingleContainer.style.display = 'none';
+            allModeBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === 'dual');
+            });
+            localStorage.setItem('splitc_validador_mode', 'dual');
+        }
+    }
+
+    allModeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const mode = btn.dataset.mode;
+            setAppMode(mode);
+        });
+    });
+
+    // Se o usuário já tinha selecionado modo single antes, restaura
+    const savedMode = localStorage.getItem('splitc_validador_mode');
+    if (savedMode === 'single') {
+        setAppMode('single');
+    }
+
+    // ========================================================
+    // MÓDULO DE VALIDAÇÃO / AUDITORIA DE ARQUIVO ÚNICO
+    // ========================================================
+    const singleDropzone = document.getElementById('single-dropzone');
+    const singleFileInput = document.getElementById('single-file-input');
+    const singleFileMeta = document.getElementById('single-file-meta');
+    const singleFilename = document.getElementById('single-filename');
+    const singleFilesize = document.getElementById('single-filesize');
+    const btnSingleReadFile = document.getElementById('btn-single-read-file');
+
+    const singleStepUpload = document.getElementById('single-step-upload');
+    const singleStepConfig = document.getElementById('single-step-config');
+    const singleStepResults = document.getElementById('single-step-results');
+
+    const singleInfoName = document.getElementById('single-info-name');
+    const singleInfoRows = document.getElementById('single-info-rows');
+    const singleInfoCols = document.getElementById('single-info-cols');
+    const btnSingleChangeFile = document.getElementById('btn-single-change-file');
+
+    const singleRuleCol = document.getElementById('single-rule-col');
+    const singleRuleType = document.getElementById('single-rule-type');
+    const singleParamContainer = document.getElementById('single-param-container');
+    const singleParamLabel = document.getElementById('single-param-label');
+    const singleParamHelp = document.getElementById('single-param-help');
+
+    const paramCompareCols = document.getElementById('param-compare-cols');
+    const singleRuleOp = document.getElementById('single-rule-op');
+    const singleRuleTargetCol = document.getElementById('single-rule-target-col');
+
+    const paramThreshold = document.getElementById('param-threshold');
+    const singleRuleThreshold = document.getElementById('single-rule-threshold');
+
+    const paramCount = document.getElementById('param-count');
+    const singleRuleCount = document.getElementById('single-rule-count');
+
+    const paramLength = document.getElementById('param-length');
+    const singleRuleLenOp = document.getElementById('single-rule-len-op');
+    const singleRuleLenVal = document.getElementById('single-rule-len-val');
+
+    const btnSingleAddRule = document.getElementById('btn-single-add-rule');
+    const singleRulesContainer = document.getElementById('single-rules-container');
+    const singleEmptyRulesMsg = document.getElementById('single-empty-rules-msg');
+    const singleRulesCountBadge = document.getElementById('single-rules-count-badge');
+    const btnSingleClearRules = document.getElementById('btn-single-clear-rules');
+    const btnSingleRunAudit = document.getElementById('btn-single-run-audit');
+
+    const presetIdDuplicates = document.getElementById('preset-id-duplicates');
+    const presetAllNotEmpty = document.getElementById('preset-all-not-empty');
+
+    const singleAlertBanner = document.getElementById('single-alert-banner');
+    const singleAlertIcon = document.getElementById('single-alert-icon');
+    const singleAlertTitle = document.getElementById('single-alert-title');
+    const singleAlertDesc = document.getElementById('single-alert-desc');
+    const singleKpiTotalRows = document.getElementById('single-kpi-total-rows');
+    const singleKpiValidRows = document.getElementById('single-kpi-valid-rows');
+    const singleKpiValidPct = document.getElementById('single-kpi-valid-pct');
+    const singleKpiInvalidRows = document.getElementById('single-kpi-invalid-rows');
+    const singleKpiInvalidPct = document.getElementById('single-kpi-invalid-pct');
+    const singleKpiCellsErrors = document.getElementById('single-kpi-cells-errors');
+    const singleKpiRulesCount = document.getElementById('single-kpi-rules-count');
+    const singleKpiConformityRate = document.getElementById('single-kpi-conformity-rate');
+
+    const btnSingleDownloadExcel = document.getElementById('btn-single-download-excel');
+    const btnSingleRestart = document.getElementById('btn-single-restart');
+
+    const singleTabBtnIssues = document.getElementById('single-tab-btn-issues');
+    const singleTabBtnRules = document.getElementById('single-tab-btn-rules');
+    const singleTabBtnFreq = document.getElementById('single-tab-btn-freq');
+    const singleBadgeIssues = document.getElementById('single-badge-issues');
+    const singleBadgeRules = document.getElementById('single-badge-rules');
+
+    const singlePaneIssues = document.getElementById('single-pane-issues');
+    const singlePaneRules = document.getElementById('single-pane-rules');
+    const singlePaneFreq = document.getElementById('single-pane-freq');
+
+    const singleIssuesSearch = document.getElementById('single-issues-search');
+    const singleIssuesTheadTr = document.getElementById('single-issues-thead-tr');
+    const singleIssuesTbody = document.getElementById('single-issues-tbody');
+    const singleRulesTbody = document.getElementById('single-rules-tbody');
+    const singleFreqContainer = document.getElementById('single-freq-container');
+
+    // Estado interno do modo único
+    const singleState = {
+        file: null,
+        sessionId: null,
+        filename: '',
+        cols: [],
+        totalRows: 0,
+        totalCols: 0,
+        rules: [],
+        reportId: null,
+        summary: null,
+        previewRows: []
+    };
+
+    // Upload & Drag-and-drop
+    if (singleDropzone && singleFileInput) {
+        ['dragenter', 'dragover'].forEach(evt => {
+            singleDropzone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                singleDropzone.classList.add('drag-over');
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            singleDropzone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                singleDropzone.classList.remove('drag-over');
+            });
+        });
+
+        singleDropzone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files && files[0]) {
+                handleSingleFileSelect(files[0]);
+            }
+        });
+
+        singleDropzone.addEventListener('click', (e) => {
+            if (e.target !== singleFileInput) {
+                singleFileInput.click();
+            }
+        });
+
+        singleFileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                handleSingleFileSelect(e.target.files[0]);
+            }
+        });
+    }
+
+    function handleSingleFileSelect(file) {
+        const validExts = ['.xlsx', '.xls', '.csv'];
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        if (!validExts.includes(ext)) {
+            alert('Formato de arquivo não suportado. Por favor, envie um arquivo .xlsx, .xls ou .csv.');
+            return;
+        }
+
+        singleState.file = file;
+        singleFilename.textContent = file.name;
+        singleFilesize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+        singleFileMeta.style.display = 'inline-flex';
+        singleDropzone.classList.add('file-loaded');
+        btnSingleReadFile.disabled = false;
+    }
+
+    // Leitura das colunas do arquivo
+    if (btnSingleReadFile) {
+        btnSingleReadFile.addEventListener('click', async () => {
+            if (!singleState.file) return;
+
+            const btnText = btnSingleReadFile.querySelector('.btn-text');
+            const spinner = btnSingleReadFile.querySelector('.spinner');
+            btnSingleReadFile.disabled = true;
+            btnText.textContent = 'Lendo colunas...';
+            spinner.style.display = 'inline-block';
+
+            const formData = new FormData();
+            formData.append('file', singleState.file);
+
+            try {
+                const res = await fetch('/api/single/upload-headers', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Erro ao carregar arquivo.');
+                }
+
+                singleState.sessionId = data.session_id;
+                singleState.filename = data.filename;
+                singleState.cols = data.cols;
+                singleState.totalRows = data.total_rows;
+                singleState.totalCols = data.total_cols;
+                singleState.rules = [];
+
+                // Atualiza painel do Passo 2
+                singleInfoName.textContent = singleState.filename;
+                singleInfoRows.textContent = Number(singleState.totalRows).toLocaleString('pt-BR');
+                singleInfoCols.textContent = Number(singleState.totalCols).toLocaleString('pt-BR');
+
+                // Popula selects de colunas
+                populateSingleColSelects(singleState.cols);
+                renderSingleRulesList();
+
+                // Transição de tela
+                singleStepUpload.style.display = 'none';
+                singleStepConfig.style.display = 'block';
+                singleStepResults.style.display = 'none';
+                singleStepConfig.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                btnSingleReadFile.disabled = false;
+                btnText.textContent = 'Ler Colunas e Configurar Regras';
+                spinner.style.display = 'none';
+            }
+        });
+    }
+
+    function populateSingleColSelects(cols) {
+        if (!singleRuleCol || !singleRuleTargetCol) return;
+        singleRuleCol.innerHTML = '<option value="">Selecione uma coluna...</option>';
+        singleRuleTargetCol.innerHTML = '<option value="">Selecione a 2ª coluna...</option>';
+
+        cols.forEach(c => {
+            const opt1 = document.createElement('option');
+            opt1.value = c;
+            opt1.textContent = c;
+            singleRuleCol.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = c;
+            opt2.textContent = c;
+            singleRuleTargetCol.appendChild(opt2);
+        });
+    }
+
+    // Componente de Dropdown Customizado com Ícones SVG SplitC
+    const customRuleTrigger = document.getElementById('custom-rule-trigger');
+    const customRuleDropdown = document.getElementById('custom-rule-dropdown');
+    const customRuleTriggerIcon = document.getElementById('custom-rule-trigger-icon');
+    const customRuleTriggerLabel = document.getElementById('custom-rule-trigger-label');
+
+    function selectCustomRule(val) {
+        if (!customRuleDropdown || !singleRuleType) return;
+        const options = customRuleDropdown.querySelectorAll('.custom-select-option');
+        options.forEach(opt => {
+            const isMatch = opt.getAttribute('data-value') === val;
+            opt.classList.toggle('selected', isMatch);
+            opt.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+            if (isMatch) {
+                const iconHtml = opt.querySelector('.option-icon').innerHTML;
+                const title = opt.querySelector('.option-title').textContent.trim();
+                const desc = opt.querySelector('.option-desc').textContent.trim();
+                if (customRuleTriggerIcon) customRuleTriggerIcon.innerHTML = iconHtml;
+                if (customRuleTriggerLabel) customRuleTriggerLabel.textContent = `${title} ${desc}`;
+            }
+        });
+
+        if (singleRuleType.value !== val) {
+            singleRuleType.value = val;
+            singleRuleType.dispatchEvent(new Event('change'));
+        }
+    }
+
+    if (customRuleTrigger && customRuleDropdown && singleRuleType) {
+        customRuleTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = customRuleDropdown.style.display === 'block';
+            if (isOpen) {
+                closeCustomRuleDropdown();
+            } else {
+                openCustomRuleDropdown();
+            }
+        });
+
+        customRuleTrigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                openCustomRuleDropdown();
+            } else if (e.key === 'Escape') {
+                closeCustomRuleDropdown();
+            }
+        });
+
+        function openCustomRuleDropdown() {
+            customRuleDropdown.style.display = 'block';
+            customRuleTrigger.classList.add('active');
+            customRuleTrigger.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeCustomRuleDropdown() {
+            customRuleDropdown.style.display = 'none';
+            customRuleTrigger.classList.remove('active');
+            customRuleTrigger.setAttribute('aria-expanded', 'false');
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!customRuleTrigger.contains(e.target) && !customRuleDropdown.contains(e.target)) {
+                closeCustomRuleDropdown();
+            }
+        });
+
+        const customOptions = customRuleDropdown.querySelectorAll('.custom-select-option');
+        customOptions.forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = opt.getAttribute('data-value');
+                selectCustomRule(val);
+                closeCustomRuleDropdown();
+                customRuleTrigger.focus();
+            });
+        });
+    }
+
+    // Dinâmica de parâmetros do tipo de regra
+    if (singleRuleType) {
+        singleRuleType.addEventListener('change', () => {
+            const rType = singleRuleType.value;
+            singleParamContainer.style.display = 'none';
+            paramCompareCols.style.display = 'none';
+            paramThreshold.style.display = 'none';
+            paramCount.style.display = 'none';
+            paramLength.style.display = 'none';
+
+            if (rType === 'compare_cols') {
+                singleParamContainer.style.display = 'block';
+                paramCompareCols.style.display = 'grid';
+                if (singleParamLabel) singleParamLabel.textContent = 'Comparar com outra Coluna *';
+                if (singleParamHelp) singleParamHelp.textContent = 'Escolha o operador e a coluna de destino';
+            } else if (['greater_than', 'less_than', 'equals', 'not_equals'].includes(rType)) {
+                singleParamContainer.style.display = 'block';
+                paramThreshold.style.display = 'block';
+                if (singleParamLabel) singleParamLabel.textContent = 'Valor de Referência *';
+                if (singleParamHelp) singleParamHelp.textContent = 'Digite o valor fixo (numérico, data ou texto)';
+            } else if (rType === 'count_equals') {
+                singleParamContainer.style.display = 'block';
+                paramCount.style.display = 'block';
+                if (singleParamLabel) singleParamLabel.textContent = 'Limite Mínimo de Repetições *';
+                if (singleParamHelp) singleParamHelp.textContent = 'Alerta se o valor se repetir X ou mais vezes';
+            } else if (rType === 'text_length') {
+                singleParamContainer.style.display = 'block';
+                paramLength.style.display = 'grid';
+                if (singleParamLabel) singleParamLabel.textContent = 'Comprimento do Texto *';
+                if (singleParamHelp) singleParamHelp.textContent = 'Ex: 11 para CPF, 14 para CNPJ';
+            }
+        });
+    }
+
+    // Adicionar regra
+    if (btnSingleAddRule) {
+        btnSingleAddRule.addEventListener('click', () => {
+            const col = singleRuleCol.value;
+            if (!col) {
+                alert('Por favor, selecione uma coluna para validar.');
+                singleRuleCol.focus();
+                return;
+            }
+
+            const ruleType = singleRuleType.value;
+            let targetCol = '';
+            let op = '==';
+            let threshold = '';
+            let countVal = 2;
+            let lenOp = '==';
+            let lenVal = 0;
+
+            if (ruleType === 'compare_cols') {
+                targetCol = singleRuleTargetCol.value;
+                if (!targetCol) {
+                    alert('Selecione a segunda coluna para a comparação.');
+                    singleRuleTargetCol.focus();
+                    return;
+                }
+                if (targetCol === col) {
+                    alert('Selecione uma coluna diferente da primeira para comparar.');
+                    return;
+                }
+                op = singleRuleOp.value;
+            } else if (['greater_than', 'less_than', 'equals', 'not_equals'].includes(ruleType)) {
+                threshold = singleRuleThreshold.value.trim();
+                if (!threshold) {
+                    alert('Informe o valor de referência para a comparação.');
+                    singleRuleThreshold.focus();
+                    return;
+                }
+            } else if (ruleType === 'count_equals') {
+                countVal = parseInt(singleRuleCount.value) || 2;
+            } else if (ruleType === 'text_length') {
+                lenOp = singleRuleLenOp.value;
+                lenVal = parseInt(singleRuleLenVal.value) || 0;
+                if (lenVal <= 0) {
+                    alert('Informe a quantidade de caracteres esperada.');
+                    singleRuleLenVal.focus();
+                    return;
+                }
+            }
+
+            // Descrição amigável
+            let desc = '';
+            const typeLabels = {
+                'duplicate': 'Verificar Duplicatas',
+                'only_letters': 'Apenas Letras',
+                'only_numbers': 'Apenas Números',
+                'alphanumeric': 'Alfanumérico (Letras e Números)',
+                'not_empty': 'Campo Obrigatório (Não Vazio)',
+                'compare_cols': `Comparar: [${col}] ${op} [${targetCol}]`,
+                'greater_than': `Maior que (>) ${threshold}`,
+                'less_than': `Menor que (<) ${threshold}`,
+                'equals': `Igual a (==) ${threshold}`,
+                'not_equals': `Diferente de (!=) ${threshold}`,
+                'count_equals': `Contar Repetições (limite: >= ${countVal})`,
+                'text_length': `Tamanho ${lenOp} ${lenVal} caracteres`
+            };
+            desc = typeLabels[ruleType] || ruleType;
+
+            // Evita regra idêntica duplicada
+            const exists = singleState.rules.some(r => 
+                r.col === col && r.rule_type === ruleType && r.target_col === targetCol && r.threshold === threshold && r.op === op
+            );
+            if (exists) {
+                alert('Essa mesma regra já foi adicionada para esta coluna.');
+                return;
+            }
+
+            singleState.rules.push({
+                id: Date.now() + Math.random().toString(36).substr(2, 4),
+                col: col,
+                rule_type: ruleType,
+                target_col: targetCol,
+                op: op,
+                threshold: threshold,
+                count: countVal,
+                length_op: lenOp,
+                length_val: lenVal,
+                desc: desc
+            });
+
+            renderSingleRulesList();
+            if (singleRuleThreshold) singleRuleThreshold.value = '';
+            if (singleRuleLenVal) singleRuleLenVal.value = '';
+        });
+    }
+
+    function renderSingleRulesList() {
+        if (!singleRulesContainer) return;
+        singleRulesContainer.innerHTML = '';
+
+        if (singleState.rules.length === 0) {
+            singleRulesContainer.appendChild(singleEmptyRulesMsg);
+            singleRulesCountBadge.textContent = '0 regras';
+            btnSingleRunAudit.disabled = true;
+            return;
+        }
+
+        singleRulesCountBadge.textContent = `${singleState.rules.length} regra${singleState.rules.length > 1 ? 's' : ''}`;
+        btnSingleRunAudit.disabled = false;
+
+        singleState.rules.forEach((rule, idx) => {
+            const item = document.createElement('div');
+            item.className = 'single-rule-item';
+            item.innerHTML = `
+                <div class="rule-item-content">
+                    <span class="rule-col-badge">${escapeHtml(rule.col)}</span>
+                    <span class="rule-type-tag">${escapeHtml(rule.desc)}</span>
+                </div>
+                <button type="button" class="btn-remove-rule" title="Remover Regra" data-idx="${idx}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
+            item.querySelector('.btn-remove-rule').addEventListener('click', () => {
+                singleState.rules.splice(idx, 1);
+                renderSingleRulesList();
+            });
+            singleRulesContainer.appendChild(item);
+        });
+    }
+
+    // Presets rápidos
+    if (presetIdDuplicates) {
+        presetIdDuplicates.addEventListener('click', () => {
+            const keywords = ['id', 'codigo', 'código', 'ticket', 'cpf', 'matricula', 'documento', 'doc', 'chave', 'num'];
+            let addedCount = 0;
+            singleState.cols.forEach(col => {
+                const norm = col.toLowerCase();
+                if (keywords.some(k => norm.includes(k))) {
+                    if (!singleState.rules.some(r => r.col === col && r.rule_type === 'duplicate')) {
+                        singleState.rules.push({
+                            id: Date.now() + Math.random().toString(36).substr(2, 4),
+                            col: col,
+                            rule_type: 'duplicate',
+                            desc: `Verificar Duplicatas na coluna '${col}'`
+                        });
+                        addedCount++;
+                    }
+                }
+            });
+            if (addedCount > 0) {
+                renderSingleRulesList();
+            } else {
+                alert('Nenhuma coluna com nome de identificador (ID, CÓDIGO, TICKET, CPF, etc.) foi identificada.');
+            }
+        });
+    }
+
+    if (presetAllNotEmpty) {
+        presetAllNotEmpty.addEventListener('click', () => {
+            let addedCount = 0;
+            singleState.cols.forEach(col => {
+                if (!singleState.rules.some(r => r.col === col && r.rule_type === 'not_empty')) {
+                    singleState.rules.push({
+                        id: Date.now() + Math.random().toString(36).substr(2, 4),
+                        col: col,
+                        rule_type: 'not_empty',
+                        desc: `Campo Obrigatório em '${col}'`
+                    });
+                    addedCount++;
+                }
+            });
+            if (addedCount > 0) {
+                renderSingleRulesList();
+            } else {
+                alert('Todas as colunas já possuem a regra de campo obrigatório adicionada.');
+            }
+        });
+    }
+
+    if (btnSingleClearRules) {
+        btnSingleClearRules.addEventListener('click', () => {
+            if (singleState.rules.length > 0 && confirm('Deseja realmente limpar todas as regras adicionadas?')) {
+                singleState.rules = [];
+                renderSingleRulesList();
+            }
+        });
+    }
+
+    if (btnSingleChangeFile) {
+        btnSingleChangeFile.addEventListener('click', () => {
+            singleStepUpload.style.display = 'block';
+            singleStepConfig.style.display = 'none';
+            singleStepResults.style.display = 'none';
+        });
+    }
+
+    // Executar auditoria
+    if (btnSingleRunAudit) {
+        btnSingleRunAudit.addEventListener('click', async () => {
+            if (singleState.rules.length === 0) {
+                alert('Adicione ao menos uma regra de validação antes de continuar.');
+                return;
+            }
+
+            const btnText = btnSingleRunAudit.querySelector('.btn-text');
+            const spinner = btnSingleRunAudit.querySelector('.spinner');
+            btnSingleRunAudit.disabled = true;
+            btnText.textContent = 'Processando auditoria...';
+            spinner.style.display = 'inline-block';
+
+            try {
+                const res = await fetch('/api/single/audit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: singleState.sessionId,
+                        rules: singleState.rules
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Erro na auditoria.');
+                }
+
+                singleState.reportId = data.report_id;
+                singleState.summary = data.summary;
+                singleState.previewRows = data.preview_rows;
+
+                renderSingleResults(data);
+
+                singleStepConfig.style.display = 'none';
+                singleStepResults.style.display = 'block';
+                singleStepResults.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                btnSingleRunAudit.disabled = false;
+                btnText.textContent = 'Executar Auditoria de Dados';
+                spinner.style.display = 'none';
+            }
+        });
+    }
+
+    function renderSingleResults(data) {
+        const s = data.summary;
+
+        // Banner
+        if (s.is_perfect) {
+            singleAlertBanner.className = 'result-banner banner-success';
+            singleAlertTitle.textContent = 'Excelente! Planilha 100% Conforme!';
+            singleAlertDesc.textContent = 'Todas as regras aplicadas foram validadas com sucesso. Nenhuma inconsistência foi encontrada.';
+            if (singleAlertIcon) {
+                singleAlertIcon.innerHTML = `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+            }
+        } else {
+            singleAlertBanner.className = 'result-banner banner-alert';
+            singleAlertTitle.textContent = 'Atenção: Foram encontradas inconsistências na planilha!';
+            singleAlertDesc.textContent = `Foram detectadas ${s.total_errors.toLocaleString('pt-BR')} divergências distribuídas em ${s.invalid_rows.toLocaleString('pt-BR')} linhas. Veja os detalhes abaixo ou baixe o Excel com as células destacadas.`;
+            if (singleAlertIcon) {
+                singleAlertIcon.innerHTML = `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+            }
+        }
+
+        // KPIs
+        singleKpiTotalRows.textContent = s.total_rows.toLocaleString('pt-BR');
+        singleKpiValidRows.textContent = s.valid_rows.toLocaleString('pt-BR');
+        singleKpiValidPct.textContent = `${((s.valid_rows / s.total_rows) * 100 || 0).toFixed(1)}% do total`;
+        singleKpiInvalidRows.textContent = s.invalid_rows.toLocaleString('pt-BR');
+        singleKpiInvalidPct.textContent = `${((s.invalid_rows / s.total_rows) * 100 || 0).toFixed(1)}% com falhas`;
+        singleKpiCellsErrors.textContent = s.total_errors.toLocaleString('pt-BR');
+        singleKpiRulesCount.textContent = s.rules_count;
+        singleKpiConformityRate.textContent = `${s.conformity_rate}%`;
+
+        // Badges nas abas
+        singleBadgeIssues.textContent = s.invalid_rows.toLocaleString('pt-BR');
+        singleBadgeRules.textContent = s.rules_count;
+
+        // Frequência de repetições (Aba 3)
+        if (s.frequency_breakdown && Object.keys(s.frequency_breakdown).length > 0) {
+            singleTabBtnFreq.style.display = 'inline-flex';
+            renderSingleFrequency(s.frequency_breakdown);
+        } else {
+            singleTabBtnFreq.style.display = 'none';
+        }
+
+        // Renderiza tabelas
+        renderSingleIssuesTable(singleIssuesSearch ? singleIssuesSearch.value : '');
+        renderSingleRulesTable(s.rules_stats);
+
+        // Aba padrão ativa
+        switchSingleTab('issues');
+    }
+
+    function renderSingleIssuesTable(query = '') {
+        if (!singleIssuesTheadTr || !singleIssuesTbody) return;
+        singleIssuesTheadTr.innerHTML = `
+            <th style="width: 70px; text-align: center;">Linha</th>
+            <th style="width: 120px; text-align: center;">Situação</th>
+            <th style="min-width: 200px;">Inconsistências Detectadas</th>
+        `;
+
+        singleState.cols.forEach(c => {
+            const th = document.createElement('th');
+            th.textContent = c;
+            singleIssuesTheadTr.appendChild(th);
+        });
+
+        singleIssuesTbody.innerHTML = '';
+        const q = query.toLowerCase().trim();
+
+        const filtered = singleState.previewRows.filter(row => {
+            if (!q) return true;
+            return Object.values(row).some(v => String(v).toLowerCase().includes(q));
+        });
+
+        if (filtered.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="${singleState.cols.length + 3}" style="text-align: center; padding: 32px; color: var(--text-muted);">Nenhum registro encontrado para este filtro.</td>`;
+            singleIssuesTbody.appendChild(tr);
+            return;
+        }
+
+        filtered.forEach(row => {
+            const tr = document.createElement('tr');
+            const errors = row._errors || {};
+            const hasError = Object.keys(errors).length > 0;
+
+            let reasonsHtml = '';
+            if (hasError) {
+                const tags = [];
+                for (const [colName, msgList] of Object.entries(errors)) {
+                    tags.push(`<span class="invalid-reason-badge"><strong>${escapeHtml(colName)}:</strong> ${escapeHtml(msgList.join(', '))}</span>`);
+                }
+                reasonsHtml = `<div class="invalid-cell-wrap">${tags.join('')}</div>`;
+            } else {
+                reasonsHtml = '<span class="status-badge-ok">Conforme</span>';
+            }
+
+            const statusBadge = hasError 
+                ? '<span class="status-badge-diff">Inconsistente</span>'
+                : '<span class="status-badge-ok">OK</span>';
+
+            let cellsHtml = '';
+            singleState.cols.forEach(c => {
+                const val = row[c] !== undefined ? row[c] : '';
+                const isCellError = errors[c] !== undefined;
+                if (isCellError) {
+                    cellsHtml += `<td class="cell-invalid" title="${escapeHtml(errors[c].join(', '))}">${escapeHtml(val)}</td>`;
+                } else {
+                    cellsHtml += `<td>${escapeHtml(val)}</td>`;
+                }
+            });
+
+            tr.innerHTML = `
+                <td style="text-align: center;"><span class="badge-line">${row._row_idx}</span></td>
+                <td style="text-align: center;">${statusBadge}</td>
+                <td>${reasonsHtml}</td>
+                ${cellsHtml}
+            `;
+            singleIssuesTbody.appendChild(tr);
+        });
+    }
+
+    function renderSingleRulesTable(rulesStats) {
+        if (!singleRulesTbody) return;
+        singleRulesTbody.innerHTML = '';
+
+        rulesStats.forEach(r => {
+            const tr = document.createElement('tr');
+            const isOk = r.passed;
+            const statusBadge = isOk 
+                ? '<span class="status-badge-ok">100% Conforme</span>'
+                : `<span class="status-badge-diff">${r.violations_count} Inconsistência(s)</span>`;
+
+            tr.innerHTML = `
+                <td style="text-align: center;"><strong>#${r.rule_id}</strong></td>
+                <td><span class="rule-col-badge">${escapeHtml(r.col)}</span></td>
+                <td><strong>${escapeHtml(r.rule_type)}</strong></td>
+                <td>${escapeHtml(r.description)}</td>
+                <td style="text-align: right; font-weight: bold; color: ${isOk ? 'var(--success)' : 'var(--danger)'};">${r.violations_count.toLocaleString('pt-BR')}</td>
+                <td style="text-align: center;">${statusBadge}</td>
+            `;
+            singleRulesTbody.appendChild(tr);
+        });
+    }
+
+    function renderSingleFrequency(breakdown) {
+        if (!singleFreqContainer) return;
+        singleFreqContainer.innerHTML = '';
+
+        for (const [col, items] of Object.entries(breakdown)) {
+            const card = document.createElement('div');
+            card.className = 'freq-card';
+            let rowsHtml = items.map(it => `
+                <tr>
+                    <td>${escapeHtml(it.value)}</td>
+                    <td style="text-align: center;"><span class="badge-line text-danger font-bold">${it.count.toLocaleString('pt-BR')}x</span></td>
+                </tr>
+            `).join('');
+
+            card.innerHTML = `
+                <h4>Repetições na Coluna: ${escapeHtml(col)}</h4>
+                <table class="freq-table">
+                    <thead>
+                        <tr>
+                            <th>Valor</th>
+                            <th style="text-align: center;">Ocorrências</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+            `;
+            singleFreqContainer.appendChild(card);
+        }
+    }
+
+    function switchSingleTab(tab) {
+        [singleTabBtnIssues, singleTabBtnRules, singleTabBtnFreq].forEach(b => {
+            if (b) b.classList.remove('active');
+        });
+        if (singlePaneIssues) singlePaneIssues.style.display = 'none';
+        if (singlePaneRules) singlePaneRules.style.display = 'none';
+        if (singlePaneFreq) singlePaneFreq.style.display = 'none';
+
+        if (tab === 'issues') {
+            if (singleTabBtnIssues) singleTabBtnIssues.classList.add('active');
+            if (singlePaneIssues) singlePaneIssues.style.display = 'block';
+        } else if (tab === 'rules') {
+            if (singleTabBtnRules) singleTabBtnRules.classList.add('active');
+            if (singlePaneRules) singlePaneRules.style.display = 'block';
+        } else if (tab === 'freq') {
+            if (singleTabBtnFreq) singleTabBtnFreq.classList.add('active');
+            if (singlePaneFreq) singlePaneFreq.style.display = 'block';
+        }
+    }
+
+    if (singleTabBtnIssues) singleTabBtnIssues.addEventListener('click', () => switchSingleTab('issues'));
+    if (singleTabBtnRules) singleTabBtnRules.addEventListener('click', () => switchSingleTab('rules'));
+    if (singleTabBtnFreq) singleTabBtnFreq.addEventListener('click', () => switchSingleTab('freq'));
+
+    if (singleIssuesSearch) {
+        singleIssuesSearch.addEventListener('input', (e) => {
+            renderSingleIssuesTable(e.target.value);
+        });
+    }
+
+    // Download do Excel de Auditoria Única
+    if (btnSingleDownloadExcel) {
+        btnSingleDownloadExcel.addEventListener('click', () => {
+            if (!singleState.reportId) {
+                alert('Nenhum relatório disponível para download.');
+                return;
+            }
+            window.location.href = `/api/single/download-report/${singleState.reportId}`;
+        });
+    }
+
+    // Nova Auditoria
+    if (btnSingleRestart) {
+        btnSingleRestart.addEventListener('click', () => {
+            singleState.file = null;
+            singleState.rules = [];
+            singleState.reportId = null;
+            if (singleFileInput) singleFileInput.value = '';
+            if (singleFileMeta) singleFileMeta.style.display = 'none';
+            if (singleDropzone) singleDropzone.classList.remove('file-loaded');
+            if (btnSingleReadFile) btnSingleReadFile.disabled = true;
+
+            singleStepUpload.style.display = 'block';
+            singleStepConfig.style.display = 'none';
+            singleStepResults.style.display = 'none';
+            singleStepUpload.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
 });
