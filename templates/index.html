@@ -386,6 +386,18 @@
                     <div class="kpi-val text-warning" id="kpi-cols-diff">0</div>
                     <div class="kpi-sub" id="kpi-cols-total">de 0 colunas</div>
                 </div>
+
+                <div class="kpi-card" id="kpi-card-only-a">
+                    <div class="kpi-label">Apenas na Base Antiga</div>
+                    <div class="kpi-val text-info" id="kpi-rows-only-a">0</div>
+                    <div class="kpi-sub" id="kpi-only-a-sub">não existem em B</div>
+                </div>
+
+                <div class="kpi-card" id="kpi-card-only-b">
+                    <div class="kpi-label">Apenas na Base Nova</div>
+                    <div class="kpi-val text-info" id="kpi-rows-only-b">0</div>
+                    <div class="kpi-sub" id="kpi-only-b-sub">não existem em A</div>
+                </div>
             </div>
 
             <!-- Botão de Download do Relatório Excel -->
@@ -414,6 +426,22 @@
                     </svg>
                     <span>Divergências Detalhadas</span>
                     <span class="tab-btn-badge" id="badge-diff-count">0</span>
+                </button>
+                <button type="button" class="result-nav-tab-btn" id="tab-btn-only-a" data-view="only-a" style="display: none;">
+                    <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span>Apenas na Base Antiga</span>
+                    <span class="tab-btn-badge" id="badge-only-a-count">0</span>
+                </button>
+                <button type="button" class="result-nav-tab-btn" id="tab-btn-only-b" data-view="only-b" style="display: none;">
+                    <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span>Apenas na Base Nova</span>
+                    <span class="tab-btn-badge" id="badge-only-b-count">0</span>
                 </button>
                 <button type="button" class="result-nav-tab-btn" id="tab-btn-financial" data-view="financial" style="display: none;">
                     <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -456,6 +484,68 @@
                     </table>
                 </div>
                 <div class="pagination-hint" id="diff-preview-hint">
+                    Exibindo as primeiras ocorrências encontradas. Baixe o relatório Excel para a auditoria completa.
+                </div>
+            </div>
+
+            <!-- Seção de Registros Apenas na Base Antiga -->
+            <div class="only-table-section" id="only-a-table-section" style="display: none;">
+                <div class="diff-table-header">
+                    <div>
+                        <h4>Registros Exclusivos da Base Antiga (Não encontrados na Base Nova)</h4>
+                        <p class="subtext" style="margin-top: 2px; font-size: 13px;">Linhas cuja chave identificadora não possui correspondência na Base Nova.</p>
+                    </div>
+                    <div class="table-search input-search-wrapper">
+                        <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"/>
+                            <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                        </svg>
+                        <input type="text" id="only-a-search" placeholder="Filtrar por chave ou valor..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-diff table-only" id="only-a-table">
+                        <thead id="only-a-table-head">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </thead>
+                        <tbody id="only-a-table-body">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-hint" id="only-a-preview-hint">
+                    Exibindo as primeiras ocorrências encontradas. Baixe o relatório Excel para a auditoria completa.
+                </div>
+            </div>
+
+            <!-- Seção de Registros Apenas na Base Nova -->
+            <div class="only-table-section" id="only-b-table-section" style="display: none;">
+                <div class="diff-table-header">
+                    <div>
+                        <h4>Registros Exclusivos da Base Nova (Não encontrados na Base Antiga)</h4>
+                        <p class="subtext" style="margin-top: 2px; font-size: 13px;">Linhas cuja chave identificadora não possui correspondência na Base Antiga.</p>
+                    </div>
+                    <div class="table-search input-search-wrapper">
+                        <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="7"/>
+                            <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                        </svg>
+                        <input type="text" id="only-b-search" placeholder="Filtrar por chave ou valor..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-diff table-only" id="only-b-table">
+                        <thead id="only-b-table-head">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </thead>
+                        <tbody id="only-b-table-body">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination-hint" id="only-b-preview-hint">
                     Exibindo as primeiras ocorrências encontradas. Baixe o relatório Excel para a auditoria completa.
                 </div>
             </div>

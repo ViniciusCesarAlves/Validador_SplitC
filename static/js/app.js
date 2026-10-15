@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isManualMapping: false,
         selectedSecondaryKeys: [],
         diffRecords: [],
-        allDiffRows: []
+        allDiffRows: [],
+        onlyInAPreview: [],
+        onlyInBPreview: [],
+        colsDisplayA: [],
+        colsDisplayB: []
     };
 
     // ----------------------------------------------------
@@ -125,6 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const kpiCellsDiff = document.getElementById('kpi-cells-diff');
     const kpiColsDiff = document.getElementById('kpi-cols-diff');
     const kpiColsTotal = document.getElementById('kpi-cols-total');
+    const kpiRowsOnlyA = document.getElementById('kpi-rows-only-a');
+    const kpiRowsOnlyB = document.getElementById('kpi-rows-only-b');
     const btnDownloadExcel = document.getElementById('btn-download-excel');
     const diffColsSection = document.getElementById('diff-cols-section');
     const diffTagsContainer = document.getElementById('diff-tags-container');
@@ -133,14 +139,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const diffSearch = document.getElementById('diff-search');
     const btnRestart = document.getElementById('btn-restart');
 
-    // Elementos de Navegação e Sumarização Financeira
+    // Elementos de Navegação, Sumarização Financeira e Registros Exclusivos
     const resultNavTabs = document.getElementById('result-nav-tabs');
     const tabBtnDiffs = document.getElementById('tab-btn-diffs');
+    const tabBtnOnlyA = document.getElementById('tab-btn-only-a');
+    const tabBtnOnlyB = document.getElementById('tab-btn-only-b');
     const tabBtnFinancial = document.getElementById('tab-btn-financial');
+    const onlyATableSection = document.getElementById('only-a-table-section');
+    const onlyBTableSection = document.getElementById('only-b-table-section');
+    const onlyATableHead = document.getElementById('only-a-table-head');
+    const onlyATableBody = document.getElementById('only-a-table-body');
+    const onlyBTableHead = document.getElementById('only-b-table-head');
+    const onlyBTableBody = document.getElementById('only-b-table-body');
+    const onlyASearch = document.getElementById('only-a-search');
+    const onlyBSearch = document.getElementById('only-b-search');
     const financialTableSection = document.getElementById('financial-table-section');
     const financialTableBody = document.getElementById('financial-table-body');
     const financialTableFooter = document.getElementById('financial-table-footer');
     const badgeDiffCount = document.getElementById('badge-diff-count');
+    const badgeOnlyACount = document.getElementById('badge-only-a-count');
+    const badgeOnlyBCount = document.getElementById('badge-only-b-count');
     const badgeFinCount = document.getElementById('badge-fin-count');
 
     // ----------------------------------------------------
@@ -1166,6 +1184,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             state.reportId = data.report_id;
             state.diffRecords = data.diff_preview || [];
+            state.onlyInAPreview = data.only_in_a_preview || [];
+            state.onlyInBPreview = data.only_in_b_preview || [];
+            state.colsDisplayA = data.cols_display_a || [];
+            state.colsDisplayB = data.cols_display_b || [];
             
             // Exibir Resultados
             renderResults(data);
@@ -1199,6 +1221,9 @@ document.addEventListener('DOMContentLoaded', () => {
         kpiColsDiff.textContent = s.columns_with_differences_count.toLocaleString('pt-BR');
         kpiColsTotal.textContent = `de ${s.total_columns_compared} colunas`;
 
+        if (kpiRowsOnlyA) kpiRowsOnlyA.textContent = (s.only_in_a_count || 0).toLocaleString('pt-BR');
+        if (kpiRowsOnlyB) kpiRowsOnlyB.textContent = (s.only_in_b_count || 0).toLocaleString('pt-BR');
+
         if (s.is_identical) {
             // Sucesso Total
             bannerIdentical.style.display = 'flex';
@@ -1206,18 +1231,35 @@ document.addEventListener('DOMContentLoaded', () => {
             diffColsSection.style.display = 'none';
             diffTableSection.style.display = 'none';
             if (resultNavTabs) resultNavTabs.style.display = 'none';
+            if (onlyATableSection) onlyATableSection.style.display = 'none';
+            if (onlyBTableSection) onlyBTableSection.style.display = 'none';
             if (financialTableSection) financialTableSection.style.display = 'none';
             btnDownloadExcel.classList.remove('btn-excel');
             btnDownloadExcel.classList.add('btn-success');
         } else {
-            // Divergências Encontradas
+            // Divergências ou Chaves Exclusivas
             bannerIdentical.style.display = 'none';
             bannerDiffs.style.display = 'flex';
             btnDownloadExcel.classList.add('btn-excel');
 
+            const bannerTitle = bannerDiffs.querySelector('h3');
+            const bannerDesc = bannerDiffs.querySelector('p');
+
+            if (s.matched_keys_count === 0 && ((s.only_in_a_count || 0) > 0 || (s.only_in_b_count || 0) > 0)) {
+                if (bannerTitle) bannerTitle.textContent = 'Atenção: Nenhuma linha coincidiu entre as duas planilhas!';
+                if (bannerDesc) {
+                    bannerDesc.innerHTML = `Com os identificadores selecionados, nenhum registro da Base Antiga foi encontrado na Base Nova. Todos os registros são exclusivos de cada arquivo (<strong>${(s.only_in_a_count || 0).toLocaleString('pt-BR')}</strong> apenas na Base Antiga e <strong>${(s.only_in_b_count || 0).toLocaleString('pt-BR')}</strong> apenas na Base Nova). Veja os dados completos nas abas <strong>"Apenas na Base Antiga"</strong> e <strong>"Apenas na Base Nova"</strong> abaixo ou verifique os identificadores escolhidos.`;
+                }
+            } else {
+                if (bannerTitle) bannerTitle.textContent = 'Atenção: Foram encontradas divergências entre as planilhas!';
+                if (bannerDesc) {
+                    bannerDesc.textContent = 'Confira o resumo das divergências abaixo ou baixe a planilha Excel completa com as células pintadas.';
+                }
+            }
+
             // Renderizar Tags de Colunas Divergentes
             diffTagsContainer.innerHTML = '';
-            if (data.columns_with_differences) {
+            if (data.columns_with_differences && Object.keys(data.columns_with_differences).length > 0) {
                 diffColsSection.style.display = 'block';
                 for (const [col, count] of Object.entries(data.columns_with_differences)) {
                     const tag = document.createElement('span');
@@ -1225,19 +1267,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     tag.textContent = `${col} (${count.toLocaleString('pt-BR')} linhas)`;
                     diffTagsContainer.appendChild(tag);
                 }
+            } else {
+                diffColsSection.style.display = 'none';
             }
 
             // Preparar dados para a tabela de diferenças
             flattenDiffRows(data.diff_preview);
             renderDiffTable(state.allDiffRows);
-            diffTableSection.style.display = 'block';
+
+            // Renderizar tabelas de registros exclusivos
+            renderOnlyTable(onlyATableHead, onlyATableBody, state.colsDisplayA, state.onlyInAPreview);
+            renderOnlyTable(onlyBTableHead, onlyBTableBody, state.colsDisplayB, state.onlyInBPreview);
 
             // Configurar Abas e Sumarização Financeira
             const fin = s.financial_summary;
             const hasFinancial = fin && fin.items && fin.items.length > 0;
+            const hasDiffs = s.different_rows_count > 0;
+            const hasOnlyA = (s.only_in_a_count || 0) > 0;
+            const hasOnlyB = (s.only_in_b_count || 0) > 0;
+
             if (resultNavTabs) {
                 resultNavTabs.style.display = 'flex';
                 if (badgeDiffCount) badgeDiffCount.textContent = s.different_rows_count.toLocaleString('pt-BR');
+                if (badgeOnlyACount) badgeOnlyACount.textContent = (s.only_in_a_count || 0).toLocaleString('pt-BR');
+                if (badgeOnlyBCount) badgeOnlyBCount.textContent = (s.only_in_b_count || 0).toLocaleString('pt-BR');
+
+                if (tabBtnDiffs) tabBtnDiffs.style.display = hasDiffs || s.matched_keys_count > 0 ? 'inline-flex' : 'none';
+                if (tabBtnOnlyA) tabBtnOnlyA.style.display = hasOnlyA ? 'inline-flex' : 'none';
+                if (tabBtnOnlyB) tabBtnOnlyB.style.display = hasOnlyB ? 'inline-flex' : 'none';
+
                 if (tabBtnFinancial) {
                     if (hasFinancial) {
                         tabBtnFinancial.style.display = 'inline-flex';
@@ -1247,11 +1305,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         tabBtnFinancial.style.display = 'none';
                     }
                 }
-                // Reseta para a aba de divergências detalhadas ativa
-                if (tabBtnDiffs) tabBtnDiffs.classList.add('active');
-                if (tabBtnFinancial) tabBtnFinancial.classList.remove('active');
-                diffTableSection.style.display = 'block';
-                if (financialTableSection) financialTableSection.style.display = 'none';
+
+                // Escolhe a aba ativa inicial mais relevante
+                if (hasDiffs) {
+                    switchResultTab('diffs');
+                } else if (hasOnlyA) {
+                    switchResultTab('only-a');
+                } else if (hasOnlyB) {
+                    switchResultTab('only-b');
+                } else if (hasFinancial) {
+                    switchResultTab('financial');
+                } else {
+                    switchResultTab('diffs');
+                }
             }
         }
     }
@@ -1372,19 +1438,95 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (tabBtnDiffs && tabBtnFinancial) {
-        tabBtnDiffs.addEventListener('click', () => {
-            tabBtnDiffs.classList.add('active');
-            tabBtnFinancial.classList.remove('active');
-            if (diffTableSection) diffTableSection.style.display = 'block';
-            if (financialTableSection) financialTableSection.style.display = 'none';
+    function switchResultTab(tabName) {
+        [tabBtnDiffs, tabBtnOnlyA, tabBtnOnlyB, tabBtnFinancial].forEach(btn => {
+            if (btn) btn.classList.remove('active');
         });
+        if (diffTableSection) diffTableSection.style.display = 'none';
+        if (onlyATableSection) onlyATableSection.style.display = 'none';
+        if (onlyBTableSection) onlyBTableSection.style.display = 'none';
+        if (financialTableSection) financialTableSection.style.display = 'none';
 
-        tabBtnFinancial.addEventListener('click', () => {
-            tabBtnFinancial.classList.add('active');
-            tabBtnDiffs.classList.remove('active');
-            if (diffTableSection) diffTableSection.style.display = 'none';
+        if (tabName === 'diffs') {
+            if (tabBtnDiffs) tabBtnDiffs.classList.add('active');
+            if (diffTableSection) diffTableSection.style.display = 'block';
+        } else if (tabName === 'only-a') {
+            if (tabBtnOnlyA) tabBtnOnlyA.classList.add('active');
+            if (onlyATableSection) onlyATableSection.style.display = 'block';
+        } else if (tabName === 'only-b') {
+            if (tabBtnOnlyB) tabBtnOnlyB.classList.add('active');
+            if (onlyBTableSection) onlyBTableSection.style.display = 'block';
+        } else if (tabName === 'financial') {
+            if (tabBtnFinancial) tabBtnFinancial.classList.add('active');
             if (financialTableSection) financialTableSection.style.display = 'block';
+        }
+    }
+
+    function renderOnlyTable(thead, tbody, cols, rows, filterText = '') {
+        if (!thead || !tbody) return;
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        if (!cols || cols.length === 0) return;
+
+        // Cabeçalhos (Linha, Chave, + colunas)
+        const trHead = document.createElement('tr');
+        trHead.innerHTML = `
+            <th style="text-align: center; width: 80px;">Linha</th>
+            <th style="min-width: 200px;">Chave Identificadora</th>
+        ` + cols.map(c => `<th>${escapeHtml(c)}</th>`).join('');
+        thead.appendChild(trHead);
+
+        const normFilter = normalizeSearch(filterText);
+        const filtered = normFilter 
+            ? rows.filter(r => 
+                normalizeSearch(r.key).includes(normFilter) ||
+                String(r.line).includes(normFilter) ||
+                Object.values(r.values || {}).some(v => normalizeSearch(v).includes(normFilter))
+              )
+            : rows;
+
+        if (filtered.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="${cols.length + 2}" style="text-align: center; color: #64748b; padding: 24px;">Nenhum registro encontrado.</td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        const maxDisplay = 200;
+        const displayRows = filtered.slice(0, maxDisplay);
+
+        displayRows.forEach(item => {
+            const tr = document.createElement('tr');
+            const lineVal = item.line !== null ? item.line : '-';
+            const cellsHtml = cols.map(c => {
+                const val = (item.values && item.values[c]) || '';
+                return `<td>${escapeHtml(val)}</td>`;
+            }).join('');
+
+            tr.innerHTML = `
+                <td style="text-align: center;"><span class="badge-line">${escapeHtml(String(lineVal))}</span></td>
+                <td><span class="key-code">${escapeHtml(item.key)}</span></td>
+                ${cellsHtml}
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    if (tabBtnDiffs) tabBtnDiffs.addEventListener('click', () => switchResultTab('diffs'));
+    if (tabBtnOnlyA) tabBtnOnlyA.addEventListener('click', () => switchResultTab('only-a'));
+    if (tabBtnOnlyB) tabBtnOnlyB.addEventListener('click', () => switchResultTab('only-b'));
+    if (tabBtnFinancial) tabBtnFinancial.addEventListener('click', () => switchResultTab('financial'));
+
+    if (onlyASearch) {
+        onlyASearch.addEventListener('input', (e) => {
+            renderOnlyTable(onlyATableHead, onlyATableBody, state.colsDisplayA, state.onlyInAPreview, e.target.value);
+        });
+    }
+
+    if (onlyBSearch) {
+        onlyBSearch.addEventListener('input', (e) => {
+            renderOnlyTable(onlyBTableHead, onlyBTableBody, state.colsDisplayB, state.onlyInBPreview, e.target.value);
         });
     }
 

@@ -188,6 +188,10 @@ def compare():
             'summary': summary,
             'has_differences': not summary['is_identical'],
             'diff_preview': summary['sample_diff_records'],
+            'only_in_a_preview': summary.get('sample_only_in_a', []),
+            'only_in_b_preview': summary.get('sample_only_in_b', []),
+            'cols_display_a': summary.get('cols_display_a', []),
+            'cols_display_b': summary.get('cols_display_b', []),
             'columns_with_differences': summary['columns_with_differences']
         })
 

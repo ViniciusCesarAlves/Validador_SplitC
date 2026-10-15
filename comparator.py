@@ -14,7 +14,7 @@ def normalize_column_name(col: str) -> str:
     """Normaliza nome de coluna: sem acentos, sem espaços extras, uppercase e substitui caracteres especiais por _."""
     if not isinstance(col, str):
         col = str(col)
-    col = col.strip().upper()
+    col = col.replace('\ufeff', '').strip().upper()
     col = unicodedata.normalize('NFKD', col).encode('ASCII', 'ignore').decode('utf-8')
     col = re.sub(r'[\s\-_/\\|]+', '_', col)
     return col.strip('_')
@@ -24,10 +24,11 @@ def read_tabular_file(file_path_or_buffer, filename: str) -> pd.DataFrame:
     ext = filename.lower().split('.')[-1]
     if ext in ['xlsx', 'xls', 'xlsm']:
         # Lê com openpyxl ou padrão
-        return pd.read_excel(file_path_or_buffer)
+        df = pd.read_excel(file_path_or_buffer)
     elif ext == 'csv':
-        # Tenta detectar separador (; ou ,) e encoding
-        encodings = ['utf-8', 'latin1', 'cp1252', 'iso-8859-1']
+        # Tenta detectar separador (; ou ,) e encoding (utf-8-sig primeiro para tratar BOM)
+        encodings = ['utf-8-sig', 'utf-8', 'latin1', 'cp1252', 'iso-8859-1']
+        df = None
         for enc in encodings:
             try:
                 if hasattr(file_path_or_buffer, 'seek'):
@@ -43,15 +44,21 @@ def read_tabular_file(file_path_or_buffer, filename: str) -> pd.DataFrame:
                 if hasattr(file_path_or_buffer, 'seek'):
                     file_path_or_buffer.seek(0)
                 
-                return pd.read_csv(file_path_or_buffer, sep=delimiter, encoding=enc)
+                df = pd.read_csv(file_path_or_buffer, sep=delimiter, encoding=enc)
+                break
             except Exception:
                 continue
         # Fallback padrão
-        if hasattr(file_path_or_buffer, 'seek'):
-            file_path_or_buffer.seek(0)
-        return pd.read_csv(file_path_or_buffer, sep=None, engine='python')
+        if df is None:
+            if hasattr(file_path_or_buffer, 'seek'):
+                file_path_or_buffer.seek(0)
+            df = pd.read_csv(file_path_or_buffer, sep=None, engine='python')
     else:
         raise ValueError(f"Formato de arquivo não suportado: {ext}. Use .xlsx ou .csv")
+
+    # Remove BOM (\ufeff) e espaços das pontas de todos os nomes de colunas
+    df.columns = [str(c).replace('\ufeff', '').strip() for c in df.columns]
+    return df
 
 def parse_cell_value(val, normalize_currency=True, normalize_dates=True, ignore_case=True, trim_spaces=True):
     """
@@ -70,7 +77,7 @@ def parse_cell_value(val, normalize_currency=True, normalize_dates=True, ignore_
             return val.strftime('%Y-%m-%d')
         return str(val)
 
-    s = str(val)
+    s = str(val).replace('\ufeff', '')
     if trim_spaces:
         s = s.strip()
 
@@ -471,6 +478,29 @@ def compare_datasets(df_a: pd.DataFrame, df_b: pd.DataFrame,
     # Sumarização Financeira dos Pares Monetários
     financial_summary = compute_financial_summary(df_a, df_b, column_mapping, columns_with_differences)
 
+    # Amostra de registros exclusivos para exibição na UI
+    cols_display_a = [c for c in df_a.columns if not c.startswith('_')]
+    sample_only_in_a = []
+    for key in sorted(list(only_in_a))[:max_sample_rows]:
+        row_a = df_a_indexed.loc[key]
+        line_a = int(row_a['_ORIG_ROW_NUM_']) if '_ORIG_ROW_NUM_' in row_a else None
+        sample_only_in_a.append({
+            'key': str(key),
+            'line': line_a,
+            'values': {c: (str(row_a[c]) if not pd.isna(row_a[c]) else "") for c in cols_display_a}
+        })
+
+    cols_display_b = [c for c in df_b.columns if not c.startswith('_')]
+    sample_only_in_b = []
+    for key in sorted(list(only_in_b))[:max_sample_rows]:
+        row_b = df_b_indexed.loc[key]
+        line_b = int(row_b['_ORIG_ROW_NUM_']) if '_ORIG_ROW_NUM_' in row_b else None
+        sample_only_in_b.append({
+            'key': str(key),
+            'line': line_b,
+            'values': {c: (str(row_b[c]) if not pd.isna(row_b[c]) else "") for c in cols_display_b}
+        })
+
     summary = {
         'is_identical': is_identical,
         'total_rows_a': len(df_a),
@@ -480,6 +510,10 @@ def compare_datasets(df_a: pd.DataFrame, df_b: pd.DataFrame,
         'identical_rows_count': len(common_keys) - len(diff_records),
         'only_in_a_count': len(only_in_a),
         'only_in_b_count': len(only_in_b),
+        'sample_only_in_a': sample_only_in_a,
+        'sample_only_in_b': sample_only_in_b,
+        'cols_display_a': cols_display_a,
+        'cols_display_b': cols_display_b,
         'total_columns_compared': len(valid_cols_a),
         'columns_with_differences_count': len(columns_with_differences),
         'columns_with_differences': columns_with_differences,
