@@ -322,6 +322,15 @@ body.dark-theme .header-subtitle {
     box-shadow: var(--shadow-md);
 }
 
+.step-card {
+    margin-bottom: 28px;
+    scroll-margin-top: 80px;
+}
+
+.step-card:last-child {
+    margin-bottom: 0;
+}
+
 .card-header {
     display: flex;
     align-items: flex-start;
