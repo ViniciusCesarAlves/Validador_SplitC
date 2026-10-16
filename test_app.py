@@ -272,6 +272,16 @@ def test_full_pipeline():
     assert pdf_cmp_json['summary']['is_identical'] is True
     print("[OK] Leitura e comparação de arquivos .pdf funcionando perfeitamente!")
 
+    # 11. Teste da página "Como usar?" (/como-usar) com Toggle Planilhas / Texto
+    res_guide = client.get('/como-usar')
+    assert res_guide.status_code == 200, f"Falha GET /como-usar: {res_guide.status_code}"
+    html_guide = res_guide.data.decode('utf-8')
+    assert 'btn-guide-planilhas' in html_guide
+    assert 'btn-guide-texto' in html_guide
+    assert 'guide-view-planilhas' in html_guide
+    assert 'guide-view-texto' in html_guide
+    print("[OK] GET /como-usar renderizado com toggle Validar Planilhas / Validar Texto e ambos os guias!")
+
     print("\nTODOS OS TESTES PASSARAM COM 100% DE SUCESSO!")
 
 if __name__ == '__main__':

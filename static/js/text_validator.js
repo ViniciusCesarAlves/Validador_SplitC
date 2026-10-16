@@ -161,14 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
             fileDocA = file;
             filenameA.textContent = file.name;
             filesizeA.textContent = formatBytes(file.size);
-            metaA.style.display = 'flex';
-            dropzoneA.classList.add('has-file');
+            metaA.style.display = 'inline-flex';
+            dropzoneA.classList.add('has-file', 'file-loaded');
         } else {
             fileDocB = file;
             filenameB.textContent = file.name;
             filesizeB.textContent = formatBytes(file.size);
-            metaB.style.display = 'flex';
-            dropzoneB.classList.add('has-file');
+            metaB.style.display = 'inline-flex';
+            dropzoneB.classList.add('has-file', 'file-loaded');
         }
         updateActionButtonState();
     }
@@ -188,16 +188,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropzone.classList.add('dragover');
+            dropzone.classList.add('dragover', 'drag-over');
         });
 
         dropzone.addEventListener('dragleave', () => {
-            dropzone.classList.remove('dragover');
+            dropzone.classList.remove('dragover', 'drag-over');
         });
 
         dropzone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropzone.classList.remove('dragover');
+            dropzone.classList.remove('dragover', 'drag-over');
             if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                 handleFileSelect(side, e.dataTransfer.files[0]);
             }
@@ -338,30 +338,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnFindDiff.addEventListener('click', () => runTextComparison());
 
-    // --- 10. Renderização de KPIs, Banner, PDF e Tabelas ---
+    // --- 10. Renderização de KPIs, Banners Padronizados, PDF e Tabelas ---
     function renderAllResults(data) {
         const s = data.summary;
 
-        // Status Banner
-        const banner = document.getElementById('text-status-banner');
-        const icon = document.getElementById('text-status-icon');
-        const title = document.getElementById('text-status-title');
-        const desc = document.getElementById('text-status-desc');
+        // Banners Padronizados (Idêntico ao Validador de Planilhas)
+        const bannerIdentical = document.getElementById('text-banner-identical');
+        const bannerDiffs = document.getElementById('text-banner-diffs');
 
-        banner.classList.remove('status-success', 'status-warning', 'status-danger');
         if (s.is_identical) {
-            banner.classList.add('status-success');
-            icon.textContent = '✓';
-            title.textContent = 'Documentos 100% Idênticos!';
-            desc.textContent = `Nenhuma diferença encontrada entre "${s.filename_a}" e "${s.filename_b}".`;
+            bannerIdentical.style.display = 'flex';
+            bannerDiffs.style.display = 'none';
+            document.getElementById('text-identical-title').textContent = 'Excelente! Os documentos estão 100% IDÊNTICOS!';
+            document.getElementById('text-identical-desc').textContent =
+                `Todas as linhas e palavras coincidiram perfeitamente entre "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}).`;
         } else {
-            banner.classList.add('status-warning');
-            icon.textContent = '!';
-            title.textContent = `Foram encontradas ${s.total_diff_blocks} linhas com alterações (${s.similarity_pct}% de similaridade)`;
-            desc.textContent = `Comparando "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}) — ${s.modified_lines_count} modificadas, ${s.added_lines_count} adicionadas e ${s.removed_lines_count} removidas.`;
+            bannerIdentical.style.display = 'none';
+            bannerDiffs.style.display = 'flex';
+            document.getElementById('text-diffs-title').textContent =
+                `Atenção: Foram encontradas ${s.total_diff_blocks} linhas com alterações (${s.similarity_pct}% de similaridade)!`;
+            document.getElementById('text-diffs-desc').textContent =
+                `Comparando "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}) — ${s.modified_lines_count} modificadas, ${s.added_lines_count} adicionadas e ${s.removed_lines_count} removidas.`;
         }
 
-        // KPIs (Grid 2x3)
+        // KPIs (Grid 2x3 padronizado)
         document.getElementById('text-kpi-similarity').textContent = `${s.similarity_pct}%`;
         document.getElementById('text-kpi-lines').textContent = `${s.total_lines_a} / ${s.total_lines_b}`;
         document.getElementById('text-kpi-pages-sub').textContent = `${s.pages_a} pág. vs ${s.pages_b} pág.`;
@@ -628,11 +628,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <table class="plain-diff-table">
                         <thead>
                             <tr>
-                                <th style="width:44px;">#</th>
-                                <th style="width:24px;"></th>
+                                <th style="width:44px;text-align:right;">#</th>
+                                <th style="width:26px;"></th>
                                 <th>${escapeHtml(s.filename_a)} (Texto Puro)</th>
-                                <th style="width:44px;">#</th>
-                                <th style="width:24px;"></th>
+                                <th style="width:44px;text-align:right;">#</th>
+                                <th style="width:26px;"></th>
                                 <th>${escapeHtml(s.filename_b)} (Texto Puro)</th>
                             </tr>
                         </thead>
@@ -680,11 +680,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? renderSegmentsHtml(r.segments_b)
                 : `<span style="color:var(--text-muted);font-style:italic;">${escapeHtml(r.text_b)}</span>`;
 
+            const badgeClass = r.badge_class === 'success' ? 'status-badge-ok' : 'status-badge-diff';
+
             return `
                 <tr>
-                    <td><strong>#${r.diff_id}</strong></td>
-                    <td><span class="badge badge-${r.badge_class}">${escapeHtml(r.change_type)}</span></td>
-                    <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">${r.line_a} → ${r.line_b}</td>
+                    <td><span class="key-code">#${r.diff_id}</span></td>
+                    <td style="text-align:center;"><span class="${badgeClass}">${escapeHtml(r.change_type)}</span></td>
+                    <td style="text-align:center;"><span class="badge-line">${r.line_a} → ${r.line_b}</span></td>
                     <td style="white-space:pre-wrap;word-break:break-word;">${contentA}</td>
                     <td style="white-space:pre-wrap;word-break:break-word;">${contentB}</td>
                 </tr>
@@ -705,11 +707,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const tbody = document.getElementById('text-stats-tbody');
         tbody.innerHTML = stats.map(st => {
-            let diffBadge = '<span class="badge badge-info">Sem variação (0)</span>';
+            let diffBadge = '<span class="badge-line">Sem variação (0)</span>';
             if (st.diff > 0) {
-                diffBadge = `<span class="badge badge-success">+${st.diff.toLocaleString('pt-BR')} ${escapeHtml(st.unit)}</span>`;
+                diffBadge = `<span class="status-badge-ok">+${st.diff.toLocaleString('pt-BR')} ${escapeHtml(st.unit)}</span>`;
             } else if (st.diff < 0) {
-                diffBadge = `<span class="badge badge-danger">${st.diff.toLocaleString('pt-BR')} ${escapeHtml(st.unit)}</span>`;
+                diffBadge = `<span class="status-badge-diff">${st.diff.toLocaleString('pt-BR')} ${escapeHtml(st.unit)}</span>`;
             }
 
             const valA = typeof st.val_a === 'number' ? st.val_a.toLocaleString('pt-BR') : escapeHtml(st.val_a);
@@ -718,16 +720,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <tr>
                     <td><strong>${escapeHtml(st.metric)}</strong></td>
-                    <td>${valA}</td>
-                    <td>${valB}</td>
-                    <td>${diffBadge}</td>
+                    <td style="text-align:center;font-weight:600;">${valA}</td>
+                    <td style="text-align:center;font-weight:600;">${valB}</td>
+                    <td style="text-align:center;">${diffBadge}</td>
                 </tr>
             `;
         }).join('');
     }
 
     // --- 14. Controle de Abas na Seção de Resultados ---
-    const tabBtns = document.querySelectorAll('#text-results-tabs .result-tab-btn');
+    const tabBtns = document.querySelectorAll('#text-results-tabs .result-nav-tab-btn');
     const paneVisual = document.getElementById('text-pane-visual');
     const paneTable = document.getElementById('text-pane-table');
     const paneStats = document.getElementById('text-pane-stats');
@@ -750,4 +752,3 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('text-step-upload').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
-

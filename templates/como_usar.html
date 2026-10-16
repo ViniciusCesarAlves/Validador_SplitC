@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Como usar? | ValidAí</title>
+    <title>ValidAí - O seu validador</title>
     <link rel="icon" type="image/png" href="/static/images/favicon.png?v=3">
     <link rel="shortcut icon" href="/favicon.ico?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css?v=6">
-    <link rel="stylesheet" href="/static/css/guide.css?v=6">
+    <link rel="stylesheet" href="/static/css/guide.css?v=7">
     <script>
         (function() {
             try {
@@ -99,8 +99,31 @@
     <main class="container main-content">
         <div class="guide-container">
 
-            <!-- Banner Hero de Apresentação -->
+            <!-- Banner Hero de Apresentação com Toggle Button (Planilhas | Texto) -->
             <section class="guide-hero">
+                <!-- Toggle Button no canto superior direito -->
+                <div class="guide-hero-toggle-wrap">
+                    <div class="mode-toggle-pill" role="tablist" aria-label="Escolher Guia do Validador">
+                        <button type="button" class="mode-btn active" id="btn-guide-planilhas" data-guide="planilhas" title="Ver guia do Validador de Planilhas">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="9" y1="21" x2="9" y2="9"/>
+                            </svg>
+                            <span>Validar Planilhas</span>
+                        </button>
+                        <button type="button" class="mode-btn" id="btn-guide-texto" data-guide="texto" title="Ver guia do Validador de Texto e Documentos">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            <span>Validar Texto</span>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="guide-hero-badge">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
@@ -109,355 +132,719 @@
                     <span>Guia Rápido e Descomplicado</span>
                 </div>
                 <h1 class="guide-hero-title">Como usar o <span class="highlight">ValidAí</span>?</h1>
-                <p class="guide-hero-subtitle">
-                    O ValidAí foi criado para você conferir e auditar planilhas com rapidez, segurança e sem precisar quebrar a cabeça com fórmulas difíceis do Excel como PROCV ou PROCX. Veja abaixo tudo o que você precisa saber!
-                </p>
 
-                <!-- Atalhos Rápidos -->
-                <div class="guide-nav-pills">
-                    <a href="#sec-chave-primaria" class="guide-nav-pill-btn">
-                        <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 2-2 2m-6 6 2 2 4-4m-6 6-7 7a2 2 0 0 1-2.83-2.83l7-7"/>
-                            <circle cx="7.5" cy="7.5" r="4.5"/>
-                        </svg>
-                        <span>O que é Chave Primária?</span>
-                    </a>
-                    <a href="#sec-comparar-bases" class="guide-nav-pill-btn">
-                        <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="8" height="18" rx="2"/>
-                            <rect x="14" y="3" width="8" height="18" rx="2"/>
-                            <path d="m6 12 2-2-2-2"/>
-                            <path d="m18 12-2 2 2 2"/>
-                        </svg>
-                        <span>Comparar 2 Planilhas</span>
-                    </a>
-                    <a href="#sec-auditar-base" class="guide-nav-pill-btn">
-                        <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <circle cx="11.5" cy="14.5" r="2.5"/>
-                            <path d="m13.5 16.5 2.5 2.5"/>
-                        </svg>
-                        <span>Auditar 1 Planilha</span>
-                    </a>
-                    <a href="#sec-dicas" class="guide-nav-pill-btn">
-                        <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 18h6"/>
-                            <path d="M10 22h4"/>
-                            <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
-                        </svg>
-                        <span>Dicas de Ouro</span>
-                    </a>
-                </div>
-            </section>
-
-            <!-- SEÇÃO 1: O QUE É CHAVE PRIMÁRIA -->
-            <section id="sec-chave-primaria" class="guide-section">
-                <div class="guide-section-header">
-                    <div class="guide-section-icon-wrap">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m21 2-2 2m-6 6 2 2 4-4m-6 6-7 7a2 2 0 0 1-2.83-2.83l7-7"/>
-                            <circle cx="7.5" cy="7.5" r="4.5"/>
-                        </svg>
-                    </div>
-                    <div class="guide-section-title-wrap">
-                        <h2>1. O que é Chave Primária (Identificador Único)?</h2>
-                        <p>O conceito mais importante para entender como o validador encontra as informações certas.</p>
-                    </div>
-                </div>
-
-                <div class="guide-analogy-box">
-                    <div class="guide-analogy-title">
-                        <svg class="guide-pill-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 18h6"/>
-                            <path d="M10 22h4"/>
-                            <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
-                        </svg>
-                        <span>Pense no CPF ou na Placa de um Carro!</span>
-                    </div>
-                    <p class="guide-analogy-text">
-                        Imagine que você tem uma lista com 100 pessoas e várias delas se chamam <strong>"João Silva"</strong>. Como o banco ou o hospital sabe exatamente quem é quem? Pelo <strong>CPF</strong>, porque o CPF é <strong>único para cada pessoa</strong>!
-                    </p>
-                    <p class="guide-analogy-text" style="margin-top: 10px;">
-                        Na sua planilha acontece exatamente a mesma coisa: a <strong>Chave Primária</strong> é a coluna que identifica exclusivamente cada linha. Pode ser o <strong>Código do Produto</strong>, <strong>Número da Nota Fiscal</strong>, <strong>Matrícula do Funcionário</strong> ou <strong>ID do Pedido</strong>.
+                <!-- Subtítulo e Atalhos: Modo Planilhas -->
+                <div id="hero-content-planilhas">
+                    <p class="guide-hero-subtitle">
+                        O ValidAí foi criado para você conferir e auditar planilhas com rapidez, segurança e sem precisar quebrar a cabeça com fórmulas difíceis do Excel como PROCV ou PROCX. Veja abaixo tudo o que você precisa saber!
                     </p>
 
-                    <div class="guide-example-pill-row">
-                        <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> CPF</span>
-                        <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Nº da Nota Fiscal</span>
-                        <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> ID do Pedido</span>
-                        <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Matrícula</span>
-                        <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Código do Item</span>
+                    <div class="guide-nav-pills">
+                        <a href="#sec-chave-primaria" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m21 2-2 2m-6 6 2 2 4-4m-6 6-7 7a2 2 0 0 1-2.83-2.83l7-7"/>
+                                <circle cx="7.5" cy="7.5" r="4.5"/>
+                            </svg>
+                            <span>O que é Chave Primária?</span>
+                        </a>
+                        <a href="#sec-comparar-bases" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="8" height="18" rx="2"/>
+                                <rect x="14" y="3" width="8" height="18" rx="2"/>
+                                <path d="m6 12 2-2-2-2"/>
+                                <path d="m18 12-2 2 2 2"/>
+                            </svg>
+                            <span>Comparar 2 Planilhas</span>
+                        </a>
+                        <a href="#sec-auditar-base" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <circle cx="11.5" cy="14.5" r="2.5"/>
+                                <path d="m13.5 16.5 2.5 2.5"/>
+                            </svg>
+                            <span>Auditar 1 Planilha</span>
+                        </a>
+                        <a href="#sec-dicas" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18h6"/>
+                                <path d="M10 22h4"/>
+                                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
+                            </svg>
+                            <span>Dicas de Ouro</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="guide-steps-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-                    <div class="guide-step-card">
-                        <div class="guide-step-badge">Por que ela é necessária?</div>
-                        <h3 class="guide-step-title">As planilhas nem sempre estão na mesma ordem!</h3>
-                        <p class="guide-step-desc">
-                            A Base Nova pode estar em ordem alfabética e a Base Antiga em ordem de data. Graças à Chave Primária, o ValidAí localiza o mesmo registro em qualquer linha e bate os dados com precisão cirúrgica.
-                        </p>
-                    </div>
+                <!-- Subtítulo e Atalhos: Modo Texto -->
+                <div id="hero-content-texto" style="display: none;">
+                    <p class="guide-hero-subtitle">
+                        Com o Validador de Texto do ValidAí, você compara duas versões de contratos, minutas, relatórios ou textos (.pdf, .docx ou .txt) em segundos, enxergando exatamente cada palavra adicionada ou removida sem precisar ler linha por linha!
+                    </p>
 
-                    <div class="guide-step-card">
-                        <div class="guide-step-badge">Chaves Complementares</div>
-                        <h3 class="guide-step-title">E se um código sozinho se repetir?</h3>
-                        <p class="guide-step-desc">
-                            Se a mesma nota fiscal tiver várias parcelas, o número da nota vai se repetir. Nesse caso, basta adicionar uma <strong>Coluna Complementar</strong> (como <em>Número da Parcela</em> ou <em>Data de Vencimento</em>) para formar uma combinação única!
-                        </p>
+                    <div class="guide-nav-pills">
+                        <a href="#sec-texto-conceito" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            <span>Como Funciona?</span>
+                        </a>
+                        <a href="#sec-texto-passos" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="8" height="18" rx="2"/>
+                                <rect x="14" y="3" width="8" height="18" rx="2"/>
+                                <path d="m6 12 2-2-2-2"/>
+                                <path d="m18 12-2 2 2 2"/>
+                            </svg>
+                            <span>Comparar 2 Documentos</span>
+                        </a>
+                        <a href="#sec-texto-modos" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                            </svg>
+                            <span>Modos e Opções de Leitura</span>
+                        </a>
+                        <a href="#sec-texto-dicas" class="guide-nav-pill-btn">
+                            <svg class="guide-pill-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18h6"/>
+                                <path d="M10 22h4"/>
+                                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
+                            </svg>
+                            <span>Dicas de Ouro</span>
+                        </a>
                     </div>
                 </div>
             </section>
 
-            <!-- SEÇÃO 2: COMPARAR 2 PLANILHAS -->
-            <section id="sec-comparar-bases" class="guide-section">
-                <div class="guide-section-header">
-                    <div class="guide-section-icon-wrap">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="8" height="18" rx="2"/>
-                            <rect x="14" y="3" width="8" height="18" rx="2"/>
-                            <path d="m6 12 2-2-2-2"/>
-                            <path d="m18 12-2 2 2 2"/>
+            <!-- ================================================================== -->
+            <!-- VISÃO 1: GUIA DO VALIDADOR DE PLANILHAS                            -->
+            <!-- ================================================================== -->
+            <div id="guide-view-planilhas" class="guide-view-container">
+
+                <!-- SEÇÃO 1: O QUE É CHAVE PRIMÁRIA -->
+                <section id="sec-chave-primaria" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m21 2-2 2m-6 6 2 2 4-4m-6 6-7 7a2 2 0 0 1-2.83-2.83l7-7"/>
+                                <circle cx="7.5" cy="7.5" r="4.5"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>1. O que é Chave Primária (Identificador Único)?</h2>
+                            <p>O conceito mais importante para entender como o validador encontra as informações certas.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-analogy-box">
+                        <div class="guide-analogy-title">
+                            <svg class="guide-pill-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18h6"/>
+                                <path d="M10 22h4"/>
+                                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
+                            </svg>
+                            <span>Pense no CPF ou na Placa de um Carro!</span>
+                        </div>
+                        <p class="guide-analogy-text">
+                            Imagine que você tem uma lista com 100 pessoas e várias delas se chamam <strong>"João Silva"</strong>. Como o banco ou o hospital sabe exatamente quem é quem? Pelo <strong>CPF</strong>, porque o CPF é <strong>único para cada pessoa</strong>!
+                        </p>
+                        <p class="guide-analogy-text" style="margin-top: 10px;">
+                            Na sua planilha acontece exatamente a mesma coisa: a <strong>Chave Primária</strong> é a coluna que identifica exclusivamente cada linha. Pode ser o <strong>Código do Produto</strong>, <strong>Número da Nota Fiscal</strong>, <strong>Matrícula do Funcionário</strong> ou <strong>ID do Pedido</strong>.
+                        </p>
+
+                        <div class="guide-example-pill-row">
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> CPF</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Nº da Nota Fiscal</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> ID do Pedido</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Matrícula</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Código do Item</span>
+                        </div>
+                    </div>
+
+                    <div class="guide-steps-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Por que ela é necessária?</div>
+                            <h3 class="guide-step-title">As planilhas nem sempre estão na mesma ordem!</h3>
+                            <p class="guide-step-desc">
+                                A Base Nova pode estar em ordem alfabética e a Base Antiga em ordem de data. Graças à Chave Primária, o ValidAí localiza o mesmo registro em qualquer linha e bate os dados com precisão cirúrgica.
+                            </p>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Chaves Complementares</div>
+                            <h3 class="guide-step-title">E se um código sozinho se repetir?</h3>
+                            <p class="guide-step-desc">
+                                Se a mesma nota fiscal tiver várias parcelas, o número da nota vai se repetir. Nesse caso, basta adicionar uma <strong>Coluna Complementar</strong> (como <em>Número da Parcela</em> ou <em>Data de Vencimento</em>) para formar uma combinação única!
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO 2: COMPARAR 2 PLANILHAS -->
+                <section id="sec-comparar-bases" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="8" height="18" rx="2"/>
+                                <rect x="14" y="3" width="8" height="18" rx="2"/>
+                                <path d="m6 12 2-2-2-2"/>
+                                <path d="m18 12-2 2 2 2"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>2. Comparar 2 Bases (Conferência entre Planilhas)</h2>
+                            <p>Ideal para quando você recebeu uma planilha nova e precisa saber o que mudou em relação à anterior.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-steps-grid">
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 1</div>
+                            <h3 class="guide-step-title">Carregar os Arquivos</h3>
+                            <p class="guide-step-desc">
+                                Envie a <strong>Base Antiga</strong> (sua base de referência) e a <strong>Base Nova</strong> (o arquivo atualizado que você deseja conferir).
+                            </p>
+                            <div class="guide-step-highlight">
+                                Formatos aceitos: <strong>.xlsx, .xls ou .csv</strong> (até 100 MB).
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 2</div>
+                            <h3 class="guide-step-title">Escolher a Chave</h3>
+                            <p class="guide-step-desc">
+                                Selecione a coluna que identifica cada linha (ex: ID, CPF, Código). Se precisar, selecione colunas secundárias para refinar.
+                            </p>
+                            <div class="guide-step-highlight">
+                                O ValidAí já sugere automaticamente as colunas mais prováveis!
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 3</div>
+                            <h3 class="guide-step-title">Mapear as Colunas</h3>
+                            <p class="guide-step-desc">
+                                O sistema reconhece colunas com nomes parecidos (ex: <em>Valor Total</em> e <em>Vlr_Total</em>). Você pode conferir e ajustar manualmente como quiser.
+                            </p>
+                            <div class="guide-step-highlight">
+                                Opções para ignorar diferenças de maiúsculas, espaços e formatar moedas (R$).
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 4</div>
+                            <h3 class="guide-step-title">Resultados e Relatório</h3>
+                            <p class="guide-step-desc">
+                                Veja na tela os KPIs gerais, a lista completa de células divergentes e a <strong>Sumarização Financeira</strong>.
+                            </p>
+                            <div class="guide-step-highlight">
+                                Baixe o <strong>Relatório Excel (.xlsx)</strong> com abas prontas e células pintadas!
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO 3: AUDITAR 1 PLANILHA -->
+                <section id="sec-auditar-base" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <circle cx="11.5" cy="14.5" r="2.5"/>
+                                <path d="m13.5 16.5 2.5 2.5"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>3. Auditar 1 Base (Regras Internas na Mesma Planilha)</h2>
+                            <p>Para quando você tem apenas um arquivo e quer garantir que todos os dados estão perfeitos antes de enviar.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-rules-grid">
+                        <!-- Regra: Sem Duplicatas -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="8" y="8" width="12" height="12" rx="2"/>
+                                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Sem Duplicatas (Valores Únicos)</span>
+                            </div>
+                            <p class="guide-rule-desc">Verifica se não há valores repetidos em colunas que devem ser únicas (como CPF, CNPJ ou Código).</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> 100, 101, 102 (todos distintos)</div>
+                                <div class="guide-rule-example-item invalid"><span>✕</span> 100, 101, 100 (100 duplicado!)</div>
+                            </div>
+                        </div>
+
+                        <!-- Regra: Apenas Números -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="4" y1="9" x2="20" y2="9"/>
+                                        <line x1="4" y1="15" x2="20" y2="15"/>
+                                        <line x1="10" y1="3" x2="8" y2="21"/>
+                                        <line x1="16" y1="3" x2="14" y2="21"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Apenas Números</span>
+                            </div>
+                            <p class="guide-rule-desc">Garante que a coluna contém somente dígitos numéricos. Aponta se alguém digitou letras por engano.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> 987654321</div>
+                                <div class="guide-rule-example-item invalid"><span>✕</span> 98765A321 (letra no meio)</div>
+                            </div>
+                        </div>
+
+                        <!-- Regra: Apenas Letras -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 20h4l10.5-10.5a2.828 2.828 0 1 0-4-4L4 16v4z"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Apenas Letras</span>
+                            </div>
+                            <p class="guide-rule-desc">Ideal para nomes de clientes ou cidades. Alerta se houver números ou caracteres especiais digitados.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> Maria da Silva</div>
+                                <div class="guide-rule-example-item invalid"><span>✕</span> Maria 123 Silva</div>
+                            </div>
+                        </div>
+
+                        <!-- Regra: Maior / Menor / Igual -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="15 6 9 12 15 18"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Maior, Menor ou Igual a um Valor</span>
+                            </div>
+                            <p class="guide-rule-desc">Checa se os valores atendem limites (ex: Idade maior ou igual a 18 anos, ou Valor maior que zero).</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> R$ 1.500,00 (maior que 0)</div>
+                                <div class="guide-rule-example-item invalid"><span>✕</span> -R$ 50,00 (negativo inválido)</div>
+                            </div>
+                        </div>
+
+                        <!-- Regra: Campo Obrigatório / Não Vazio -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Não Vazio (Preenchimento Obrigatório)</span>
+                            </div>
+                            <p class="guide-rule-desc">Aponta células que foram deixadas em branco quando o preenchimento era obrigatório.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> "Preenchido"</div>
+                                <div class="guide-rule-example-item invalid"><span>✕</span> "" (em branco / vazio)</div>
+                            </div>
+                        </div>
+
+                        <!-- Regra: Contar Ocorrências -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="20" x2="18" y2="10"/>
+                                        <line x1="12" y1="20" x2="12" y2="4"/>
+                                        <line x1="6" y1="20" x2="6" y2="14"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Contar Iguais e Ranking</span>
+                            </div>
+                            <p class="guide-rule-desc">Gera um ranking visual de quantas vezes cada valor se repete na coluna (ex: filiais com mais lançamentos).</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> Cria tabela com as maiores frequências</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO 4: DICAS DE OURO PLANILHAS -->
+                <section id="sec-dicas" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>4. Dicas de Ouro para Suas Planilhas</h2>
+                            <p>Boas práticas simples que evitam dores de cabeça no dia a dia.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-tips-grid">
+                        <div class="guide-tip-card">
+                            <div class="guide-tip-num">1</div>
+                            <div class="guide-tip-content">
+                                <h4>Títulos sempre na primeira linha</h4>
+                                <p>Certifique-se de que a linha 1 da sua planilha contenha os nomes das colunas (ex: <em>Nome, CPF, Data</em>). Evite colocar títulos ou logos acima dos cabeçalhos.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-tip-card">
+                            <div class="guide-tip-num">2</div>
+                            <div class="guide-tip-content">
+                                <h4>Evite células mescladas</h4>
+                                <p>Células mescladas no meio da tabela podem fazer com que dados pareçam vazios para o validador. Mantenha cada informação em sua própria célula individual.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-tip-card">
+                            <div class="guide-tip-num">3</div>
+                            <div class="guide-tip-content">
+                                <h4>Formatos universais</h4>
+                                <p>Arquivos <strong>.xlsx</strong> e <strong>.csv</strong> funcionam com máxima performance. Se o seu arquivo for <em>.xls</em> muito antigo, salvar como <em>.xlsx</em> torna o processo ainda mais rápido.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA FINAL PLANILHAS -->
+                <section class="guide-cta-card">
+                    <h3>Tudo pronto para validar suas planilhas?</h3>
+                    <p>Experimente agora mesmo o comparador de bases ou o auditor interno e ganhe horas de produtividade!</p>
+                    <a href="/" class="btn-guide-cta">
+                        <span>Ir para o Validador de Planilhas</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
                         </svg>
-                    </div>
-                    <div class="guide-section-title-wrap">
-                        <h2>2. Comparar 2 Bases (Conferência entre Planilhas)</h2>
-                        <p>Ideal para quando você recebeu uma planilha nova e precisa saber o que mudou em relação à anterior.</p>
-                    </div>
-                </div>
+                    </a>
+                </section>
 
-                <div class="guide-steps-grid">
-                    <div class="guide-step-card">
-                        <div class="guide-step-badge">Passo 1</div>
-                        <h3 class="guide-step-title">Carregar os Arquivos</h3>
-                        <p class="guide-step-desc">
-                            Envie a <strong>Base Antiga</strong> (sua base de referência) e a <strong>Base Nova</strong> (o arquivo atualizado que você deseja conferir).
-                        </p>
-                        <div class="guide-step-highlight">
-                            Formatos aceitos: <strong>.xlsx, .xls ou .csv</strong> (até 100 MB).
+            </div>
+
+            <!-- ================================================================== -->
+            <!-- VISÃO 2: GUIA DO VALIDADOR DE TEXTO E DOCUMENTOS                   -->
+            <!-- ================================================================== -->
+            <div id="guide-view-texto" class="guide-view-container" style="display: none;">
+
+                <!-- SEÇÃO 1: COMO FUNCIONA A COMPARAÇÃO DE TEXTOS -->
+                <section id="sec-texto-conceito" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>1. Como Funciona a Comparação de Textos e Documentos?</h2>
+                            <p>Entenda como o ValidAí encontra até uma única vírgula ou palavra trocada em dezenas de páginas.</p>
                         </div>
                     </div>
 
-                    <div class="guide-step-card">
-                        <div class="guide-step-badge">Passo 2</div>
-                        <h3 class="guide-step-title">Escolher a Chave</h3>
-                        <p class="guide-step-desc">
-                            Selecione a coluna que identifica cada linha (ex: ID, CPF, Código). Se precisar, selecione colunas secundárias para refinar.
+                    <div class="guide-analogy-box">
+                        <div class="guide-analogy-title">
+                            <svg class="guide-pill-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18h6"/>
+                                <path d="M10 22h4"/>
+                                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
+                            </svg>
+                            <span>Pense em um Marca-Texto Inteligente Revisando um Contrato!</span>
+                        </div>
+                        <p class="guide-analogy-text">
+                            Imagine receber um contrato de 20 páginas revisado por outra área e precisar descobrir se algum valor, prazo ou cláusula foi alterado. Ler página por página com uma régua leva horas e qualquer distração pode deixar passar uma mudança importante!
                         </p>
-                        <div class="guide-step-highlight">
-                            O ValidAí já sugere automaticamente as colunas mais prováveis!
+                        <p class="guide-analogy-text" style="margin-top: 10px;">
+                            O <strong>Validador de Texto</strong> lê os dois documentos instantaneamente e usa cores universais: tudo o que foi <strong>removido ou apagado</strong> aparece grifado em <strong>vermelho tachado</strong>, e tudo o que foi <strong>inserido no documento novo</strong> aparece destacado em <strong>verde</strong>.
+                        </p>
+
+                        <div class="guide-example-pill-row">
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Contratos e Minutas (.docx)</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Propostas e Laudos (.pdf)</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Aditivos e Cláusulas</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> Relatórios e Atas (.txt)</span>
+                            <span class="guide-example-pill"><span class="pill-tag">Exemplo:</span> E-mails e Textos Colados</span>
                         </div>
                     </div>
 
-                    <div class="guide-step-card">
-                        <div class="guide-step-badge">Passo 3</div>
-                        <h3 class="guide-step-title">Mapear as Colunas</h3>
-                        <p class="guide-step-desc">
-                            O sistema reconhece colunas com nomes parecidos (ex: <em>Valor Total</em> e <em>Vlr_Total</em>). Você pode conferir e ajustar manualmente como quiser.
-                        </p>
-                        <div class="guide-step-highlight">
-                            Opções para ignorar diferenças de maiúsculas, espaços e formatar moedas (R$).
+                    <div class="guide-steps-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Duas Formas de Usar</div>
+                            <h3 class="guide-step-title">Suba arquivos prontos ou cole o texto na hora!</h3>
+                            <p class="guide-step-desc">
+                                Você pode enviar arquivos <strong>.pdf, .docx (Word) ou .txt</strong> diretamente do seu computador, ou clicar no botão <strong>"Colar Texto"</strong> no topo do Passo 1 para digitar ou colar trechos copiados de e-mails e mensagens.
+                            </p>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Alinhamento Automático</div>
+                            <h3 class="guide-step-title">E se alguém inseriu um parágrafo inteiro no meio?</h3>
+                            <p class="guide-step-desc">
+                                Não se preocupe! O ValidAí não compara apenas "linha 1 com linha 1". Ele reconhece que um parágrafo novo entrou e <strong>realinha todo o restante do documento automaticamente</strong> para não gerar falsos erros.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO 2: PASSO A PASSO PARA COMPARAR 2 DOCUMENTOS -->
+                <section id="sec-texto-passos" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="8" height="18" rx="2"/>
+                                <rect x="14" y="3" width="8" height="18" rx="2"/>
+                                <path d="m6 12 2-2-2-2"/>
+                                <path d="m18 12-2 2 2 2"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>2. Passo a Passo para Comparar 2 Documentos</h2>
+                            <p>Veja como é simples auditar duas versões de qualquer documento ou texto.</p>
                         </div>
                     </div>
 
-                    <div class="guide-step-card">
-                        <div class="guide-step-badge">Passo 4</div>
-                        <h3 class="guide-step-title">Resultados e Relatório</h3>
-                        <p class="guide-step-desc">
-                            Veja na tela os KPIs gerais, a lista completa de células divergentes e a <strong>Sumarização Financeira</strong>.
-                        </p>
-                        <div class="guide-step-highlight">
-                            Baixe o <strong>Relatório Excel (.xlsx)</strong> com abas prontas e células pintadas!
+                    <div class="guide-steps-grid">
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 1</div>
+                            <h3 class="guide-step-title">Enviar ou Colar os Textos</h3>
+                            <p class="guide-step-desc">
+                                Coloque o <strong>Documento Original</strong> na caixa da esquerda e o <strong>Documento Novo</strong> na caixa da direita (ou cole os dois textos).
+                            </p>
+                            <div class="guide-step-highlight">
+                                Formatos aceitos: <strong>.pdf, .docx ou .txt</strong> (ou texto colado).
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 2</div>
+                            <h3 class="guide-step-title">Escolher o Modo Visual</h3>
+                            <p class="guide-step-desc">
+                                Selecione como prefere enxergar as alterações: <strong>Rich text</strong> (lado a lado), <strong>Redline</strong> (texto único unificado) ou <strong>Plain text</strong>.
+                            </p>
+                            <div class="guide-step-highlight">
+                                Você também pode trocar o modo depois que o resultado aparecer!
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 3</div>
+                            <h3 class="guide-step-title">Definir a Precisão</h3>
+                            <p class="guide-step-desc">
+                                Escolha se quer ignorar espaços extras, diferenças entre letras maiúsculas/minúsculas ou linhas em branco.
+                            </p>
+                            <div class="guide-step-highlight">
+                                O destaque por palavra já vem ativado por padrão para facilitar a leitura.
+                            </div>
+                        </div>
+
+                        <div class="guide-step-card">
+                            <div class="guide-step-badge">Passo 4</div>
+                            <h3 class="guide-step-title">Analytics e Exportação PDF</h3>
+                            <p class="guide-step-desc">
+                                Confira o <strong>Índice de Similaridade (%)</strong>, total de palavras inseridas/removidas e navegue pelas divergências.
+                            </p>
+                            <div class="guide-step-highlight">
+                                Baixe o <strong>Relatório em PDF (.pdf)</strong> pronto com todas as diferenças grifadas!
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- SEÇÃO 3: AUDITAR 1 PLANILHA -->
-            <section id="sec-auditar-base" class="guide-section">
-                <div class="guide-section-header">
-                    <div class="guide-section-icon-wrap">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <circle cx="11.5" cy="14.5" r="2.5"/>
-                            <path d="m13.5 16.5 2.5 2.5"/>
+                <!-- SEÇÃO 3: MODOS DE EXIBIÇÃO E OPÇÕES DE PRECISÃO -->
+                <section id="sec-texto-modos" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <line x1="21" y1="21" x2="16.5" y2="16.5"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>3. Entendendo os Modos de Exibição e Opções de Leitura</h2>
+                            <p>Para que serve cada modo visual e cada opção de configuração do validador de texto.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-rules-grid">
+                        <!-- Modo 1: Rich Text -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="3" width="8" height="18" rx="2"/>
+                                        <rect x="14" y="3" width="8" height="18" rx="2"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Modo Rich Text (Lado a Lado)</span>
+                            </div>
+                            <p class="guide-rule-desc">Mostra o Documento Original na esquerda e o Documento Novo na direita, rolando os dois juntos na tela.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item invalid"><span>✕</span> Esquerda: mostra em vermelho o que saiu</div>
+                                <div class="guide-rule-example-item valid"><span>✓</span> Direita: mostra em verde o que entrou</div>
+                            </div>
+                        </div>
+
+                        <!-- Modo 2: Redline -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Modo Redline (Unificado)</span>
+                            </div>
+                            <p class="guide-rule-desc">Funde os dois arquivos em uma única folha contínua, ideal para revisão jurídica e aprovação de minutas.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> Prazo de <span style="text-decoration:line-through;color:#dc2626;">12 meses</span> <strong>24 meses</strong> na mesma frase</div>
+                            </div>
+                        </div>
+
+                        <!-- Modo 3: Plain Text -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="4 7 4 4 20 4 20 7"/>
+                                        <line x1="9" y1="20" x2="15" y2="20"/>
+                                        <line x1="12" y1="4" x2="12" y2="20"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Modo Plain Text (Texto Puro)</span>
+                            </div>
+                            <p class="guide-rule-desc">Compara linha por linha em fonte técnica espaçada com indicadores diretos de alteração.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>+</span> Linha adicionada | <span>~</span> Linha modificada</div>
+                                <div class="guide-rule-example-item invalid"><span>-</span> Linha suprimida do original</div>
+                            </div>
+                        </div>
+
+                        <!-- Opção 4: Ignorar Espaços Extras -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 6H3"/>
+                                        <path d="M10 12H3"/>
+                                        <path d="M10 18H3"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Ignorar Espaços e Linhas em Branco</span>
+                            </div>
+                            <p class="guide-rule-desc">Evita que um espaço duplo sem querer ou uma linha pulada entre parágrafos seja apontada como erro.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> "Valor  Total" = "Valor Total" (considera iguais)</div>
+                            </div>
+                        </div>
+
+                        <!-- Opção 5: Ignorar Maiúsculas/Minúsculas -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 20h4l10.5-10.5a2.828 2.828 0 1 0-4-4L4 16v4z"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Ignorar Maiúsculas / Minúsculas</span>
+                            </div>
+                            <p class="guide-rule-desc">Quando ativado, foca apenas se a palavra mudou de verdade, ignorando se estava em caixa alta.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> "Cláusula Primeira" = "CLÁUSULA PRIMEIRA"</div>
+                            </div>
+                        </div>
+
+                        <!-- Opção 6: Destaque por Palavra -->
+                        <div class="guide-rule-card">
+                            <div class="guide-rule-header">
+                                <div class="guide-rule-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="m9 12 2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <span class="guide-rule-name">Destaque por Palavra vs Caractere</span>
+                            </div>
+                            <p class="guide-rule-desc">Grifa a palavra inteira alterada para leitura rápida ou, se desmarcado, mostra letra por letra.</p>
+                            <div class="guide-rule-example">
+                                <div class="guide-rule-example-item valid"><span>✓</span> Facilita visualizar trocas de valores e datas</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SEÇÃO 4: DICAS DE OURO TEXTO -->
+                <section id="sec-texto-dicas" class="guide-section">
+                    <div class="guide-section-header">
+                        <div class="guide-section-icon-wrap">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                        </div>
+                        <div class="guide-section-title-wrap">
+                            <h2>4. Dicas de Ouro para Seus Documentos</h2>
+                            <p>Truques práticos para aproveitar ao máximo o Validador de Texto.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-tips-grid">
+                        <div class="guide-tip-card">
+                            <div class="guide-tip-num">1</div>
+                            <div class="guide-tip-content">
+                                <h4>Use o filtro "Exibir apenas diferenças"</h4>
+                                <p>Ao comparar documentos grandes com muitas páginas iguais, marque a caixinha <strong>"Exibir apenas diferenças"</strong> no topo do resultado para ver somente os parágrafos que mudaram!</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-tip-card">
+                            <div class="guide-tip-num">2</div>
+                            <div class="guide-tip-content">
+                                <h4>Alterne entre Rich Text e Redline em 1 clique</h4>
+                                <p>Você não precisa enviar os arquivos de novo para mudar a visualização: basta clicar nos botões <em>Rich Text</em>, <em>Redline</em> ou <em>Plain Text</em> na barra de resultados.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-tip-card">
+                            <div class="guide-tip-num">3</div>
+                            <div class="guide-tip-content">
+                                <h4>Exporte o PDF para compartilhar</h4>
+                                <p>Precisa mostrar para um cliente ou gestor o que foi alterado na versão nova? Clique em <strong>"Baixar Relatório em PDF (.pdf)"</strong> para gerar o documento timbrado já grifado.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CTA FINAL TEXTO -->
+                <section class="guide-cta-card">
+                    <h3>Tudo pronto para comparar seus documentos e textos?</h3>
+                    <p>Experimente agora mesmo o Validador de Texto com arquivos PDF, Word (.docx) ou textos colados!</p>
+                    <a href="/validador-texto" class="btn-guide-cta">
+                        <span>Ir para o Validador de Texto</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
                         </svg>
-                    </div>
-                    <div class="guide-section-title-wrap">
-                        <h2>3. Auditar 1 Base (Regras Internas na Mesma Planilha)</h2>
-                        <p>Para quando você tem apenas um arquivo e quer garantir que todos os dados estão perfeitos antes de enviar.</p>
-                    </div>
-                </div>
+                    </a>
+                </section>
 
-                <div class="guide-rules-grid">
-                    <!-- Regra: Sem Duplicatas -->
-                    <div class="guide-rule-card">
-                        <div class="guide-rule-header">
-                            <div class="guide-rule-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="8" y="8" width="12" height="12" rx="2"/>
-                                    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                                </svg>
-                            </div>
-                            <span class="guide-rule-name">Sem Duplicatas (Valores Únicos)</span>
-                        </div>
-                        <p class="guide-rule-desc">Verifica se não há valores repetidos em colunas que devem ser únicas (como CPF, CNPJ ou Código).</p>
-                        <div class="guide-rule-example">
-                            <div class="guide-rule-example-item valid"><span>✓</span> 100, 101, 102 (todos distintos)</div>
-                            <div class="guide-rule-example-item invalid"><span>✕</span> 100, 101, 100 (100 duplicado!)</div>
-                        </div>
-                    </div>
-
-                    <!-- Regra: Apenas Números -->
-                    <div class="guide-rule-card">
-                        <div class="guide-rule-header">
-                            <div class="guide-rule-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="4" y1="9" x2="20" y2="9"/>
-                                    <line x1="4" y1="15" x2="20" y2="15"/>
-                                    <line x1="10" y1="3" x2="8" y2="21"/>
-                                    <line x1="16" y1="3" x2="14" y2="21"/>
-                                </svg>
-                            </div>
-                            <span class="guide-rule-name">Apenas Números</span>
-                        </div>
-                        <p class="guide-rule-desc">Garante que a coluna contém somente dígitos numéricos. Aponta se alguém digitou letras por engano.</p>
-                        <div class="guide-rule-example">
-                            <div class="guide-rule-example-item valid"><span>✓</span> 987654321</div>
-                            <div class="guide-rule-example-item invalid"><span>✕</span> 98765A321 (letra no meio)</div>
-                        </div>
-                    </div>
-
-                    <!-- Regra: Apenas Letras -->
-                    <div class="guide-rule-card">
-                        <div class="guide-rule-header">
-                            <div class="guide-rule-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 20h4l10.5-10.5a2.828 2.828 0 1 0-4-4L4 16v4z"/>
-                                </svg>
-                            </div>
-                            <span class="guide-rule-name">Apenas Letras</span>
-                        </div>
-                        <p class="guide-rule-desc">Ideal para nomes de clientes ou cidades. Alerta se houver números ou caracteres especiais digitados.</p>
-                        <div class="guide-rule-example">
-                            <div class="guide-rule-example-item valid"><span>✓</span> Maria da Silva</div>
-                            <div class="guide-rule-example-item invalid"><span>✕</span> Maria 123 Silva</div>
-                        </div>
-                    </div>
-
-                    <!-- Regra: Maior / Menor / Igual -->
-                    <div class="guide-rule-card">
-                        <div class="guide-rule-header">
-                            <div class="guide-rule-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="15 6 9 12 15 18"/>
-                                </svg>
-                            </div>
-                            <span class="guide-rule-name">Maior, Menor ou Igual a um Valor</span>
-                        </div>
-                        <p class="guide-rule-desc">Checa se os valores atendem limites (ex: Idade maior ou igual a 18 anos, ou Valor maior que zero).</p>
-                        <div class="guide-rule-example">
-                            <div class="guide-rule-example-item valid"><span>✓</span> R$ 1.500,00 (maior que 0)</div>
-                            <div class="guide-rule-example-item invalid"><span>✕</span> -R$ 50,00 (negativo inválido)</div>
-                        </div>
-                    </div>
-
-                    <!-- Regra: Campo Obrigatório / Não Vazio -->
-                    <div class="guide-rule-card">
-                        <div class="guide-rule-header">
-                            <div class="guide-rule-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="12" y1="8" x2="12" y2="12"/>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                                </svg>
-                            </div>
-                            <span class="guide-rule-name">Não Vazio (Preenchimento Obrigatório)</span>
-                        </div>
-                        <p class="guide-rule-desc">Aponta células que foram deixadas em branco quando o preenchimento era obrigatório.</p>
-                        <div class="guide-rule-example">
-                            <div class="guide-rule-example-item valid"><span>✓</span> "Preenchido"</div>
-                            <div class="guide-rule-example-item invalid"><span>✕</span> "" (em branco / vazio)</div>
-                        </div>
-                    </div>
-
-                    <!-- Regra: Contar Ocorrências -->
-                    <div class="guide-rule-card">
-                        <div class="guide-rule-header">
-                            <div class="guide-rule-icon">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="20" x2="18" y2="10"/>
-                                    <line x1="12" y1="20" x2="12" y2="4"/>
-                                    <line x1="6" y1="20" x2="6" y2="14"/>
-                                </svg>
-                            </div>
-                            <span class="guide-rule-name">Contar Iguais e Ranking</span>
-                        </div>
-                        <p class="guide-rule-desc">Gera um ranking visual de quantas vezes cada valor se repete na coluna (ex: filiais com mais lançamentos).</p>
-                        <div class="guide-rule-example">
-                            <div class="guide-rule-example-item valid"><span>✓</span> Cria tabela com as maiores frequências</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SEÇÃO 4: DICAS DE OURO -->
-            <section id="sec-dicas" class="guide-section">
-                <div class="guide-section-header">
-                    <div class="guide-section-icon-wrap">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="16" x2="12" y2="12"/>
-                            <line x1="12" y1="8" x2="12.01" y2="8"/>
-                        </svg>
-                    </div>
-                    <div class="guide-section-title-wrap">
-                        <h2>4. Dicas de Ouro para Suas Planilhas</h2>
-                        <p>Boas práticas simples que evitam dores de cabeça no dia a dia.</p>
-                    </div>
-                </div>
-
-                <div class="guide-tips-grid">
-                    <div class="guide-tip-card">
-                        <div class="guide-tip-num">1</div>
-                        <div class="guide-tip-content">
-                            <h4>Títulos sempre na primeira linha</h4>
-                            <p>Certifique-se de que a linha 1 da sua planilha contenha os nomes das colunas (ex: <em>Nome, CPF, Data</em>). Evite colocar títulos ou logos acima dos cabeçalhos.</p>
-                        </div>
-                    </div>
-
-                    <div class="guide-tip-card">
-                        <div class="guide-tip-num">2</div>
-                        <div class="guide-tip-content">
-                            <h4>Evite células mescladas</h4>
-                            <p>Células mescladas no meio da tabela podem fazer com que dados pareçam vazios para o validador. Mantenha cada informação em sua própria célula individual.</p>
-                        </div>
-                    </div>
-
-                    <div class="guide-tip-card">
-                        <div class="guide-tip-num">3</div>
-                        <div class="guide-tip-content">
-                            <h4>Formatos universais</h4>
-                            <p>Arquivos <strong>.xlsx</strong> e <strong>.csv</strong> funcionam com máxima performance. Se o seu arquivo for <em>.xls</em> muito antigo, salvar como <em>.xlsx</em> torna o processo ainda mais rápido.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CTA FINAL -->
-            <section class="guide-cta-card">
-                <h3>Tudo pronto para validar suas planilhas?</h3>
-                <p>Experimente agora mesmo o comparador de bases ou o auditor interno e ganhe horas de produtividade!</p>
-                <a href="/" class="btn-guide-cta">
-                    <span>Ir para o Validador de Planilhas</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                </a>
-            </section>
+            </div>
 
         </div>
     </main>
@@ -468,7 +855,7 @@
         </div>
     </footer>
 
-    <!-- Script de Alternância de Tema Claro/Escuro -->
+    <!-- Script de Alternância de Tema Claro/Escuro e Toggle Planilhas/Texto -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -511,8 +898,47 @@
                     } catch(e) {}
                 });
             }
+
+            // Alternância entre Guia de Planilhas e Guia de Texto
+            var btnGuidePlanilhas = document.getElementById('btn-guide-planilhas');
+            var btnGuideTexto = document.getElementById('btn-guide-texto');
+            var viewPlanilhas = document.getElementById('guide-view-planilhas');
+            var viewTexto = document.getElementById('guide-view-texto');
+            var heroPlanilhas = document.getElementById('hero-content-planilhas');
+            var heroTexto = document.getElementById('hero-content-texto');
+
+            function setGuideMode(mode) {
+                if (mode === 'texto') {
+                    btnGuideTexto.classList.add('active');
+                    btnGuidePlanilhas.classList.remove('active');
+                    viewPlanilhas.style.display = 'none';
+                    viewTexto.style.display = 'flex';
+                    heroPlanilhas.style.display = 'none';
+                    heroTexto.style.display = 'block';
+                } else {
+                    btnGuidePlanilhas.classList.add('active');
+                    btnGuideTexto.classList.remove('active');
+                    viewTexto.style.display = 'none';
+                    viewPlanilhas.style.display = 'flex';
+                    heroTexto.style.display = 'none';
+                    heroPlanilhas.style.display = 'block';
+                }
+            }
+
+            if (btnGuidePlanilhas && btnGuideTexto) {
+                btnGuidePlanilhas.addEventListener('click', function() {
+                    setGuideMode('planilhas');
+                });
+                btnGuideTexto.addEventListener('click', function() {
+                    setGuideMode('texto');
+                });
+            }
+
+            // Verifica se a URL pede modo=texto diretamente
+            if (window.location.search.indexOf('modo=texto') !== -1 || window.location.hash === '#texto') {
+                setGuideMode('texto');
+            }
         });
     </script>
 </body>
 </html>
-
