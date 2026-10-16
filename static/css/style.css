@@ -69,6 +69,7 @@ body {
 }
 
 .container {
+    width: 100%;
     max-width: 1140px;
     margin: 0 auto;
     padding: 0 24px;
@@ -99,13 +100,12 @@ body.dark-theme .navbar {
     position: relative;
 }
 
-/* Lateral Esquerda: Versão + Botão de Tema */
-.header-left {
+/* Lateral Direita: Versão + Botão de Tema */
+.header-right-actions {
     display: flex;
     align-items: center;
     gap: 12px;
-    flex: 1;
-    justify-content: flex-start;
+    justify-content: flex-end;
 }
 
 .version-tag {
@@ -198,12 +198,11 @@ body.dark-theme .theme-toggle-btn .moon-icon-path {
     filter: none !important;
 }
 
-/* Centro: Logo e Título */
+/* Lateral Esquerda: Logo */
 .header-brand-center {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 18px;
+    justify-content: flex-start;
     text-align: left;
 }
 
@@ -236,80 +235,32 @@ body.dark-theme .brand-logo-dark {
     display: block !important;
 }
 
-.brand-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.header-title-row {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-}
-
-.header-title {
-    font-family: 'Outfit', 'Montserrat', -apple-system, sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin: 0;
-    background: linear-gradient(130deg, #4FD580, #6AE099 50%, #4FD580);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: #4FD580;
-    display: inline-block;
-}
-
-.header-subtitle {
-    font-size: 13.5px;
-    color: #64748b;
-    font-weight: 500;
-    line-height: 1.25;
-    margin-top: 2px;
-}
-
-body.dark-theme .header-subtitle {
-    color: #94a3af;
-}
-
-/* Espaçador da Direita para manter o centro perfeito */
-.header-right-spacer {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-}
-
 @media (max-width: 768px) {
     .nav-content {
-        flex-direction: column;
-        gap: 12px;
-    }
-    .header-left {
-        width: 100%;
+        flex-direction: row;
         justify-content: space-between;
-    }
-    .header-right-spacer {
-        display: none;
-    }
-    .header-brand-center {
-        text-align: center;
     }
 }
 
 /* Main Content */
 .main-content {
     flex: 1;
+    width: 100%;
+    max-width: 1140px;
     padding: 32px 24px;
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
+#mode-dual-container,
+#mode-single-container {
+    width: 100%;
+}
+
 /* Cards */
 .card {
+    width: 100%;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
@@ -3144,8 +3095,8 @@ body.dark-theme .mode-btn:hover:not(.active) {
 /* ESTILOS DA AUDITORIA DE ARQUIVO ÚNICO                    */
 /* ======================================================== */
 .single-upload-wrapper {
-    max-width: 720px;
-    margin: 0 auto 24px auto;
+    width: 100%;
+    margin: 0 0 24px 0;
 }
 
 .single-dropzone {
