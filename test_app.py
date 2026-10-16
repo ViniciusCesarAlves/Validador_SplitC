@@ -201,6 +201,77 @@ def test_full_pipeline():
     assert cleared_result['summary']['total_columns_compared'] == 1, f"Esperado 1 coluna comparada, obtido: {cleared_result['summary']['total_columns_compared']}"
     print("[OK] Teste de Limpar Mapeamento e comparar apenas colunas selecionadas: 1 coluna comparada com sucesso!")
 
+    # 10. Teste da página Validador de Texto (/validador-texto) e rotas de comparação (.txt, .docx, .pdf) + Exportação PDF
+    res_txt_page = client.get('/validador-texto')
+    assert res_txt_page.status_code == 200, f"Falha GET /validador-texto: {res_txt_page.status_code}"
+    html_txt_page = res_txt_page.data.decode('utf-8')
+    assert 'Rich text' in html_txt_page
+    assert 'Redline' in html_txt_page
+    assert 'Plain text' in html_txt_page
+    assert 'OCR' not in html_txt_page
+    print("[OK] GET /validador-texto renderizado com os 3 modos (Rich text, Redline, Plain text) e sem Imagem/OCR!")
+
+    # Teste 10.1: Upload de arquivos .docx reais
+    import docx
+    doc_a_buf = io.BytesIO()
+    doc_a = docx.Document()
+    doc_a.add_paragraph("Contrato de Prestação de Serviços ValidAí")
+    doc_a.add_paragraph("Cláusula 1: O valor mensal será de R$ 3.000,00.")
+    doc_a.add_paragraph("Cláusula 2: Vigência de 12 meses.")
+    doc_a.save(doc_a_buf)
+    doc_a_buf.seek(0)
+
+    doc_b_buf = io.BytesIO()
+    doc_b = docx.Document()
+    doc_b.add_paragraph("Contrato de Prestação de Serviços ValidAí")
+    doc_b.add_paragraph("Cláusula 1: O valor mensal será de R$ 4.500,00.")
+    doc_b.add_paragraph("Cláusula 3: Foro da comarca de São Paulo.")
+    doc_b.save(doc_b_buf)
+    doc_b_buf.seek(0)
+
+    res_docx_cmp = client.post(
+        '/api/text/compare',
+        data={
+            'file_a': (doc_a_buf, 'contrato_antigo.docx'),
+            'file_b': (doc_b_buf, 'contrato_novo.docx'),
+            'trim_spaces': 'true',
+            'ignore_case': 'false',
+            'diff_granularity': 'word'
+        },
+        content_type='multipart/form-data'
+    )
+    assert res_docx_cmp.status_code == 200, f"Falha POST /api/text/compare (.docx): {res_docx_cmp.status_code}"
+    docx_json = res_docx_cmp.get_json()
+    assert docx_json['summary']['is_identical'] is False
+    assert docx_json['summary']['file_type_a'] == 'DOCX'
+    assert docx_json['summary']['total_diff_blocks'] >= 2
+    assert 'report_id' in docx_json
+
+    # Verifica download do relatório PDF gerado
+    pdf_report_id = docx_json['report_id']
+    res_pdf_down = client.get(f'/api/text/download-pdf/{pdf_report_id}')
+    assert res_pdf_down.status_code == 200, f"Falha download PDF: {res_pdf_down.status_code}"
+    assert res_pdf_down.data.startswith(b'%PDF-'), "Arquivo baixado não é um PDF válido!"
+    assert len(res_pdf_down.data) > 1500
+    print(f"[OK] Comparação de .docx e exportação de relatório PDF validada ({len(res_pdf_down.data)} bytes)!")
+
+    # Teste 10.2: Upload de arquivos .pdf reais (usando o próprio PDF gerado ou criando um PDF de teste)
+    pdf_a_buf = io.BytesIO(res_pdf_down.data)
+    pdf_b_buf = io.BytesIO(res_pdf_down.data)
+    res_pdf_cmp = client.post(
+        '/api/text/compare',
+        data={
+            'file_a': (pdf_a_buf, 'relatorio_v1.pdf'),
+            'file_b': (pdf_b_buf, 'relatorio_v2.pdf'),
+        },
+        content_type='multipart/form-data'
+    )
+    assert res_pdf_cmp.status_code == 200, f"Falha POST /api/text/compare (.pdf): {res_pdf_cmp.status_code}"
+    pdf_cmp_json = res_pdf_cmp.get_json()
+    assert pdf_cmp_json['summary']['file_type_a'] == 'PDF'
+    assert pdf_cmp_json['summary']['is_identical'] is True
+    print("[OK] Leitura e comparação de arquivos .pdf funcionando perfeitamente!")
+
     print("\nTODOS OS TESTES PASSARAM COM 100% DE SUCESSO!")
 
 if __name__ == '__main__':

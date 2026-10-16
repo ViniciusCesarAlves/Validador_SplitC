@@ -87,6 +87,7 @@ body {
     transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
+html[data-theme="dark"] .navbar,
 body.dark-theme .navbar {
     background: #14151b;
     border-bottom-color: #242632;
@@ -100,27 +101,42 @@ body.dark-theme .navbar {
     position: relative;
 }
 
-/* Lateral Direita: Versão + Botão de Tema */
+/* Lateral Direita: Ações, Tema e Versão */
 .header-right-actions {
     display: flex;
     align-items: center;
     gap: 12px;
     justify-content: flex-end;
+    position: relative;
 }
 
 .version-tag {
-    font-size: 13px;
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
     font-weight: 600;
     color: #94a3b8;
     background: none;
     letter-spacing: 0.02em;
     user-select: none;
     line-height: 1;
+    white-space: nowrap;
     transition: color 0.2s ease;
 }
 
+[data-theme="dark"] .version-tag,
 body.dark-theme .version-tag {
     color: #64748b;
+}
+
+@media (max-width: 1240px) {
+    .version-tag {
+        position: static;
+        transform: none;
+        order: 3;
+    }
 }
 
 /* Botão de Alternância de Tema */
@@ -198,16 +214,91 @@ body.dark-theme .theme-toggle-btn .moon-icon-path {
     filter: none !important;
 }
 
-/* Lateral Esquerda: Logo */
-.header-brand-center {
+/* Lateral Esquerda: Logo e Menu de Navegação */
+.header-left-group {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    text-align: left;
+    gap: 32px;
+}
+
+.header-brand-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-menu-link {
+    font-family: 'Outfit', 'Montserrat', -apple-system, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+}
+
+.nav-menu-link .nav-menu-icon {
+    transition: transform 0.2s ease, stroke 0.2s ease;
+}
+
+.nav-menu-link:hover {
+    color: var(--text-main);
+    background: rgba(79, 213, 128, 0.1);
+    border-color: rgba(79, 213, 128, 0.2);
+    transform: translateY(-1px);
+}
+
+.nav-menu-link:hover .nav-menu-icon {
+    transform: scale(1.1);
+}
+
+.nav-menu-link.active {
+    color: #0f172a;
+    background: #BCFFE2;
+    border-color: #86EAB1;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(79, 213, 128, 0.2);
+}
+
+.nav-menu-link.active .nav-menu-icon {
+    stroke: #15803d;
+}
+
+body.dark-theme .nav-menu-link {
+    color: #94a3af;
+}
+
+body.dark-theme .nav-menu-link:hover {
+    color: #f3f4f6;
+    background: rgba(79, 213, 128, 0.12);
+    border-color: rgba(79, 213, 128, 0.25);
+}
+
+body.dark-theme .nav-menu-link.active {
+    color: #ffffff;
+    background: rgba(79, 213, 128, 0.2);
+    border-color: rgba(79, 213, 128, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .nav-menu-link.active .nav-menu-icon {
+    stroke: #4FD580;
 }
 
 .brand-logo {
-    height: 44px;
+    height: 42px;
     width: auto;
     object-fit: contain;
     transition: transform 0.2s ease;
@@ -239,6 +330,22 @@ body.dark-theme .brand-logo-dark {
     .nav-content {
         flex-direction: row;
         justify-content: space-between;
+        gap: 12px;
+    }
+    .header-left-group {
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .brand-logo {
+        height: 34px;
+    }
+    .nav-menu-link {
+        font-size: 13px;
+        padding: 6px 10px;
+        gap: 5px;
+    }
+    .nav-menu-link span {
+        font-size: 12.5px;
     }
 }
 
@@ -2389,12 +2496,14 @@ body.dark-theme .tfoot-total-row td {
     color: #f8fafc;
 }
 
+html[data-theme="dark"] .footer,
 body.dark-theme .footer {
     background: #14151b;
     border-top-color: #242632;
     color: #64748b;
 }
 
+html[data-theme="dark"] .footer-content p,
 body.dark-theme .footer-content p {
     color: #64748b;
 }

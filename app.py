@@ -4,6 +4,7 @@ import json
 from flask import Flask, render_template, request, jsonify, send_file
 import comparator
 import single_auditor
+import text_comparator
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Suporta até 100MB de arquivo
@@ -22,6 +23,14 @@ REPORTS = {}
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/validador-texto')
+def validador_texto():
+    return render_template('validador_texto.html')
+
+@app.route('/como-usar')
+def como_usar():
+    return render_template('como_usar.html')
 
 @app.route('/api/upload-headers', methods=['POST'])
 def upload_headers():
@@ -315,6 +324,127 @@ def single_audit():
 @app.route('/api/single/download-report/<report_id>', methods=['GET'])
 def single_download_report(report_id):
     return download_report(report_id)
+
+# ========================================================
+# ROTAS DO VALIDADOR DE TEXTO E DOCUMENTOS (PDF/DOCX/TXT)
+# ========================================================
+
+@app.route('/api/text/compare', methods=['POST'])
+def text_compare():
+    try:
+        if request.is_json:
+            data = request.json or {}
+            text_a = data.get('text_a', '')
+            text_b = data.get('text_b', '')
+            filename_a = data.get('filename_a', 'Documento Original.txt')
+            filename_b = data.get('filename_b', 'Documento Novo.txt')
+            pages_a = int(data.get('pages_a', 1))
+            pages_b = int(data.get('pages_b', 1))
+            file_type_a = data.get('file_type_a', 'TXT')
+            file_type_b = data.get('file_type_b', 'TXT')
+            ignore_case = bool(data.get('ignore_case', False))
+            trim_spaces = bool(data.get('trim_spaces', True))
+            ignore_empty_lines = bool(data.get('ignore_empty_lines', False))
+            diff_granularity = data.get('diff_granularity', 'word')
+        else:
+            file_a = request.files.get('file_a')
+            file_b = request.files.get('file_b')
+            text_a_raw = request.form.get('text_a')
+            text_b_raw = request.form.get('text_b')
+
+            session_id = str(uuid.uuid4())
+            session_folder = os.path.join(UPLOAD_DIR, session_id)
+            os.makedirs(session_folder, exist_ok=True)
+
+            if file_a and file_a.filename:
+                filename_a = file_a.filename
+                path_a = os.path.join(session_folder, 'doc_a_' + filename_a)
+                file_a.save(path_a)
+                extracted_a = text_comparator.extract_text_from_file(path_a, filename_a)
+                text_a = extracted_a['text']
+                pages_a = extracted_a['pages_count']
+                file_type_a = extracted_a['file_type']
+            elif text_a_raw is not None:
+                text_a = text_a_raw
+                filename_a = request.form.get('filename_a', 'Texto Original')
+                pages_a = 1
+                file_type_a = 'TXT'
+            else:
+                return jsonify({'error': 'Envie o Documento Original (.pdf, .docx ou .txt).'}), 400
+
+            if file_b and file_b.filename:
+                filename_b = file_b.filename
+                path_b = os.path.join(session_folder, 'doc_b_' + filename_b)
+                file_b.save(path_b)
+                extracted_b = text_comparator.extract_text_from_file(path_b, filename_b)
+                text_b = extracted_b['text']
+                pages_b = extracted_b['pages_count']
+                file_type_b = extracted_b['file_type']
+            elif text_b_raw is not None:
+                text_b = text_b_raw
+                filename_b = request.form.get('filename_b', 'Texto Novo')
+                pages_b = 1
+                file_type_b = 'TXT'
+            else:
+                return jsonify({'error': 'Envie o Documento Novo (.pdf, .docx ou .txt).'}), 400
+
+            ignore_case = request.form.get('ignore_case', 'false').lower() == 'true'
+            trim_spaces = request.form.get('trim_spaces', 'true').lower() == 'true'
+            ignore_empty_lines = request.form.get('ignore_empty_lines', 'false').lower() == 'true'
+            diff_granularity = request.form.get('diff_granularity', 'word')
+
+        result = text_comparator.compare_texts(
+            text_a=text_a,
+            text_b=text_b,
+            filename_a=filename_a,
+            filename_b=filename_b,
+            pages_a=pages_a,
+            pages_b=pages_b,
+            file_type_a=file_type_a,
+            file_type_b=file_type_b,
+            ignore_case=ignore_case,
+            trim_spaces=trim_spaces,
+            ignore_empty_lines=ignore_empty_lines,
+            diff_granularity=diff_granularity
+        )
+
+        report_id = str(uuid.uuid4())
+        report_filename = f"Relatorio_Diferencas_Texto_{report_id[:8]}.pdf"
+        report_path = os.path.join(REPORT_DIR, report_filename)
+
+        text_comparator.generate_pdf_diff_report(result, report_path)
+
+        REPORTS[report_id] = {
+            'path': report_path,
+            'filename': report_filename,
+            'mimetype': 'application/pdf'
+        }
+
+        return jsonify({
+            'success': True,
+            'report_id': report_id,
+            'summary': result['summary'],
+            'side_by_side_blocks': result['side_by_side_blocks'],
+            'redline_blocks': result['redline_blocks'],
+            'diff_table_rows': result['diff_table_rows'],
+            'stats_comparison': result['stats_comparison']
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Erro ao comparar documentos: {str(e)}'}), 500
+
+@app.route('/api/text/download-pdf/<report_id>', methods=['GET'])
+def download_text_pdf_report(report_id):
+    if report_id not in REPORTS:
+        return jsonify({'error': 'Relatório PDF não encontrado.'}), 404
+
+    rep = REPORTS[report_id]
+    return send_file(
+        rep['path'],
+        as_attachment=True,
+        download_name=rep['filename'],
+        mimetype=rep.get('mimetype', 'application/pdf')
+    )
 
 if __name__ == '__main__':
     print("Iniciando Validador de Dados em http://127.0.0.1:5000")

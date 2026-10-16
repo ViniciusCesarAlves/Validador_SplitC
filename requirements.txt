@@ -2,3 +2,7 @@ Flask
 pandas
 openpyxl
 gunicorn
+pypdf
+python-docx
+reportlab
+Pillow
