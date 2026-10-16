@@ -101,13 +101,13 @@ def test_full_pipeline():
     assert len(ws_resumo._images) > 0, "Logo SplitC deve estar presente lateralmente na aba de resumo!"
     print(f"[OK] Logo da SplitC confirmada no Excel ({len(ws_resumo._images)} imagem inserida).")
 
-    # Valida cabeçalhos e cores (#F87F06)
+    # Valida cabeçalhos e cores (#4FD580)
     ws_test = wb_test['Divergências Detalhadas']
     headers_test = [ws_test.cell(row=1, column=i).value for i in range(1, 6)]
     expected_headers = ["Chave Identificadora", "Linha", "Coluna", "Valor Base Antiga", "Valor Base Nova"]
     assert headers_test == expected_headers, f"Headers incorretos: {headers_test} vs {expected_headers}"
     assert ws_test.cell(row=2, column=2).value is not None, "Coluna Linha vazia na linha 2"
-    assert ws_test.cell(row=1, column=1).fill.start_color.rgb == '00F87F06', "Cabeçalho deve usar a cor #F87F06!"
+    assert ws_test.cell(row=1, column=1).fill.start_color.rgb == '004FD580', "Cabeçalho deve usar a cor #4FD580!"
 
     # Valida a 3ª aba 'Sumarização Financeira'
     ws_fin = wb_test['Sumarização Financeira']
@@ -117,9 +117,9 @@ def test_full_pipeline():
         "Diferença (Nova - Antiga)", "% Variação", "Situação", "Qtd. Linhas Divergentes"
     ]
     assert fin_headers == expected_fin_headers, f"Cabeçalhos da aba financeira incorretos: {fin_headers}"
-    assert ws_fin.cell(row=1, column=1).fill.start_color.rgb == '00F87F06', "Cabeçalhos da aba financeira devem usar #F87F06!"
+    assert ws_fin.cell(row=1, column=1).fill.start_color.rgb == '004FD580', "Cabeçalhos da aba financeira devem usar #4FD580!"
     assert ws_fin.cell(row=2, column=3).value is not None, "Total da Base Antiga deve estar preenchido!"
-    print(f"[OK] 3ª Aba 'Sumarização Financeira' confirmada com cabeçalhos em #F87F06: {fin_headers}")
+    print(f"[OK] 3ª Aba 'Sumarização Financeira' confirmada com cabeçalhos em #4FD580: {fin_headers}")
 
     # Valida que em bases idênticas a 3ª aba 'Sumarização Financeira' NÃO é criada
     report_id_single = comp_single['report_id']

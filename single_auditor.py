@@ -348,8 +348,8 @@ def generate_single_audit_excel(df, summary, invalid_cells_by_row, cols, output_
     wb.remove(wb.active)
 
     # Cores SplitC
-    COLOR_ORANGE = "F87F06"
-    COLOR_LIGHT_ORANGE = "FFF2E5"
+    COLOR_ORANGE = "4FD580"
+    COLOR_LIGHT_ORANGE = "BCFFE2"
     COLOR_HEADER_FONT = "FFFFFF"
     COLOR_ERROR_FILL = "FDE8E8" # Vermelho suave
     COLOR_ERROR_FONT = "991B1B" # Vermelho escuro
@@ -400,7 +400,7 @@ def generate_single_audit_excel(df, summary, invalid_cells_by_row, cols, output_
             start_row = 1
 
     # Título
-    title_cell = ws_resumo.cell(row=start_row, column=1, value="RELATÓRIO DE AUDITORIA DE PLANILHA ÚNICA - SPLITC")
+    title_cell = ws_resumo.cell(row=start_row, column=1, value="RELATÓRIO DE AUDITORIA DE PLANILHA ÚNICA - VALIDAÍ")
     title_cell.font = Font(name="Calibri", size=14, bold=True, color=COLOR_ORANGE)
     start_row += 2
 

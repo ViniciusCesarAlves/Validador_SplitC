@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
             opt.className = 'dropdown-option' + (isSelected ? ' selected' : '');
             opt.innerHTML = `
                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(col)}</span>
-                ${isSelected ? '<span style="color: #f87f06; font-weight: 800; margin-left: 8px;">✓</span>' : ''}
+                ${isSelected ? '<span style="color: #4FD580; font-weight: 800; margin-left: 8px;">✓</span>' : ''}
             `;
             opt.addEventListener('click', () => {
                 selectMappingDropdownOption(col);
@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="trigger-arrow">▾</span>
                     </div>
                 </td>
-                <td style="color: #f87f06; text-align: center; font-weight: 800; font-size: 15px;">➔</td>
+                <td style="color: #4FD580; text-align: center; font-weight: 800; font-size: 15px;">➔</td>
                 <td>
                     <div class="searchable-select-trigger mapping-col-b ${item.colB ? 'has-value' : 'is-placeholder'}" data-id="${item.id}" data-type="colB" tabindex="0" title="${escapeHtml(item.colB || 'Clique para pesquisar e selecionar coluna')}">
                         <span class="trigger-text">${escapeHtml(item.colB || 'Selecione a coluna (Base Nova)...')}</span>

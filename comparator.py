@@ -556,8 +556,8 @@ def generate_excel_diff_report(summary: dict, diff_records: list,
     ws_summary.views.sheetView[0].showGridLines = True
 
     # Cores e Estilos alinhados à marca SplitC
-    color_primary = "F87F06"    # Laranja oficial SplitC (#f87f06)
-    color_col_header = "F87F06" # Laranja oficial SplitC para títulos das colunas (#f87f06)
+    color_primary = "4FD580"    # Verde oficial SplitC (#4FD580)
+    color_col_header = "4FD580" # Verde oficial SplitC para títulos das colunas (#4FD580)
     color_diff_fill = "FEE2E2"  # Vermelho suave para diferenças
     color_diff_font = "991B1B"  # Vermelho escuro
     color_success_fill = "DCFCE7" # Verde suave
@@ -583,7 +583,7 @@ def generate_excel_diff_report(summary: dict, diff_records: list,
     # Banner do Título (A1:C2) na cor laranja oficial (#F87F06)
     ws_summary.merge_cells("A1:C2")
     title_cell = ws_summary["A1"]
-    title_cell.value = "  SplitC - RELATÓRIO DE VALIDAÇÃO DE DADOS"
+    title_cell.value = "  ValidAí - RELATÓRIO DE VALIDAÇÃO DE DADOS"
     title_cell.font = font_title
     title_cell.fill = fill_title
     title_cell.alignment = Alignment(vertical="center", horizontal="left")
