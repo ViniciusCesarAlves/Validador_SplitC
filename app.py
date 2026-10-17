@@ -6,6 +6,7 @@ import comparator
 import single_auditor
 import text_comparator
 import cadastros_cleaner
+import xml_reconciler
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Suporta até 100MB de arquivo
@@ -32,6 +33,10 @@ def validador_texto():
 @app.route('/validador-cadastros')
 def validador_cadastros():
     return render_template('validador_cadastros.html')
+
+@app.route('/validador-xml')
+def validador_xml():
+    return render_template('validador_xml.html')
 
 @app.route('/como-usar')
 def como_usar():
@@ -625,7 +630,215 @@ def cadastros_download_audit(report_id):
         )
     return jsonify({'error': 'Relatório de auditoria expirado ou não encontrado.'}), 404
 
+
+# ========================================================
+# ROTAS DO CONCILIADOR DE XML DE NOTAS FISCAIS (NFe / NFSe)
+# ========================================================
+
+@app.route('/api/xml/upload', methods=['POST'])
+def xml_upload():
+    try:
+        xml_files = request.files.getlist('xml_files')
+        sheet_file = request.files.get('sheet_file')
+
+        if not xml_files or len(xml_files) == 0 or not xml_files[0].filename:
+            return jsonify({'error': 'Envie um arquivo .zip contendo os XMLs ou arquivos .xml de Notas Fiscais.'}), 400
+        if not sheet_file or not sheet_file.filename:
+            return jsonify({'error': 'Envie a planilha financeira (.xlsx, .xls ou .csv) para conciliação.'}), 400
+
+        session_id = str(uuid.uuid4())
+        session_folder = os.path.join(UPLOAD_DIR, session_id)
+        os.makedirs(session_folder, exist_ok=True)
+
+        saved_xml_files = []
+        for idx, xf in enumerate(xml_files):
+            if not xf.filename:
+                continue
+            safe_name = os.path.basename(xf.filename)
+            x_path = os.path.join(session_folder, f"xml_{idx}_{safe_name}")
+            xf.save(x_path)
+            saved_xml_files.append((x_path, safe_name))
+
+        invoices, parse_errors = xml_reconciler.extract_xmls_from_files(saved_xml_files)
+        if len(invoices) == 0:
+            err_detail = parse_errors[0]['error'] if parse_errors else "Nenhum arquivo .xml de Nota Fiscal válido foi localizado no envio."
+            return jsonify({'error': f'Falha ao ler XMLs: {err_detail}'}), 400
+
+        sheet_filename = os.path.basename(sheet_file.filename)
+        sheet_path = os.path.join(session_folder, f"sheet_{sheet_filename}")
+        sheet_file.save(sheet_path)
+
+        df_sheet = comparator.read_tabular_file(sheet_path, sheet_filename)
+        cols = list(df_sheet.columns)
+        suggested = xml_reconciler.suggest_sheet_columns(cols)
+
+        xml_total_val = round(sum(inv['vNF'] for inv in invoices), 2)
+        package_label = saved_xml_files[0][1] if len(saved_xml_files) == 1 else f"{len(saved_xml_files)} arquivos enviados"
+
+        SESSIONS[session_id] = {
+            'mode': 'xml',
+            'invoices': invoices,
+            'parse_errors': parse_errors,
+            'sheet_path': sheet_path,
+            'sheet_filename': sheet_filename,
+            'package_label': package_label,
+            'cols': cols
+        }
+
+        return jsonify({
+            'session_id': session_id,
+            'package_label': package_label,
+            'xml_count': len(invoices),
+            'xml_total_value': xml_total_val,
+            'xml_total_value_fmt': xml_reconciler.format_brl(xml_total_val),
+            'parse_errors': parse_errors,
+            'sheet_filename': sheet_filename,
+            'sheet_rows': len(df_sheet),
+            'sheet_cols': len(cols),
+            'cols': cols,
+            'suggested': suggested
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Erro ao processar arquivos: {str(e)}'}), 500
+
+
+@app.route('/api/xml/load-example', methods=['POST'])
+def xml_load_example():
+    try:
+        session_id = str(uuid.uuid4())
+        session_folder = os.path.join(UPLOAD_DIR, session_id)
+        os.makedirs(session_folder, exist_ok=True)
+
+        zip_path, zip_name, excel_path, excel_name = xml_reconciler.create_demo_files(session_folder)
+        invoices, parse_errors = xml_reconciler.extract_xmls_from_files([(zip_path, zip_name)])
+        df_sheet = comparator.read_tabular_file(excel_path, excel_name)
+        cols = list(df_sheet.columns)
+        suggested = xml_reconciler.suggest_sheet_columns(cols)
+        xml_total_val = round(sum(inv['vNF'] for inv in invoices), 2)
+
+        SESSIONS[session_id] = {
+            'mode': 'xml',
+            'invoices': invoices,
+            'parse_errors': parse_errors,
+            'sheet_path': excel_path,
+            'sheet_filename': excel_name,
+            'package_label': zip_name,
+            'cols': cols
+        }
+
+        return jsonify({
+            'session_id': session_id,
+            'package_label': zip_name,
+            'xml_count': len(invoices),
+            'xml_total_value': xml_total_val,
+            'xml_total_value_fmt': xml_reconciler.format_brl(xml_total_val),
+            'parse_errors': parse_errors,
+            'sheet_filename': excel_name,
+            'sheet_rows': len(df_sheet),
+            'sheet_cols': len(cols),
+            'cols': cols,
+            'suggested': suggested
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Erro ao gerar lote de exemplo: {str(e)}'}), 500
+
+
+@app.route('/api/xml/reconcile', methods=['POST'])
+def xml_reconcile():
+    try:
+        data = request.json or {}
+        session_id = data.get('session_id')
+
+        if not session_id or session_id not in SESSIONS:
+            return jsonify({'error': 'Sessão inválida ou expirada. Faça o upload novamente.'}), 400
+
+        sess = SESSIONS[session_id]
+        df_sheet = comparator.read_tabular_file(sess['sheet_path'], sess['sheet_filename'])
+        invoices = sess['invoices']
+
+        options = {
+            'col_nf': data.get('col_nf'),
+            'col_val': data.get('col_val'),
+            'col_cnpj': data.get('col_cnpj'),
+            'col_tax': data.get('col_tax'),
+            'col_fornecedor': data.get('col_fornecedor'),
+            'tolerance': data.get('tolerance', 0.05),
+            'ignore_leading_zeros': bool(data.get('ignore_leading_zeros', True)),
+            'ignore_cnpj_punct': bool(data.get('ignore_cnpj_punct', True)),
+            'check_missing_in_excel': bool(data.get('check_missing_in_excel', True)),
+            'check_missing_xml': bool(data.get('check_missing_xml', True)),
+            'check_taxes': bool(data.get('check_taxes', True))
+        }
+
+        res = xml_reconciler.reconcile_xml_vs_sheet(invoices, df_sheet, options)
+
+        report_id = str(uuid.uuid4())
+        audit_filename = f"Relatorio_Conciliacao_XML_{report_id[:8]}.xlsx"
+        audit_path = os.path.join(REPORT_DIR, audit_filename)
+        xml_reconciler.generate_xml_audit_excel(df_sheet, res, audit_path)
+
+        mirror_filename = f"Espelho_Notas_Fiscais_XML_{report_id[:8]}.xlsx"
+        mirror_path = os.path.join(REPORT_DIR, mirror_filename)
+        xml_reconciler.generate_xml_mirror_excel(res['all_xml_mirror'], mirror_path)
+
+        REPORTS[f"xml_audit_{report_id}"] = {
+            'path': audit_path,
+            'filename': audit_filename
+        }
+        REPORTS[f"xml_mirror_{report_id}"] = {
+            'path': mirror_path,
+            'filename': mirror_filename
+        }
+
+        return jsonify({
+            'success': True,
+            'report_id': report_id,
+            'summary': res['summary'],
+            'divergences': res['divergences'],
+            'missing_in_excel': res['missing_in_excel'],
+            'missing_xml': res['missing_xml'],
+            'all_xml_mirror': res['all_xml_mirror']
+        })
+
+    except ValueError as ve:
+        return jsonify({
+            'error': str(ve),
+            'title': 'Coluna Incompatível com a Referência Fiscal'
+        }), 400
+    except Exception as e:
+        return jsonify({'error': f'Erro ao executar conciliação de XML: {str(e)}'}), 500
+
+
+@app.route('/api/xml/download-audit/<report_id>', methods=['GET'])
+def xml_download_audit(report_id):
+    key = f"xml_audit_{report_id}"
+    if key in REPORTS and os.path.exists(REPORTS[key]['path']):
+        return send_file(
+            REPORTS[key]['path'],
+            as_attachment=True,
+            download_name=REPORTS[key]['filename'],
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    return jsonify({'error': 'Relatório de auditoria expirado ou não encontrado.'}), 404
+
+
+@app.route('/api/xml/download-mirror/<report_id>', methods=['GET'])
+def xml_download_mirror(report_id):
+    key = f"xml_mirror_{report_id}"
+    if key in REPORTS and os.path.exists(REPORTS[key]['path']):
+        return send_file(
+            REPORTS[key]['path'],
+            as_attachment=True,
+            download_name=REPORTS[key]['filename'],
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    return jsonify({'error': 'Planilha espelho expirada ou não encontrada.'}), 404
+
+
 if __name__ == '__main__':
     print("Iniciando Validador de Dados em http://127.0.0.1:5000")
     app.run(host='127.0.0.1', port=5000, debug=True, use_reloader=False)
+
 

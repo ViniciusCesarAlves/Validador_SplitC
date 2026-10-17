@@ -5514,8 +5514,11 @@ body.dark-theme .file-meta {
 
 /* Alerta de Upload no Modo Escuro */
 html[data-theme="dark"] #cadastros-upload-alert,
+html[data-theme="dark"] #xml-upload-alert,
 html.dark-theme #cadastros-upload-alert,
-body.dark-theme #cadastros-upload-alert {
+html.dark-theme #xml-upload-alert,
+body.dark-theme #cadastros-upload-alert,
+body.dark-theme #xml-upload-alert {
     background: rgba(239, 68, 68, 0.15) !important;
     border-color: rgba(239, 68, 68, 0.35) !important;
     color: #fca5a5 !important;
@@ -5545,6 +5548,8 @@ body.dark-theme .single-info-pill strong {
 html[data-theme="dark"] .tolerance-box,
 html[data-theme="dark"] #box-mapping-cadastros,
 html[data-theme="dark"] #box-rules-cadastros,
+html[data-theme="dark"] #box-mapping-xml,
+html[data-theme="dark"] #box-rules-xml,
 html.dark-theme .tolerance-box,
 body.dark-theme .tolerance-box {
     background: #13141a !important;

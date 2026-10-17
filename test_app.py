@@ -296,6 +296,7 @@ def test_full_pipeline():
         ('/', 'Validador Planilhas'),
         ('/validador-texto', 'Validador Texto'),
         ('/validador-cadastros', 'Higienizador de Cadastros'),
+        ('/validador-xml', 'Conciliador de XML'),
         ('/como-usar', 'Como Usar')
     ]
     for path, label in pages_to_check:
@@ -452,7 +453,6 @@ def test_full_pipeline():
     print("[OK] Relatório de Auditoria gerado com células pintadas, 3 abas e Logo ValidAí!")
 
     # F. Teste de Coluna Incompatível (ex: IDCOLABORADOR com números aleatórios curtos como '555722')
-    import pandas as pd
     df_incompat = pd.DataFrame({
         'IDCOLABORADOR': [555722, 10293, 88392, 44021, 99120],  # 5-6 dígitos (IDs numéricos com dtype int64)
         'NMCLIENTE': ['MARIA SILVA', 'JOAO SOUZA', 'ANA COSTA', 'PEDRO LIMA', 'LUCAS DIAS'],
@@ -484,7 +484,116 @@ def test_full_pipeline():
     assert 'IDCOLABORADOR' in err_data['error']
     print(f"[OK] Detecção de coluna incompatível ('IDCOLABORADOR' com valores de 6 dígitos) validada: {err_data['error'][:80]}...")
 
+    # 15. Teste completo do Conciliador de XML de Notas Fiscais (/validador-xml)
+    # A. Renderização da página e elementos de UI
+    res_xml_page = client.get('/validador-xml')
+    assert res_xml_page.status_code == 200, f"Falha GET /validador-xml: {res_xml_page.status_code}"
+    html_xml = res_xml_page.data.decode('utf-8')
+    assert 'drop-xml-pack' in html_xml, "Dropzone do pacote XML ausente"
+    assert 'drop-xml-sheet' in html_xml, "Dropzone da planilha financeira ausente"
+    assert 'step-config-xml' in html_xml, "Passo 2 de configuração XML ausente"
+    assert 'step-results-xml' in html_xml, "Passo 3 de resultados XML ausente"
+    assert 'btn-xml-back-step1' in html_xml, "Botão Trocar Arquivo no Passo 2 ausente"
+    assert 'btn-xml-download-audit' in html_xml, "Botão download auditoria XML ausente"
+    assert 'btn-xml-download-mirror' in html_xml, "Botão download espelho XML ausente"
+    print("[OK] Página /validador-xml renderizada com todos os elementos padronizados!")
+
+    # B. Teste de Carregamento de Exemplo (/api/xml/load-example) e Upload Direto (/api/xml/upload)
+    res_xml_ex = client.post('/api/xml/load-example')
+    assert res_xml_ex.status_code == 200, f"Falha POST /api/xml/load-example: {res_xml_ex.status_code}"
+    ex_json = res_xml_ex.get_json()
+    assert 'session_id' in ex_json
+    assert ex_json['xml_count'] == 6
+    assert ex_json['sheet_rows'] == 6
+    sess_xml = ex_json['session_id']
+    suggested_xml = ex_json['suggested']
+    assert suggested_xml['col_nf'] == 'Numero_NF'
+    assert suggested_xml['col_val'] == 'Valor_Total_NF'
+    assert suggested_xml['col_cnpj'] == 'CNPJ_Fornecedor'
+    assert suggested_xml['col_tax'] == 'Total_Impostos'
+    print(f"[OK] Pacote de exemplo XML carregado: {ex_json['xml_count']} notas XML extraídas e {ex_json['sheet_rows']} linhas na planilha.")
+
+    # C. Teste de Upload via multipart/form-data (/api/xml/upload) com arquivo .zip e .xlsx
+    import tempfile
+    import xml_reconciler
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        zip_path, zip_name, excel_path, excel_name = xml_reconciler.create_demo_files(tmp_dir)
+        with open(zip_path, 'rb') as fz, open(excel_path, 'rb') as fe:
+            res_xml_up = client.post(
+                '/api/xml/upload',
+                data={
+                    'xml_files': (io.BytesIO(fz.read()), zip_name),
+                    'sheet_file': (io.BytesIO(fe.read()), excel_name)
+                },
+                content_type='multipart/form-data'
+            )
+    assert res_xml_up.status_code == 200, f"Falha POST /api/xml/upload: {res_xml_up.status_code}"
+    up_xml_json = res_xml_up.get_json()
+    assert up_xml_json['xml_count'] == 6
+    sess_xml_up = up_xml_json['session_id']
+    print("[OK] Upload via multipart/form-data de arquivo .zip + planilha .xlsx validado com sucesso!")
+
+    # D. Teste de Rejeição de Coluna Incompatível no Conciliador de XML
+    res_xml_bad_col = client.post('/api/xml/reconcile', json={
+        'session_id': sess_xml_up,
+        'col_nf': 'Numero_NF',
+        'col_val': 'Fornecedor',  # Texto puro no lugar de Valor Total (<vNF>)
+        'col_cnpj': 'CNPJ_Fornecedor'
+    })
+    assert res_xml_bad_col.status_code == 400, f"Deveria rejeitar coluna incompatível com 400, mas retornou {res_xml_bad_col.status_code}"
+    bad_col_err = res_xml_bad_col.get_json()
+    assert 'Fornecedor' in bad_col_err['error']
+    assert 'Valor Monetário (<vNF>)' in bad_col_err['error']
+    print(f"[OK] Detecção de coluna incompatível no Conciliador XML validada: {bad_col_err['error'][:80]}...")
+
+    # E. Teste de Conciliação Completa (/api/xml/reconcile)
+    res_xml_rec = client.post('/api/xml/reconcile', json={
+        'session_id': sess_xml_up,
+        'col_nf': 'Numero_NF',
+        'col_val': 'Valor_Total_NF',
+        'col_cnpj': 'CNPJ_Fornecedor',
+        'col_tax': 'Total_Impostos',
+        'col_fornecedor': 'Fornecedor',
+        'ignore_leading_zeros': True,
+        'ignore_cnpj_punct': True,
+        'tolerance': 0.05,
+        'check_missing_in_excel': True,
+        'check_missing_xml': True,
+        'check_taxes': True
+    })
+    assert res_xml_rec.status_code == 200, f"Falha POST /api/xml/reconcile: {res_xml_rec.status_code}"
+    rec_json = res_xml_rec.get_json()
+    assert rec_json['success'] is True
+    xml_sum = rec_json['summary']
+    assert xml_sum['total_xmls'] == 6
+    assert xml_sum['matched_count'] == 3, f"Esperado 3 conciliadas, obteve {xml_sum['matched_count']}"
+    assert xml_sum['divergences_count'] == 2, f"Esperado 2 divergentes, obteve {xml_sum['divergences_count']}"
+    assert xml_sum['missing_in_excel_count'] == 1, f"Esperado 1 XML sem lançamento, obteve {xml_sum['missing_in_excel_count']}"
+    assert xml_sum['missing_xml_count'] == 1, f"Esperado 1 lançamento sem XML, obteve {xml_sum['missing_xml_count']}"
+    print(f"[OK] Conciliação XML executada: {xml_sum['matched_count']} conciliadas, {xml_sum['divergences_count']} divergentes, {xml_sum['missing_in_excel_count']} XML sem Excel, {xml_sum['missing_xml_count']} Excel sem XML.")
+
+    # F. Teste de Download dos 2 Relatórios Excel (Auditoria Pintada + Espelho de XMLs)
+    xml_rep_id = rec_json['report_id']
+    res_dl_xml_audit = client.get(f'/api/xml/download-audit/{xml_rep_id}')
+    assert res_dl_xml_audit.status_code == 200
+    assert len(res_dl_xml_audit.data) > 5000
+    wb_xml_audit = openpyxl.load_workbook(io.BytesIO(res_dl_xml_audit.data))
+    assert 'Resumo da Conciliação' in wb_xml_audit.sheetnames
+    assert 'Planilha Auditada' in wb_xml_audit.sheetnames
+    assert 'XMLs Sem Lançamento' in wb_xml_audit.sheetnames
+    assert 'Divergências de Valor e CNPJ' in wb_xml_audit.sheetnames
+    assert len(wb_xml_audit['Resumo da Conciliação']._images) >= 1, "Logo ValidAí ausente no Resumo da Conciliação XML!"
+    print("[OK] Relatório Excel de Auditoria Fiscal XML gerado com 4 abas, células pintadas e Logo ValidAí!")
+
+    res_dl_xml_mirror = client.get(f'/api/xml/download-mirror/{xml_rep_id}')
+    assert res_dl_xml_mirror.status_code == 200
+    assert len(res_dl_xml_mirror.data) > 3000
+    wb_xml_mirror = openpyxl.load_workbook(io.BytesIO(res_dl_xml_mirror.data))
+    assert 'Espelho Notas Fiscais XML' in wb_xml_mirror.sheetnames
+    print("[OK] Planilha Espelho dos XMLs Extraídos gerada e validada com sucesso!")
+
     print("\nTODOS OS TESTES PASSARAM COM 100% DE SUCESSO!")
 
 if __name__ == '__main__':
     test_full_pipeline()
+
