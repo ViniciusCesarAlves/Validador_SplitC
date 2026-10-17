@@ -75,10 +75,12 @@
             if (target === 'dark') {
                 html.setAttribute('data-theme', 'dark');
                 html.classList.add('dark-theme');
+                if (document.body) document.body.classList.add('dark-theme');
                 localStorage.setItem('splitc_theme', 'dark');
             } else {
                 html.removeAttribute('data-theme');
                 html.classList.remove('dark-theme');
+                if (document.body) document.body.classList.remove('dark-theme');
                 localStorage.setItem('splitc_theme', 'light');
             }
         });

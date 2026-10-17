@@ -4866,12 +4866,29 @@ body.dark-theme .freq-card {
 }
 
 .badge-recommended {
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 4px;
-    background: #e0f2fe;
-    color: #0369a1;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86eab1;
+    display: inline-flex;
+    align-items: center;
+    letter-spacing: 0.02em;
+}
+
+input[type="radio"] {
+    accent-color: #4FD580;
+    cursor: pointer;
+}
+
+.checkbox-card input[type="radio"],
+.radio-chip input[type="radio"] {
+    accent-color: #4FD580;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
 }
 
 .field-hint {
@@ -5419,165 +5436,457 @@ body.dark-theme .freq-card {
 }
 
 /* ==========================================================================
-   MODO ESCURO - HIGIENIZADOR DE CADASTROS
+   MODO ESCURO - HIGIENIZADOR DE CADASTROS (COMPLETO E ROBUSTO)
    ========================================================================== */
+/* Hero Banner (se houver) */
 html[data-theme="dark"] .module-hero-banner,
+html.dark-theme .module-hero-banner,
 body.dark-theme .module-hero-banner {
     background: linear-gradient(135deg, rgba(79, 213, 128, 0.08) 0%, rgba(20, 21, 27, 0.95) 100%);
     border-color: rgba(79, 213, 128, 0.2);
 }
 
 html[data-theme="dark"] .module-subtag-badge,
+html.dark-theme .module-subtag-badge,
 body.dark-theme .module-subtag-badge {
     background: #17181f;
     border-color: rgba(79, 213, 128, 0.3);
     color: #6AE099;
 }
 
-html[data-theme="dark"] .cadastros-file-summary-bar,
-body.dark-theme .cadastros-file-summary-bar {
-    background: #14151b;
-    border-color: #272a36;
+/* Passo 1: Dropzone de Upload (Sem caixa branca quando carrega o arquivo!) */
+html[data-theme="dark"] .dropzone,
+html[data-theme="dark"] .single-dropzone,
+html.dark-theme .dropzone,
+body.dark-theme .dropzone {
+    background: #17181f !important;
+    border-color: #2f3240 !important;
 }
 
-html[data-theme="dark"] .config-panel,
-body.dark-theme .config-panel {
-    background: #17181f;
-    border-color: #272a36;
+html[data-theme="dark"] .dropzone:hover,
+html[data-theme="dark"] .dropzone.drag-over,
+html.dark-theme .dropzone:hover,
+body.dark-theme .dropzone:hover {
+    background: #1f222d !important;
+    border-color: #4FD580 !important;
 }
 
-html[data-theme="dark"] .panel-header,
-body.dark-theme .panel-header {
-    border-color: #272a36;
+html[data-theme="dark"] .dropzone.file-loaded,
+html.dark-theme .dropzone.file-loaded,
+body.dark-theme .dropzone.file-loaded {
+    background: #17181f !important;
+    border-color: #10b981 !important;
 }
 
-html[data-theme="dark"] .panel-icon-circle,
-body.dark-theme .panel-icon-circle {
-    background: rgba(79, 213, 128, 0.12);
-    color: #4FD580;
+html[data-theme="dark"] .dropzone.file-loaded .dropzone-svg,
+html.dark-theme .dropzone.file-loaded .dropzone-svg,
+body.dark-theme .dropzone.file-loaded .dropzone-svg {
+    stroke: #34d399 !important;
 }
 
-html[data-theme="dark"] .chip-checkbox,
-body.dark-theme .chip-checkbox {
-    background: #1e2029;
-    border-color: #2d313e;
-    color: #f3f4f6;
+html[data-theme="dark"] .dropzone-icon,
+html.dark-theme .dropzone-icon,
+body.dark-theme .dropzone-icon {
+    background: transparent !important;
+    color: #4FD580 !important;
+    box-shadow: none !important;
 }
 
-html[data-theme="dark"] .chip-checkbox:hover,
-body.dark-theme .chip-checkbox:hover {
-    background: #252836;
+html[data-theme="dark"] .dropzone-content h3,
+html.dark-theme .dropzone-content h3,
+body.dark-theme .dropzone-content h3 {
+    color: #f1f5f9 !important;
 }
 
-html[data-theme="dark"] .clean-rule-item,
-body.dark-theme .clean-rule-item {
-    background: #14151b;
-    border-color: #272a36;
+html[data-theme="dark"] .dropzone-hint,
+html.dark-theme .dropzone-hint,
+body.dark-theme .dropzone-hint {
+    color: #94a3af !important;
 }
 
-html[data-theme="dark"] .clean-rule-checkbox-card,
-body.dark-theme .clean-rule-checkbox-card {
-    background: #14151b;
-    border-color: #272a36;
+html[data-theme="dark"] .file-meta,
+html.dark-theme .file-meta,
+body.dark-theme .file-meta {
+    background: #18281e !important;
+    border-color: #22543d !important;
+    color: #4ade80 !important;
 }
 
-html[data-theme="dark"] .clean-rule-checkbox-card:hover,
-body.dark-theme .clean-rule-checkbox-card:hover {
-    background: #1d1f28;
-    border-color: #3b4052;
+/* Alerta de Upload no Modo Escuro */
+html[data-theme="dark"] #cadastros-upload-alert,
+html.dark-theme #cadastros-upload-alert,
+body.dark-theme #cadastros-upload-alert {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.35) !important;
+    color: #fca5a5 !important;
 }
 
-html[data-theme="dark"] .highlight-card,
-body.dark-theme .highlight-card {
-    background: rgba(79, 213, 128, 0.05);
-    border-color: rgba(79, 213, 128, 0.2);
+/* Passo 2: Barra de Resumo do Arquivo */
+html[data-theme="dark"] .single-file-info-bar,
+html.dark-theme .single-file-info-bar,
+body.dark-theme .single-file-info-bar {
+    background: #13141a !important;
+    border-color: #242632 !important;
 }
 
+html[data-theme="dark"] .single-info-pill,
+html.dark-theme .single-info-pill,
+body.dark-theme .single-info-pill {
+    color: #94a3af !important;
+}
+
+html[data-theme="dark"] .single-info-pill strong,
+html.dark-theme .single-info-pill strong,
+body.dark-theme .single-info-pill strong {
+    color: #4FD580 !important;
+}
+
+/* Passo 2: Containers de Tolerância e Mapeamento (.tolerance-box) */
+html[data-theme="dark"] .tolerance-box,
+html[data-theme="dark"] #box-mapping-cadastros,
+html[data-theme="dark"] #box-rules-cadastros,
+html.dark-theme .tolerance-box,
+body.dark-theme .tolerance-box {
+    background: #13141a !important;
+    border-color: #242632 !important;
+}
+
+html[data-theme="dark"] .tolerance-header h4,
+html.dark-theme .tolerance-header h4,
+body.dark-theme .tolerance-header h4 {
+    color: #f1f5f9 !important;
+}
+
+/* Labels e Textos de Ajuda nos Formulários */
+html[data-theme="dark"] .form-group label strong,
+html[data-theme="dark"] .mapping-duplicates-section label strong,
+html.dark-theme .form-group label strong,
+body.dark-theme .form-group label strong {
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .help-text,
+html.dark-theme .help-text,
+body.dark-theme .help-text {
+    color: #94a3af !important;
+}
+
+/* Selects de Colunas no Modo Escuro */
+html[data-theme="dark"] .form-select,
+html.dark-theme .form-select,
+body.dark-theme .form-select {
+    background-color: #17181f !important;
+    border-color: #2f3240 !important;
+    color: #f3f4f6 !important;
+}
+
+html[data-theme="dark"] .form-select:focus,
+html.dark-theme .form-select:focus,
+body.dark-theme .form-select:focus {
+    border-color: #4FD580 !important;
+    box-shadow: 0 0 0 3px rgba(79, 213, 128, 0.22) !important;
+}
+
+html[data-theme="dark"] .form-select option,
+html.dark-theme .form-select option,
+body.dark-theme .form-select option {
+    background-color: #17181f !important;
+    color: #f3f4f6 !important;
+}
+
+/* Seção de Duplicados (40% do container geral) */
+html[data-theme="dark"] .mapping-duplicates-section,
+html.dark-theme .mapping-duplicates-section,
+body.dark-theme .mapping-duplicates-section {
+    background: #17181f !important;
+    border-color: #272a36 !important;
+}
+
+/* Cards de Opções e Checkboxes (.checkbox-card) */
+html[data-theme="dark"] .checkbox-card,
+html.dark-theme .checkbox-card,
+body.dark-theme .checkbox-card {
+    background: #1c1e26 !important;
+    border-color: #282a36 !important;
+    color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .checkbox-card:hover,
+html.dark-theme .checkbox-card:hover,
+body.dark-theme .checkbox-card:hover {
+    border-color: #4FD580 !important;
+    background: #202330 !important;
+}
+
+html[data-theme="dark"] .checkbox-card strong,
+html.dark-theme .checkbox-card strong,
+body.dark-theme .checkbox-card strong {
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .checkbox-card p,
+html.dark-theme .checkbox-card p,
+body.dark-theme .checkbox-card p {
+    color: #94a3af !important;
+}
+
+/* Checkboxes na Lista Empilhada de Duplicados */
+html[data-theme="dark"] .duplicates-stacked-list .checkbox-card,
+html.dark-theme .duplicates-stacked-list .checkbox-card,
+body.dark-theme .duplicates-stacked-list .checkbox-card {
+    background: #14151b !important;
+    border-color: #272a36 !important;
+}
+
+html[data-theme="dark"] .duplicates-stacked-list .checkbox-card:hover,
+html.dark-theme .duplicates-stacked-list .checkbox-card:hover,
+body.dark-theme .duplicates-stacked-list .checkbox-card:hover {
+    background: #1d1f28 !important;
+    border-color: #4FD580 !important;
+}
+
+/* Tag "Recomendado" nos Cards de Regra */
+html[data-theme="dark"] .badge-recommended,
+html.dark-theme .badge-recommended,
+body.dark-theme .badge-recommended {
+    background: rgba(79, 213, 128, 0.15) !important;
+    color: #86EAB1 !important;
+    border: 1px solid rgba(79, 213, 128, 0.35) !important;
+}
+
+/* Radios e Checkboxes */
+html[data-theme="dark"] input[type="radio"],
+html.dark-theme input[type="radio"],
+body.dark-theme input[type="radio"],
+html[data-theme="dark"] input[type="checkbox"],
+html.dark-theme input[type="checkbox"],
+body.dark-theme input[type="checkbox"] {
+    accent-color: #4FD580 !important;
+}
+
+/* Botão Secundário / Voltar */
+html[data-theme="dark"] .btn-pill-outline,
+html.dark-theme .btn-pill-outline,
+body.dark-theme .btn-pill-outline {
+    background: #17181f !important;
+    border-color: #2f3240 !important;
+    color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"] .btn-pill-outline:hover:not(:disabled),
+html.dark-theme .btn-pill-outline:hover:not(:disabled),
+body.dark-theme .btn-pill-outline:hover:not(:disabled) {
+    background: #222530 !important;
+    border-color: #4FD580 !important;
+    color: #4FD580 !important;
+}
+
+/* ==========================================================================
+   PASSO 3: DASHBOARD, KPIS, DOWNLOADS E TABELAS NO MODO ESCURO
+   ========================================================================== */
+/* Banner de Conclusão de Resultados */
 html[data-theme="dark"] .cadastros-results-banner,
+html.dark-theme .cadastros-results-banner,
 body.dark-theme .cadastros-results-banner {
-    background: rgba(79, 213, 128, 0.08);
-    border-color: rgba(79, 213, 128, 0.25);
+    background: rgba(79, 213, 128, 0.08) !important;
+    border-color: rgba(79, 213, 128, 0.25) !important;
 }
 
 html[data-theme="dark"] .banner-text-box h3,
+html.dark-theme .banner-text-box h3,
 body.dark-theme .banner-text-box h3 {
-    color: #f3f4f6;
+    color: #f3f4f6 !important;
 }
 
 html[data-theme="dark"] .banner-text-box p,
+html.dark-theme .banner-text-box p,
 body.dark-theme .banner-text-box p {
-    color: #6AE099;
+    color: #6AE099 !important;
 }
 
+/* Cards de KPI no Topo */
 html[data-theme="dark"] .cadastros-kpi-card,
+html.dark-theme .cadastros-kpi-card,
 body.dark-theme .cadastros-kpi-card {
-    background: #17181f;
-    border-color: #272a36;
+    background: #17181f !important;
+    border-color: #272a36 !important;
 }
 
+html[data-theme="dark"] .cadastros-kpi-card:hover,
+html.dark-theme .cadastros-kpi-card:hover,
+body.dark-theme .cadastros-kpi-card:hover {
+    border-color: #3b3e4e !important;
+    background: #1d1f28 !important;
+}
+
+html[data-theme="dark"] .cadastros-kpi-card .kpi-label,
+html.dark-theme .cadastros-kpi-card .kpi-label,
+body.dark-theme .cadastros-kpi-card .kpi-label {
+    color: #94a3af !important;
+}
+
+/* Cards de Download do Excel */
 html[data-theme="dark"] .download-card,
+html.dark-theme .download-card,
 body.dark-theme .download-card {
-    background: #17181f;
-    border-color: #272a36;
+    background: #17181f !important;
+    border-color: #272a36 !important;
+}
+
+html[data-theme="dark"] .download-card:hover,
+html.dark-theme .download-card:hover,
+body.dark-theme .download-card:hover {
+    border-color: #3b3e4e !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .download-title-row strong,
+html.dark-theme .download-title-row strong,
+body.dark-theme .download-title-row strong {
+    color: #f3f4f6 !important;
+}
+
+html[data-theme="dark"] .download-card-desc,
+html.dark-theme .download-card-desc,
+body.dark-theme .download-card-desc {
+    color: #94a3af !important;
 }
 
 html[data-theme="dark"] .highlight-download,
+html.dark-theme .highlight-download,
 body.dark-theme .highlight-download {
-    border-color: rgba(79, 213, 128, 0.35);
-    background: linear-gradient(180deg, #17181f 0%, rgba(79, 213, 128, 0.08) 100%);
+    border-color: rgba(79, 213, 128, 0.35) !important;
+    background: linear-gradient(180deg, #17181f 0%, rgba(79, 213, 128, 0.08) 100%) !important;
 }
 
+/* Abas de Auditoria */
 html[data-theme="dark"] .cadastros-tabs-nav,
+html.dark-theme .cadastros-tabs-nav,
 body.dark-theme .cadastros-tabs-nav {
-    border-color: #272a36;
+    border-color: #272a36 !important;
+}
+
+html[data-theme="dark"] .cadastros-tab-btn,
+html.dark-theme .cadastros-tab-btn,
+body.dark-theme .cadastros-tab-btn {
+    color: #94a3af !important;
 }
 
 html[data-theme="dark"] .cadastros-tab-btn:hover,
+html.dark-theme .cadastros-tab-btn:hover,
 body.dark-theme .cadastros-tab-btn:hover {
-    background: #202330;
-    color: #f3f4f6;
+    background: #202330 !important;
+    color: #f3f4f6 !important;
 }
 
 html[data-theme="dark"] .cadastros-tab-btn.active,
+html.dark-theme .cadastros-tab-btn.active,
 body.dark-theme .cadastros-tab-btn.active {
-    background: rgba(79, 213, 128, 0.2);
-    border-color: rgba(79, 213, 128, 0.4);
-    color: #ffffff;
+    background: rgba(79, 213, 128, 0.2) !important;
+    border-color: rgba(79, 213, 128, 0.4) !important;
+    color: #ffffff !important;
+}
+
+/* Tabelas de Auditoria de Cadastros */
+html[data-theme="dark"] .cadastros-table-wrapper,
+html.dark-theme .cadastros-table-wrapper,
+body.dark-theme .cadastros-table-wrapper {
+    border-color: #272a36 !important;
 }
 
 html[data-theme="dark"] .cadastros-table th,
+html.dark-theme .cadastros-table th,
 body.dark-theme .cadastros-table th {
-    background: #14151b;
-    border-color: #272a36;
-    color: #f3f4f6;
+    background: #14151b !important;
+    border-color: #272a36 !important;
+    color: #f3f4f6 !important;
 }
 
 html[data-theme="dark"] .cadastros-table td,
+html.dark-theme .cadastros-table td,
 body.dark-theme .cadastros-table td {
-    border-color: #272a36;
-    color: #f3f4f6;
+    border-color: #272a36 !important;
+    color: #f3f4f6 !important;
 }
 
 html[data-theme="dark"] .cadastros-table tbody tr:nth-child(even),
+html.dark-theme .cadastros-table tbody tr:nth-child(even),
 body.dark-theme .cadastros-table tbody tr:nth-child(even) {
-    background: #161720;
+    background: #161720 !important;
 }
 
 html[data-theme="dark"] .cadastros-table tbody tr:hover,
+html.dark-theme .cadastros-table tbody tr:hover,
 body.dark-theme .cadastros-table tbody tr:hover {
-    background: #202330;
+    background: #202330 !important;
 }
 
+/* Badges e Pílulas na Tabela */
 html[data-theme="dark"] .code-pill,
+html.dark-theme .code-pill,
 body.dark-theme .code-pill {
-    background: #222532;
-    color: #f3f4f6;
+    background: #222532 !important;
+    color: #f3f4f6 !important;
 }
 
 html[data-theme="dark"] .lines-pill,
+html.dark-theme .lines-pill,
 body.dark-theme .lines-pill {
-    background: #222532;
-    color: #94a3af;
+    background: #222532 !important;
+    color: #94a3af !important;
+}
+
+html[data-theme="dark"] .code-danger,
+html.dark-theme .code-danger,
+body.dark-theme .code-danger {
+    background: rgba(239, 68, 68, 0.22) !important;
+    color: #f87171 !important;
+}
+
+html[data-theme="dark"] .code-warning,
+html.dark-theme .code-warning,
+body.dark-theme .code-warning {
+    background: rgba(245, 158, 11, 0.22) !important;
+    color: #fbbf24 !important;
+}
+
+html[data-theme="dark"] .code-orange,
+html.dark-theme .code-orange,
+body.dark-theme .code-orange {
+    background: rgba(249, 115, 22, 0.22) !important;
+    color: #fb923c !important;
+}
+
+html[data-theme="dark"] .pill-email,
+html.dark-theme .pill-email,
+body.dark-theme .pill-email {
+    background: rgba(3, 105, 161, 0.22) !important;
+    color: #38bdf8 !important;
+}
+
+html[data-theme="dark"] .pill-phone,
+html.dark-theme .pill-phone,
+body.dark-theme .pill-phone {
+    background: rgba(109, 40, 217, 0.22) !important;
+    color: #c084fc !important;
+}
+
+html[data-theme="dark"] .error-badge-tag,
+html.dark-theme .error-badge-tag,
+body.dark-theme .error-badge-tag {
+    color: #f87171 !important;
+}
+
+html[data-theme="dark"] .suggestion-tag,
+html.dark-theme .suggestion-tag,
+body.dark-theme .suggestion-tag {
+    color: #38bdf8 !important;
+}
+
+html[data-theme="dark"] .empty-table-msg,
+html.dark-theme .empty-table-msg,
+body.dark-theme .empty-table-msg {
+    color: #94a3af !important;
 }
 
 /* Responsividade Mobile Cadastros */

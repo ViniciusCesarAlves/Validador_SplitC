@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="/static/css/style.css?v=15">
+    <link rel="stylesheet" href="/static/css/style.css?v=17">
 
     <!-- Anti-flicker e Leitura Instantânea de Tema e Idioma -->
     <script>
@@ -23,6 +23,11 @@
                 if (theme === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
                     document.documentElement.classList.add('dark-theme');
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (document.body) {
+                            document.body.classList.add('dark-theme');
+                        }
+                    });
                 }
             } catch(e) {}
         })();
@@ -434,7 +439,7 @@
                     <div class="checkbox-card" style="display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                             <strong data-i18n="cadastros_rule_doc_format_title">Formato do Documento (CPF / CNPJ)</strong>
-                            <span class="badge-recommended" style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px;" data-i18n="badge_recommended">Recomendado</span>
+                            <span class="badge-recommended" data-i18n="badge_recommended">Recomendado</span>
                         </div>
                         <div style="display: flex; gap: 16px; margin-top: 2px;">
                             <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px;">
@@ -521,12 +526,8 @@
 
             <div class="action-footer action-footer-between">
                 <div class="action-footer-left">
-                    <button type="button" class="btn btn-sm btn-restore-mapping" id="btn-back-step1" title="Trocar a planilha enviada">
-                        <svg class="btn-sheet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="19" y1="12" x2="5" y2="12"></line>
-                            <polyline points="12 19 5 12 12 5"></polyline>
-                        </svg>
-                        <span data-i18n="btn_change_file">Trocar Arquivo</span>
+                    <button type="button" class="btn btn-pill-outline" id="btn-back-step1" title="Trocar a planilha enviada">
+                        <span class="btn-text" data-i18n="btn_change_file">Trocar Arquivo</span>
                     </button>
                 </div>
                 <div class="action-footer-right">
@@ -766,6 +767,6 @@
     </footer>
 
     <!-- Script Controlador do Higienizador de Cadastros -->
-    <script src="/static/js/cadastros_validator.js?v=2"></script>
+    <script src="/static/js/cadastros_validator.js?v=3"></script>
 </body>
 </html>
