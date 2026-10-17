@@ -51,6 +51,11 @@ body.dark-theme {
     --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.5);
 }
 
+html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -94,11 +99,13 @@ body.dark-theme .navbar {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
-.nav-content {
+.nav-content,
+.nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
+    width: 100%;
 }
 
 /* Lateral Direita: Ações, Tema e Versão */
@@ -111,10 +118,8 @@ body.dark-theme .navbar {
 }
 
 .version-tag {
-    position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    position: static;
+    transform: none;
     font-size: 11px;
     font-weight: 600;
     color: #94a3b8;
@@ -129,14 +134,6 @@ body.dark-theme .navbar {
 [data-theme="dark"] .version-tag,
 body.dark-theme .version-tag {
     color: #64748b;
-}
-
-@media (max-width: 1240px) {
-    .version-tag {
-        position: static;
-        transform: none;
-        order: 3;
-    }
 }
 
 /* ==========================================================================
@@ -492,7 +489,8 @@ body.dark-theme .theme-toggle-btn .moon-icon-path {
     box-shadow: 0 1px 4px rgba(79, 213, 128, 0.2);
 }
 
-.nav-menu-link.active .nav-menu-icon {
+.nav-menu-link.active .nav-menu-icon,
+.nav-menu-link.active .nav-dropdown-chevron {
     stroke: #15803d;
 }
 
@@ -506,14 +504,18 @@ body.dark-theme .nav-menu-link:hover {
     border-color: rgba(79, 213, 128, 0.25);
 }
 
-body.dark-theme .nav-menu-link.active {
+body.dark-theme .nav-menu-link.active,
+html[data-theme="dark"] .nav-menu-link.active {
     color: #ffffff;
     background: rgba(79, 213, 128, 0.2);
     border-color: rgba(79, 213, 128, 0.4);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-body.dark-theme .nav-menu-link.active .nav-menu-icon {
+body.dark-theme .nav-menu-link.active .nav-menu-icon,
+body.dark-theme .nav-menu-link.active .nav-dropdown-chevron,
+html[data-theme="dark"] .nav-menu-link.active .nav-menu-icon,
+html[data-theme="dark"] .nav-menu-link.active .nav-dropdown-chevron {
     stroke: #4FD580;
 }
 
@@ -869,8 +871,23 @@ body.dark-theme .brand-logo-dark {
     display: block !important;
 }
 
+@media (max-width: 1100px) and (min-width: 769px) {
+    .header-left-group {
+        gap: 16px;
+    }
+    .nav-menu-link {
+        font-size: 13px;
+        padding: 7px 12px;
+        gap: 6px;
+    }
+    .header-right-actions {
+        gap: 8px;
+    }
+}
+
 @media (max-width: 768px) {
-    .nav-content {
+    .nav-content,
+    .nav-container {
         flex-direction: row;
         justify-content: space-between;
         gap: 12px;
