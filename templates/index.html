@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ValidAí - O seu validador</title>
+    <title data-i18n="page_title">ValidAí - O seu validador</title>
     <link rel="icon" type="image/png" href="/static/images/favicon.png?v=3">
     <link rel="shortcut icon" href="/favicon.ico?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +13,8 @@
     <script>
         (function() {
             try {
+                var lang = localStorage.getItem('validai_lang') || 'pt';
+                document.documentElement.setAttribute('lang', lang);
                 var theme = localStorage.getItem('splitc_theme');
                 if (theme === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
@@ -21,6 +23,7 @@
             } catch(e) {}
         })();
     </script>
+    <script src="/static/js/i18n.js?v=1"></script>
 </head>
 <body>
 
@@ -39,7 +42,7 @@
                             <line x1="3" y1="9" x2="21" y2="9"/>
                             <line x1="9" y1="21" x2="9" y2="9"/>
                         </svg>
-                        <span>Validador Planilhas</span>
+                        <span data-i18n="nav_sheets">Validador Planilhas</span>
                     </a>
                     <a href="/validador-texto" class="nav-menu-link">
                         <svg class="nav-menu-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -49,7 +52,7 @@
                             <line x1="16" y1="17" x2="8" y2="17"/>
                             <line x1="10" y1="9" x2="8" y2="9"/>
                         </svg>
-                        <span>Validador Texto</span>
+                        <span data-i18n="nav_text">Validador Texto</span>
                     </a>
                 </nav>
             </div>
@@ -61,9 +64,42 @@
                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                         <line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
-                    <span>Como usar?</span>
+                    <span data-i18n="nav_how_to_use">Como usar?</span>
                 </a>
-                <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+
+                <!-- Dropdown de Idiomas (PT / ES / EN) -->
+                <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
+                    <button type="button" class="lang-toggle-btn" id="lang-toggle-btn" aria-haspopup="true" aria-expanded="false" title="Idioma / Language">
+                        <svg class="lang-globe-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        <span class="lang-current-code" id="lang-current-code">PT</span>
+                        <svg class="lang-arrow-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
+                        <button type="button" class="lang-option active" data-lang="pt" role="menuitem">
+                            <span class="lang-flag">🇧🇷</span>
+                            <span class="lang-name">Português</span>
+                            <span class="lang-badge">PT</span>
+                        </button>
+                        <button type="button" class="lang-option" data-lang="es" role="menuitem">
+                            <span class="lang-flag">🇪🇸</span>
+                            <span class="lang-name">Español</span>
+                            <span class="lang-badge">ES</span>
+                        </button>
+                        <button type="button" class="lang-option" data-lang="en" role="menuitem">
+                            <span class="lang-flag">🇺🇸</span>
+                            <span class="lang-name">English</span>
+                            <span class="lang-badge">EN</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro" aria-label="Alternar tema" data-i18n-title="nav_toggle_theme">
                     <svg class="theme-icon-svg" width="19" height="19" viewBox="0 0 24 24">
                         <defs>
                             <linearGradient id="theme-grad-orange" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -101,10 +137,10 @@
         <section class="card step-card" id="step-upload">
             <div class="card-header card-header-with-toggle">
                 <div class="card-header-left">
-                    <div class="step-indicator">Passo 1</div>
+                    <div class="step-indicator" data-i18n="sheets_step1_badge">Passo 1</div>
                     <div>
-                        <h2>Carregar Arquivos para Validação</h2>
-                        <p class="subtext">Selecione as duas planilhas (.xlsx, .xls ou .csv) que você deseja bater e validar.</p>
+                        <h2 data-i18n="sheets_step1_title">Carregar Arquivos para Validação</h2>
+                        <p class="subtext" data-i18n="sheets_step1_desc">Selecione as duas planilhas (.xlsx, .xls ou .csv) que você deseja bater e validar.</p>
                     </div>
                 </div>
 
@@ -117,7 +153,7 @@
                             <path d="m6 12 2-2-2-2"/>
                             <path d="m18 12-2 2 2 2"/>
                         </svg>
-                        <span>Comparar 2 Bases</span>
+                        <span data-i18n="sheets_mode_dual">Comparar 2 Bases</span>
                     </button>
                     <button type="button" class="mode-btn" data-mode="single" id="btn-mode-single-1" title="Auditar colunas internas de 1 planilha">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -126,7 +162,7 @@
                             <circle cx="11.5" cy="14.5" r="2.5"/>
                             <path d="m13.5 16.5 2.5 2.5"/>
                         </svg>
-                        <span>Auditar 1 Base</span>
+                        <span data-i18n="sheets_mode_single">Auditar 1 Base</span>
                     </button>
                 </div>
             </div>
@@ -144,8 +180,8 @@
                                 <line x1="9" y1="15" x2="15" y2="15"/>
                             </svg>
                         </div>
-                        <h3>Base Antiga (ou Referência)</h3>
-                        <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo aqui</p>
+                        <h3 data-i18n="sheets_drop_a_title">Base Antiga (ou Referência)</h3>
+                        <p class="dropzone-hint" data-i18n="sheets_drop_a_hint">Clique para selecionar ou arraste o arquivo aqui</p>
                         <div class="file-meta" id="file-meta-a" style="display: none;">
                             <span class="filename" id="filename-a">arquivo.xlsx</span>
                             <span class="filesize" id="filesize-a">0 KB</span>
@@ -165,8 +201,8 @@
                                 <path d="m9 15 3 3 3-3"/>
                             </svg>
                         </div>
-                        <h3>Base Nova (ou Comparação)</h3>
-                        <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo aqui</p>
+                        <h3 data-i18n="sheets_drop_b_title">Base Nova (ou Comparação)</h3>
+                        <p class="dropzone-hint" data-i18n="sheets_drop_b_hint">Clique para selecionar ou arraste o arquivo aqui</p>
                         <div class="file-meta" id="file-meta-b" style="display: none;">
                             <span class="filename" id="filename-b">arquivo.xlsx</span>
                             <span class="filesize" id="filesize-b">0 KB</span>
@@ -177,7 +213,7 @@
 
             <div class="action-footer">
                 <button type="button" class="btn btn-pill-gradient" id="btn-read-headers" disabled>
-                    <span class="btn-text">Ler Cabeçalhos e Continuar</span>
+                    <span class="btn-text" data-i18n="sheets_btn_read_headers">Ler Cabeçalhos e Continuar</span>
                     <span class="spinner" style="display: none;"></span>
                     <span class="btn-circle-icon">→</span>
                 </button>
@@ -187,10 +223,10 @@
         <!-- ETAPA 2: Configuração de Chaves e Tolerâncias (Oculto até ler arquivos) -->
         <section class="card step-card" id="step-config" style="display: none;">
             <div class="card-header">
-                <div class="step-indicator">Passo 2</div>
+                <div class="step-indicator" data-i18n="sheets_step2_badge">Passo 2</div>
                 <div>
-                    <h2>Definir Identificadores e Regras de Validação</h2>
-                    <p class="subtext">Escolha a coluna única que conecta os registros entre as duas planilhas.</p>
+                    <h2 data-i18n="sheets_step2_title">Definir Identificadores e Regras de Validação</h2>
+                    <p class="subtext" data-i18n="sheets_step2_desc">Escolha a coluna única que conecta os registros entre as duas planilhas.</p>
                 </div>
             </div>
 
@@ -198,12 +234,12 @@
                 <!-- Coluna da Esquerda: Chave Primária (Seletor Único) -->
                 <div class="form-group">
                     <label for="primary-key">
-                        <strong>Chave Identificadora Principal (Coluna da Esquerda) *</strong>
-                        <span class="help-text">Seletor único de referência (Ex: Matrícula, Ticket, ID, Sequencial)</span>
+                        <strong data-i18n="sheets_primary_key_label">Chave Identificadora Principal (Coluna da Esquerda) *</strong>
+                        <span class="help-text" data-i18n="sheets_primary_key_help">Seletor único de referência (Ex: Matrícula, Ticket, ID, Sequencial)</span>
                     </label>
                     <div class="select-wrapper">
                         <select id="primary-key" class="form-select">
-                            <option value="">Selecione a chave primária...</option>
+                            <option value="" data-i18n="sheets_primary_key_placeholder">Selecione a chave primária...</option>
                         </select>
                     </div>
                 </div>
@@ -211,13 +247,13 @@
                 <!-- Coluna da Direita: Seleção Múltipla de Colunas para Comparação -->
                 <div class="form-group">
                     <label>
-                        <strong>Colunas Complementares de Validação (Coluna da Direita)</strong>
-                        <span class="help-text">Selecione 1 ou mais colunas para refinar os parâmetros de comparação</span>
+                        <strong data-i18n="sheets_sec_keys_label">Colunas Complementares de Validação (Coluna da Direita)</strong>
+                        <span class="help-text" data-i18n="sheets_sec_keys_help">Selecione 1 ou mais colunas para refinar os parâmetros de comparação</span>
                     </label>
                     
                     <div class="multiselect-container" id="multiselect-container">
                         <div class="multiselect-trigger" id="sec-keys-trigger" tabindex="0">
-                            <span id="sec-keys-label">Nenhuma coluna complementar selecionada</span>
+                            <span id="sec-keys-label" data-i18n="sheets_sec_keys_none">Nenhuma coluna complementar selecionada</span>
                             <span class="multiselect-arrow">▾</span>
                         </div>
                         
@@ -227,14 +263,14 @@
                                     <circle cx="11" cy="11" r="7"/>
                                     <line x1="21" y1="21" x2="16.5" y2="16.5"/>
                                 </svg>
-                                <input type="text" id="sec-keys-search" placeholder="Filtrar colunas..." class="multiselect-search-input">
+                                <input type="text" id="sec-keys-search" placeholder="Filtrar colunas..." data-i18n-placeholder="sheets_sec_keys_search" class="multiselect-search-input">
                             </div>
                             <div class="multiselect-options" id="sec-keys-options-list">
                                 <!-- Checkboxes preenchidos dinamicamente -->
                             </div>
                             <div class="multiselect-footer">
-                                <button type="button" class="btn-link" id="btn-clear-sec-keys">Limpar seleção</button>
-                                <button type="button" class="btn btn-sm btn-pill-gradient" id="btn-close-sec-keys">Confirmar</button>
+                                <button type="button" class="btn-link" id="btn-clear-sec-keys" data-i18n="sheets_sec_keys_clear">Limpar seleção</button>
+                                <button type="button" class="btn btn-sm btn-pill-gradient" id="btn-close-sec-keys" data-i18n="sheets_sec_keys_confirm">Confirmar</button>
                             </div>
                         </div>
                         
@@ -247,7 +283,7 @@
                             <path d="M9 18h6"/>
                             <path d="M10 22h4"/>
                         </svg>
-                        <span>Se selecionar 1 coluna, ela será usada como 2º parâmetro. Se selecionar 2 ou mais, todas serão combinadas com a chave principal para formar o identificador de validação.</span>
+                        <span data-i18n="sheets_sec_keys_hint">Se selecionar 1 coluna, ela será usada como 2º parâmetro. Se selecionar 2 ou mais, todas serão combinadas com a chave principal para formar o identificador de validação.</span>
                     </p>
                 </div>
             </div>
@@ -260,39 +296,39 @@
                             <circle cx="12" cy="12" r="3"/>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
-                        <span>Regras de Normalização Automática (Evita falsos positivos)</span>
+                        <span data-i18n="sheets_tolerance_title">Regras de Normalização Automática (Evita falsos positivos)</span>
                     </h4>
                 </div>
                 <div class="tolerance-options">
                     <label class="checkbox-card">
                         <input type="checkbox" id="norm-currency" checked>
                         <div>
-                            <strong>Normalizar Moedas e Números Decimais</strong>
-                            <p>Equipara "15.650,00", "15650.00", "15650" e "R$ 15.650,00".</p>
+                            <strong data-i18n="norm_currency_title">Normalizar Moedas e Números Decimais</strong>
+                            <p data-i18n="norm_currency_desc">Equipara "15.650,00", "15650.00", "15650" e "R$ 15.650,00".</p>
                         </div>
                     </label>
 
                     <label class="checkbox-card">
                         <input type="checkbox" id="norm-dates" checked>
                         <div>
-                            <strong>Normalizar Formatos de Data</strong>
-                            <p>Equipara formatos ISO ("2026-08-01"), brasileiro ("01/08/2026") e timestamps com horário zerado.</p>
+                            <strong data-i18n="norm_dates_title">Normalizar Formatos de Data</strong>
+                            <p data-i18n="norm_dates_desc">Equipara formatos ISO ("2026-08-01"), brasileiro ("01/08/2026") e timestamps com horário zerado.</p>
                         </div>
                     </label>
 
                     <label class="checkbox-card">
                         <input type="checkbox" id="norm-case" checked>
                         <div>
-                            <strong>Ignorar Diferenças de Maiúsculas/Minúsculas</strong>
-                            <p>Equipara "Ativo" com "ATIVO" ou "ativo".</p>
+                            <strong data-i18n="norm_case_title">Ignorar Diferenças de Maiúsculas/Minúsculas</strong>
+                            <p data-i18n="norm_case_desc">Equipara "Ativo" com "ATIVO" ou "ativo".</p>
                         </div>
                     </label>
 
                     <label class="checkbox-card">
                         <input type="checkbox" id="norm-trim" checked>
                         <div>
-                            <strong>Ignorar Espaços Extras no Início e Fim</strong>
-                            <p>Equipara " 12345 " com "12345" e valores vazios (NaN com "").</p>
+                            <strong data-i18n="norm_trim_title">Ignorar Espaços Extras no Início e Fim</strong>
+                            <p data-i18n="norm_trim_desc">Equipara " 12345 " com "12345" e valores vazios (NaN com "").</p>
                         </div>
                     </label>
                 </div>
@@ -308,15 +344,15 @@
                             <path d="M3 9h18"/>
                             <path d="M3 15h18"/>
                         </svg>
-                        <span>Mapeamento de Colunas (<span id="mapped-cols-count">0</span> colunas mapeadas)</span>
+                        <span><span data-i18n="sheets_mapping_title">Mapeamento de Colunas</span> (<span id="mapped-cols-count">0</span> <span data-i18n="sheets_mapping_count_suffix">colunas mapeadas</span>)</span>
                     </span>
                 </summary>
                 <div class="mapping-content">
                     <div class="mapping-toolbar">
-                        <p class="mapping-hint">O sistema associou automaticamente colunas similares. Caso alguma coluna tenha nome diferente nas duas bases, clique em <strong>"+ Adicionar Coluna"</strong> para associá-las manualmente.</p>
+                        <p class="mapping-hint" data-i18n="sheets_mapping_hint">O sistema associou automaticamente colunas similares. Caso alguma coluna tenha nome diferente nas duas bases, clique em <strong>"+ Adicionar Coluna"</strong> para associá-las manualmente.</p>
                         <div class="mapping-toolbar-actions">
                             <button type="button" class="btn btn-sm btn-pill-outline btn-add-mapping" id="btn-add-mapping" title="Adicionar novo par de colunas para correlacionar">
-                                <span class="btn-plus-icon">+</span> Adicionar Coluna
+                                <span class="btn-plus-icon">+</span> <span data-i18n="btn_add_mapping">+ Adicionar Coluna</span>
                             </button>
                         </div>
                     </div>
@@ -325,10 +361,10 @@
                         <table class="table-mapping" id="mapping-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 44%;">Coluna na Base Antiga (ou Referência)</th>
+                                    <th style="width: 44%;" data-i18n="th_col_a">Coluna na Base Antiga (ou Referência)</th>
                                     <th style="width: 6%; text-align: center;"></th>
-                                    <th style="width: 44%;">Coluna na Base Nova (ou Comparação)</th>
-                                    <th style="width: 6%; text-align: center;">Remover</th>
+                                    <th style="width: 44%;" data-i18n="th_col_b">Coluna na Base Nova (ou Comparação)</th>
+                                    <th style="width: 6%; text-align: center;" data-i18n="th_remove">Remover</th>
                                 </tr>
                             </thead>
                             <tbody id="mapping-table-body">
@@ -351,7 +387,7 @@
                             <line x1="9" y1="3" x2="9" y2="21"></line>
                             <line x1="15" y1="3" x2="15" y2="21"></line>
                         </svg>
-                        <span>Restaurar Mapeamento</span>
+                        <span data-i18n="btn_restore_mapping">Restaurar Mapeamento</span>
                     </button>
                     <button type="button" class="btn btn-sm btn-clear-mapping" id="btn-clear-mapping" title="Apagar todas as colunas mapeadas e selecionar manualmente">
                         <svg class="btn-trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -360,12 +396,12 @@
                             <line x1="10" y1="11" x2="10" y2="17"></line>
                             <line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
-                        <span>Limpar Mapeamentos</span>
+                        <span data-i18n="btn_clear_mapping">Limpar Mapeamentos</span>
                     </button>
                 </div>
                 <div class="action-footer-right">
                     <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-run-compare">
-                        <span class="btn-text">Rodar Validação Completa</span>
+                        <span class="btn-text" data-i18n="btn_run_compare">Rodar Validação Completa</span>
                         <span class="spinner" style="display: none;"></span>
                         <span class="btn-circle-icon">→</span>
                     </button>
@@ -376,10 +412,10 @@
         <!-- ETAPA 3: Resultado da Validação -->
         <section class="card step-card" id="step-results" style="display: none;">
             <div class="card-header">
-                <div class="step-indicator">Passo 3</div>
+                <div class="step-indicator" data-i18n="sheets_step3_badge">Passo 3</div>
                 <div>
-                    <h2>Resultado da Validação</h2>
-                    <p class="subtext">Relatório consolidado e divergências célula por célula.</p>
+                    <h2 data-i18n="sheets_step3_title">Resultado da Validação</h2>
+                    <p class="subtext" data-i18n="sheets_step3_desc">Relatório consolidado e divergências célula por célula.</p>
                 </div>
             </div>
 
@@ -392,8 +428,8 @@
                     </svg>
                 </div>
                 <div class="banner-content">
-                    <h3>Excelente! As bases estão 100% IDÊNTICAS!</h3>
-                    <p id="identical-desc">Todas as linhas e colunas coincidiram perfeitamente com as regras de normalização aplicadas. Nenhuma divergência de valores foi detectada.</p>
+                    <h3 data-i18n="banner_identical_title">Excelente! As bases estão 100% IDÊNTICAS!</h3>
+                    <p id="identical-desc" data-i18n="banner_identical_desc">Todas as linhas e colunas coincidiram perfeitamente com as regras de normalização aplicadas. Nenhuma divergência de valores foi detectada.</p>
                 </div>
             </div>
 
@@ -407,57 +443,57 @@
                     </svg>
                 </div>
                 <div class="banner-content">
-                    <h3>Atenção: Foram encontradas divergências entre as planilhas!</h3>
-                    <p id="diffs-desc">Confira o resumo das divergências abaixo ou baixe a planilha Excel completa com as células pintadas.</p>
+                    <h3 data-i18n="banner_diffs_title">Atenção: Foram encontradas divergências entre as planilhas!</h3>
+                    <p id="diffs-desc" data-i18n="banner_diffs_desc">Confira o resumo das divergências abaixo ou baixe a planilha Excel completa com as células pintadas.</p>
                 </div>
             </div>
 
             <!-- Painel de KPIs / Estatísticas -->
             <div class="kpi-grid" id="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">Linhas Comparadas</div>
+                    <div class="kpi-label" data-i18n="kpi_rows_matched">Linhas Comparadas</div>
                     <div class="kpi-val" id="kpi-rows-matched">0</div>
                     <div class="kpi-sub" id="kpi-rows-total">de 0 linhas</div>
                 </div>
 
                 <div class="kpi-card" id="kpi-card-diff-rows">
-                    <div class="kpi-label">Linhas com Diferenças</div>
+                    <div class="kpi-label" data-i18n="kpi_rows_diff">Linhas com Diferenças</div>
                     <div class="kpi-val text-danger" id="kpi-rows-diff">0</div>
                     <div class="kpi-sub" id="kpi-pct-diff">0% do total</div>
                 </div>
 
                 <div class="kpi-card" id="kpi-card-diff-cells">
-                    <div class="kpi-label">Células Divergentes</div>
+                    <div class="kpi-label" data-i18n="kpi_cells_diff">Células Divergentes</div>
                     <div class="kpi-val text-danger" id="kpi-cells-diff">0</div>
-                    <div class="kpi-sub">valores com divergência</div>
+                    <div class="kpi-sub" data-i18n="kpi_cells_diff_sub">valores com divergência</div>
                 </div>
 
                 <div class="kpi-card">
-                    <div class="kpi-label">Colunas com Diferenças</div>
+                    <div class="kpi-label" data-i18n="kpi_cols_diff">Colunas com Diferenças</div>
                     <div class="kpi-val text-warning" id="kpi-cols-diff">0</div>
                     <div class="kpi-sub" id="kpi-cols-total">de 0 colunas</div>
                 </div>
 
                 <div class="kpi-card" id="kpi-card-only-a">
-                    <div class="kpi-label">Apenas na Base Antiga</div>
+                    <div class="kpi-label" data-i18n="kpi_only_a">Apenas na Base Antiga</div>
                     <div class="kpi-val text-info" id="kpi-rows-only-a">0</div>
-                    <div class="kpi-sub" id="kpi-only-a-sub">não existem em B</div>
+                    <div class="kpi-sub" id="kpi-only-a-sub" data-i18n="kpi_only_a_sub">não existem em B</div>
                 </div>
 
                 <div class="kpi-card" id="kpi-card-only-b">
-                    <div class="kpi-label">Apenas na Base Nova</div>
+                    <div class="kpi-label" data-i18n="kpi_only_b">Apenas na Base Nova</div>
                     <div class="kpi-val text-info" id="kpi-rows-only-b">0</div>
-                    <div class="kpi-sub" id="kpi-only-b-sub">não existem em A</div>
+                    <div class="kpi-sub" id="kpi-only-b-sub" data-i18n="kpi_only_b_sub">não existem em A</div>
                 </div>
             </div>
 
             <!-- Botão de Download do Relatório Excel -->
             <div class="download-section">
                 <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-download-excel">
-                    <span class="btn-text">Baixar Relatório Excel (.xlsx) com Células Pintadas</span>
+                    <span class="btn-text" data-i18n="btn_download_excel">Baixar Relatório Excel (.xlsx) com Células Pintadas</span>
                     <span class="btn-circle-icon">↓</span>
                 </button>
-                <p class="download-hint">Gera um arquivo Excel formatado com resumo e marcação colorida nas células que divergiram.</p>
+                <p class="download-hint" data-i18n="download_excel_hint">Gera um arquivo Excel formatado com resumo e marcação colorida nas células que divergiram.</p>
             </div>
 
             <!-- Seção de Tags de Colunas Divergentes -->
@@ -475,7 +511,7 @@
                         <circle cx="11" cy="11" r="7"/>
                         <line x1="21" y1="21" x2="16.5" y2="16.5"/>
                     </svg>
-                    <span>Divergências Detalhadas</span>
+                    <span data-i18n="tab_diffs">Divergências Detalhadas</span>
                     <span class="tab-btn-badge" id="badge-diff-count">0</span>
                 </button>
                 <button type="button" class="result-nav-tab-btn" id="tab-btn-only-a" data-view="only-a" style="display: none;">
@@ -483,7 +519,7 @@
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
                     </svg>
-                    <span>Apenas na Base Antiga</span>
+                    <span data-i18n="tab_only_a">Apenas na Base Antiga</span>
                     <span class="tab-btn-badge" id="badge-only-a-count">0</span>
                 </button>
                 <button type="button" class="result-nav-tab-btn" id="tab-btn-only-b" data-view="only-b" style="display: none;">
@@ -491,7 +527,7 @@
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
                     </svg>
-                    <span>Apenas na Base Nova</span>
+                    <span data-i18n="tab_only_b">Apenas na Base Nova</span>
                     <span class="tab-btn-badge" id="badge-only-b-count">0</span>
                 </button>
                 <button type="button" class="result-nav-tab-btn" id="tab-btn-financial" data-view="financial" style="display: none;">
@@ -499,7 +535,7 @@
                         <line x1="12" y1="1" x2="12" y2="23"/>
                         <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                     </svg>
-                    <span>Sumarização Financeira dos Pares</span>
+                    <span data-i18n="tab_financial">Sumarização Financeira dos Pares</span>
                     <span class="tab-btn-badge" id="badge-fin-count">0</span>
                 </button>
             </div>
@@ -507,13 +543,13 @@
             <!-- Tabela Interativa de Diferenças -->
             <div class="diff-table-section" id="diff-table-section" style="display: none;">
                 <div class="diff-table-header">
-                    <h4>Visualização Detalhada das Divergências</h4>
+                    <h4 data-i18n="diff_table_title">Visualização Detalhada das Divergências</h4>
                     <div class="table-search input-search-wrapper">
                         <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="7"/>
                             <line x1="21" y1="21" x2="16.5" y2="16.5"/>
                         </svg>
-                        <input type="text" id="diff-search" placeholder="Filtrar por chave ou valor..." class="search-input">
+                        <input type="text" id="diff-search" placeholder="Filtrar por chave ou valor..." data-i18n-placeholder="diff_search_placeholder" class="search-input">
                     </div>
                 </div>
 
@@ -521,12 +557,12 @@
                     <table class="table-diff" id="diff-table">
                         <thead>
                             <tr>
-                                <th>Chave Identificadora</th>
-                                <th style="text-align: center; width: 120px;">Linha</th>
-                                <th>Coluna</th>
-                                <th>Valor na Base Antiga</th>
+                                <th data-i18n="th_id_key">Chave Identificadora</th>
+                                <th style="text-align: center; width: 120px;" data-i18n="th_row">Linha</th>
+                                <th data-i18n="th_col">Coluna</th>
+                                <th data-i18n="th_val_old">Valor na Base Antiga</th>
                                 <th style="width: 30px;"></th>
-                                <th>Valor na Base Nova</th>
+                                <th data-i18n="th_val_new">Valor na Base Nova</th>
                             </tr>
                         </thead>
                         <tbody id="diff-table-body">
@@ -534,7 +570,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="pagination-hint" id="diff-preview-hint">
+                <div class="pagination-hint" id="diff-preview-hint" data-i18n="pagination_hint">
                     Exibindo as primeiras ocorrências encontradas. Baixe o relatório Excel para a auditoria completa.
                 </div>
             </div>
@@ -636,7 +672,7 @@
 
             <div class="action-footer">
                 <button type="button" class="btn btn-pill-outline" id="btn-restart">
-                    <span class="btn-text">Fazer Nova Validação</span>
+                    <span class="btn-text" data-i18n="btn_restart">Fazer Nova Validação</span>
                     <span class="btn-circle-icon">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
@@ -1280,7 +1316,7 @@
 
     <footer class="footer">
         <div class="container footer-content">
-            <p>&copy; 2026 ValidAí. Todos os direitos reservados.</p>
+            <p data-i18n="footer_copyright">&copy; 2026 ValidAí. Todos os direitos reservados.</p>
         </div>
     </footer>
 
@@ -1297,8 +1333,8 @@
                     </svg>
                 </div>
                 <div class="modal-header-text">
-                    <h3 id="modal-clear-title">Gerenciar Limpeza de Mapeamento</h3>
-                    <p class="modal-header-subtitle">Escolha entre limpar toda a tabela para mapear do zero ou selecionar manualmente por checkbox as colunas que deseja manter.</p>
+                    <h3 id="modal-clear-title" data-i18n="modal_clear_title">Gerenciar Limpeza de Mapeamento</h3>
+                    <p class="modal-header-subtitle" data-i18n="modal_clear_subtitle">Escolha entre limpar toda a tabela para mapear do zero ou selecionar manualmente por checkbox as colunas que deseja manter.</p>
                 </div>
                 <button type="button" class="modal-btn-close" id="btn-modal-close" title="Fechar janela">✕</button>
             </div>
@@ -1307,9 +1343,9 @@
                 <!-- Opção 1: Limpar Tudo (Modo Manual) -->
                 <div class="modal-action-card">
                     <div class="modal-action-info">
-                        <div class="modal-action-badge">Opção 1</div>
-                        <h4 class="modal-action-title">Limpar Tudo (Mapeamento Manual do Zero)</h4>
-                        <p class="modal-action-desc">Apaga todos os mapeamentos da tabela e deixa você associar coluna por coluna manualmente.</p>
+                        <div class="modal-action-badge" data-i18n="modal_opt1_badge">Opção 1</div>
+                        <h4 class="modal-action-title" data-i18n="modal_opt1_title">Limpar Tudo (Mapeamento Manual do Zero)</h4>
+                        <p class="modal-action-desc" data-i18n="modal_opt1_desc">Apaga todos os mapeamentos da tabela e deixa você associar coluna por coluna manualmente.</p>
                     </div>
                     <button type="button" class="btn btn-sm btn-modal-danger" id="btn-modal-clear-all" title="Limpar todas as colunas e mapear manualmente">
                         <svg class="btn-trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1318,21 +1354,21 @@
                             <line x1="10" y1="11" x2="10" y2="17"></line>
                             <line x1="14" y1="11" x2="14" y2="17"></line>
                         </svg>
-                        <span>Limpar Tudo</span>
+                        <span data-i18n="modal_btn_clear_all">Limpar Tudo</span>
                     </button>
                 </div>
 
                 <div class="modal-divider">
-                    <span>OU SELECIONE AS COLUNAS DO MAPEAMENTO AUTOMÁTICO</span>
+                    <span data-i18n="modal_divider_or">OU SELECIONE AS COLUNAS DO MAPEAMENTO AUTOMÁTICO</span>
                 </div>
 
                 <!-- Opção 2: Seleção de Colunas por Checkbox -->
                 <div class="modal-selection-section">
                     <div class="modal-selection-header">
-                        <div class="modal-action-badge modal-badge-orange">Opção 2</div>
-                        <h4 class="modal-action-title">Manter Apenas Colunas Selecionadas</h4>
+                        <div class="modal-action-badge modal-badge-orange" data-i18n="modal_opt2_badge">Opção 2</div>
+                        <h4 class="modal-action-title" data-i18n="modal_opt2_title">Manter Apenas Colunas Selecionadas</h4>
                     </div>
-                    <p class="modal-action-desc" style="margin-bottom: 12px;">Selecione abaixo as colunas que você deseja manter mapeadas para a comparação (com o mapeamento automático padrão já associado):</p>
+                    <p class="modal-action-desc" style="margin-bottom: 12px;" data-i18n="modal_opt2_desc">Selecione abaixo as colunas que você deseja manter mapeadas para a comparação (com o mapeamento automático padrão já associado):</p>
 
                     <div class="modal-selection-toolbar">
                         <div class="modal-search-wrapper">
@@ -1340,13 +1376,13 @@
                                 <circle cx="11" cy="11" r="7"/>
                                 <line x1="21" y1="21" x2="16.5" y2="16.5"/>
                             </svg>
-                            <input type="text" id="modal-search-input" class="modal-search-input" placeholder="Pesquisar coluna..." autocomplete="off">
+                            <input type="text" id="modal-search-input" class="modal-search-input" placeholder="Pesquisar coluna..." data-i18n-placeholder="modal_search_placeholder" autocomplete="off">
                             <button type="button" id="modal-search-clear" class="modal-search-clear" style="display: none;">✕</button>
                         </div>
                         <div class="modal-selection-buttons">
-                            <button type="button" class="btn-text-action" id="btn-modal-select-all">Marcar Todas</button>
+                            <button type="button" class="btn-text-action" id="btn-modal-select-all" data-i18n="btn_select_all">Marcar Todas</button>
                             <span class="toolbar-sep">•</span>
-                            <button type="button" class="btn-text-action" id="btn-modal-deselect-all">Desmarcar Todas</button>
+                            <button type="button" class="btn-text-action" id="btn-modal-deselect-all" data-i18n="btn_unselect_all">Desmarcar Todas</button>
                         </div>
                     </div>
 
@@ -1364,7 +1400,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-modal-cancel" id="btn-modal-cancel">Cancelar</button>
+                <button type="button" class="btn btn-sm btn-modal-cancel" id="btn-modal-cancel" data-i18n="btn_cancel">Cancelar</button>
                 <button type="button" class="btn btn-sm btn-modal-apply" id="btn-modal-apply">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>

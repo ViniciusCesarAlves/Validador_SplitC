@@ -1207,22 +1207,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // PASSO 3: RENDERIZAR RESULTADOS
     // ----------------------------------------------------
     function renderResults(data) {
+        state.lastCompareData = data;
         const s = data.summary;
+        const lang = (window.ValidAiI18n && window.ValidAiI18n.getCurrentLanguage) ? window.ValidAiI18n.getCurrentLanguage() : 'pt';
+        const numLocale = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-ES' : 'pt-BR');
+        const rowsLabel = lang === 'en' ? 'rows in A' : (lang === 'es' ? 'filas en A' : 'linhas em A');
+        const ofLabel = lang === 'en' ? 'of' : (lang === 'es' ? 'de' : 'de');
+        const colsLabel = lang === 'en' ? 'columns' : (lang === 'es' ? 'columnas' : 'colunas');
+        const ofTotal = lang === 'en' ? 'of total' : (lang === 'es' ? 'del total' : 'do total');
 
         // Atualizar KPIs
-        kpiRowsMatched.textContent = s.matched_keys_count.toLocaleString('pt-BR');
-        kpiRowsTotal.textContent = `de ${s.total_rows_a.toLocaleString('pt-BR')} linhas em A`;
+        kpiRowsMatched.textContent = s.matched_keys_count.toLocaleString(numLocale);
+        kpiRowsTotal.textContent = `${ofLabel} ${s.total_rows_a.toLocaleString(numLocale)} ${rowsLabel}`;
 
-        kpiRowsDiff.textContent = s.different_rows_count.toLocaleString('pt-BR');
+        kpiRowsDiff.textContent = s.different_rows_count.toLocaleString(numLocale);
         const pctDiff = s.matched_keys_count > 0 ? ((s.different_rows_count / s.matched_keys_count) * 100).toFixed(1) : 0;
-        kpiPctDiff.textContent = `${pctDiff}% das linhas`;
+        kpiPctDiff.textContent = `${pctDiff}% ${ofTotal}`;
 
-        kpiCellsDiff.textContent = s.total_cells_diff.toLocaleString('pt-BR');
-        kpiColsDiff.textContent = s.columns_with_differences_count.toLocaleString('pt-BR');
-        kpiColsTotal.textContent = `de ${s.total_columns_compared} colunas`;
+        kpiCellsDiff.textContent = s.total_cells_diff.toLocaleString(numLocale);
+        kpiColsDiff.textContent = s.columns_with_differences_count.toLocaleString(numLocale);
+        kpiColsTotal.textContent = `${ofLabel} ${s.total_columns_compared} ${colsLabel}`;
 
-        if (kpiRowsOnlyA) kpiRowsOnlyA.textContent = (s.only_in_a_count || 0).toLocaleString('pt-BR');
-        if (kpiRowsOnlyB) kpiRowsOnlyB.textContent = (s.only_in_b_count || 0).toLocaleString('pt-BR');
+        if (kpiRowsOnlyA) kpiRowsOnlyA.textContent = (s.only_in_a_count || 0).toLocaleString(numLocale);
+        if (kpiRowsOnlyB) kpiRowsOnlyB.textContent = (s.only_in_b_count || 0).toLocaleString(numLocale);
 
         if (s.is_identical) {
             // Sucesso Total
@@ -1246,14 +1253,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const bannerDesc = bannerDiffs.querySelector('p');
 
             if (s.matched_keys_count === 0 && ((s.only_in_a_count || 0) > 0 || (s.only_in_b_count || 0) > 0)) {
-                if (bannerTitle) bannerTitle.textContent = 'Atenção: Nenhuma linha coincidiu entre as duas planilhas!';
+                if (bannerTitle) bannerTitle.textContent = lang === 'en'
+                    ? 'Notice: No matching rows found between the two spreadsheets!'
+                    : (lang === 'es' ? '¡Atención: Ninguna fila coincidió entre ambas hojas de cálculo!' : 'Atenção: Nenhuma linha coincidiu entre as duas planilhas!');
                 if (bannerDesc) {
-                    bannerDesc.innerHTML = `Com os identificadores selecionados, nenhum registro da Base Antiga foi encontrado na Base Nova. Todos os registros são exclusivos de cada arquivo (<strong>${(s.only_in_a_count || 0).toLocaleString('pt-BR')}</strong> apenas na Base Antiga e <strong>${(s.only_in_b_count || 0).toLocaleString('pt-BR')}</strong> apenas na Base Nova). Veja os dados completos nas abas <strong>"Apenas na Base Antiga"</strong> e <strong>"Apenas na Base Nova"</strong> abaixo ou verifique os identificadores escolhidos.`;
+                    if (lang === 'en') {
+                        bannerDesc.innerHTML = `With the selected identifiers, no records from the Old Sheet were matched in the New Sheet. All records are exclusive to each file (<strong>${(s.only_in_a_count || 0).toLocaleString(numLocale)}</strong> in Old Sheet only and <strong>${(s.only_in_b_count || 0).toLocaleString(numLocale)}</strong> in New Sheet only). Check the detailed tabs below or verify your identifier keys.`;
+                    } else if (lang === 'es') {
+                        bannerDesc.innerHTML = `Con los identificadores seleccionados, no se encontraron registros de la Base Antigua en la Base Nueva. Todos los registros son exclusivos de cada archivo (<strong>${(s.only_in_a_count || 0).toLocaleString(numLocale)}</strong> solo en Base Antigua y <strong>${(s.only_in_b_count || 0).toLocaleString(numLocale)}</strong> solo en Base Nueva). Vea las pestañas abajo o revise los identificadores elegidos.`;
+                    } else {
+                        bannerDesc.innerHTML = `Com os identificadores selecionados, nenhum registro da Base Antiga foi encontrado na Base Nova. Todos os registros são exclusivos de cada arquivo (<strong>${(s.only_in_a_count || 0).toLocaleString('pt-BR')}</strong> apenas na Base Antiga e <strong>${(s.only_in_b_count || 0).toLocaleString('pt-BR')}</strong> apenas na Base Nova). Veja os dados completos nas abas <strong>"Apenas na Base Antiga"</strong> e <strong>"Apenas na Base Nova"</strong> abaixo ou verifique os identificadores escolhidos.`;
+                    }
                 }
             } else {
-                if (bannerTitle) bannerTitle.textContent = 'Atenção: Foram encontradas divergências entre as planilhas!';
+                if (bannerTitle) bannerTitle.textContent = lang === 'en'
+                    ? 'Notice: Discrepancies were found between the spreadsheets!'
+                    : (lang === 'es' ? '¡Atención: Se encontraron discrepancias entre las hojas de cálculo!' : 'Atenção: Foram encontradas divergências entre as planilhas!');
                 if (bannerDesc) {
-                    bannerDesc.textContent = 'Confira o resumo das divergências abaixo ou baixe a planilha Excel completa com as células pintadas.';
+                    bannerDesc.textContent = lang === 'en'
+                        ? 'Review the discrepancy summary below or download the full Excel report with highlighted cells.'
+                        : (lang === 'es' ? 'Consulte el resumen de discrepancias abajo o descargue la hoja Excel completa con las celdas resaltadas.' : 'Confira o resumo das divergências abaixo ou baixe a planilha Excel completa com as células pintadas.');
                 }
             }
 
@@ -2395,4 +2414,11 @@ document.addEventListener('DOMContentLoaded', () => {
             singleStepUpload.scrollIntoView({ behavior: 'smooth' });
         });
     }
+
+    // Reagir a mudanças de idioma
+    window.addEventListener('validaiLanguageChanged', () => {
+        if (state.lastCompareData) {
+            renderResults(state.lastCompareData);
+        }
+    });
 });

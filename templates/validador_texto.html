@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ValidAí - O seu validador</title>
+    <title data-i18n="page_title">ValidAí - O seu validador</title>
     <link rel="icon" type="image/png" href="/static/images/favicon.png?v=3">
     <link rel="shortcut icon" href="/favicon.ico?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,8 @@
     <script>
         (function() {
             try {
+                var lang = localStorage.getItem('validai_lang') || 'pt';
+                document.documentElement.setAttribute('lang', lang);
                 var theme = localStorage.getItem('splitc_theme');
                 if (theme === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
@@ -27,6 +29,7 @@
             } catch(e) {}
         })();
     </script>
+    <script src="/static/js/i18n.js?v=1"></script>
 </head>
 <body>
 
@@ -45,7 +48,7 @@
                             <line x1="3" y1="9" x2="21" y2="9"/>
                             <line x1="9" y1="21" x2="9" y2="9"/>
                         </svg>
-                        <span>Validador Planilhas</span>
+                        <span data-i18n="nav_sheets">Validador Planilhas</span>
                     </a>
                     <a href="/validador-texto" class="nav-menu-link active">
                         <svg class="nav-menu-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -55,7 +58,7 @@
                             <line x1="16" y1="17" x2="8" y2="17"/>
                             <line x1="10" y1="9" x2="8" y2="9"/>
                         </svg>
-                        <span>Validador Texto</span>
+                        <span data-i18n="nav_text">Validador Texto</span>
                     </a>
                 </nav>
             </div>
@@ -67,9 +70,42 @@
                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                         <line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
-                    <span>Como usar?</span>
+                    <span data-i18n="nav_how_to_use">Como usar?</span>
                 </a>
-                <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+
+                <!-- Dropdown de Idiomas (PT / ES / EN) -->
+                <div class="lang-dropdown-wrapper" id="lang-dropdown-wrapper">
+                    <button type="button" class="lang-toggle-btn" id="lang-toggle-btn" aria-haspopup="true" aria-expanded="false" title="Idioma / Language">
+                        <svg class="lang-globe-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        <span class="lang-current-code" id="lang-current-code">PT</span>
+                        <svg class="lang-arrow-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="lang-dropdown-menu" id="lang-dropdown-menu" role="menu">
+                        <button type="button" class="lang-option active" data-lang="pt" role="menuitem">
+                            <span class="lang-flag">🇧🇷</span>
+                            <span class="lang-name">Português</span>
+                            <span class="lang-badge">PT</span>
+                        </button>
+                        <button type="button" class="lang-option" data-lang="es" role="menuitem">
+                            <span class="lang-flag">🇪🇸</span>
+                            <span class="lang-name">Español</span>
+                            <span class="lang-badge">ES</span>
+                        </button>
+                        <button type="button" class="lang-option" data-lang="en" role="menuitem">
+                            <span class="lang-flag">🇺🇸</span>
+                            <span class="lang-name">English</span>
+                            <span class="lang-badge">EN</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" title="Alternar tema claro/escuro" aria-label="Alternar tema" data-i18n-title="nav_toggle_theme">
                     <svg class="theme-icon-svg" width="19" height="19" viewBox="0 0 24 24">
                         <defs>
                             <linearGradient id="theme-grad-orange" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -102,10 +138,10 @@
         <section class="card step-card" id="text-step-upload">
             <div class="card-header card-header-with-toggle">
                 <div class="card-header-left">
-                    <div class="step-indicator">Passo 1</div>
+                    <div class="step-indicator" data-i18n="text_step1_badge">Passo 1</div>
                     <div>
-                        <h2>Comparar Documentos PDF, Word e Texto</h2>
-                        <p class="subtext">Envie dois arquivos (.pdf, .docx ou .txt) ou cole os textos abaixo para identificar todas as diferenças.</p>
+                        <h2 data-i18n="text_step1_title">Comparar Documentos PDF, Word e Texto</h2>
+                        <p class="subtext" data-i18n="text_step1_desc">Envie dois arquivos (.pdf, .docx ou .txt) ou cole os textos abaixo para identificar todas as diferenças.</p>
                     </div>
                 </div>
 
@@ -116,7 +152,7 @@
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
                         </svg>
-                        <span>Arquivos (PDF / Word / TXT)</span>
+                        <span data-i18n="btn_input_files">Arquivos (PDF / Word / TXT)</span>
                     </button>
                     <button type="button" class="mode-btn" id="btn-input-paste" title="Colar ou digitar textos manualmente">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -124,7 +160,7 @@
                             <line x1="9" y1="20" x2="15" y2="20"/>
                             <line x1="12" y1="4" x2="12" y2="20"/>
                         </svg>
-                        <span>Colar Texto</span>
+                        <span data-i18n="btn_input_paste">Colar Texto</span>
                     </button>
                 </div>
             </div>
@@ -143,13 +179,13 @@
                                 <line x1="9" y1="15" x2="15" y2="15"/>
                             </svg>
                         </div>
-                        <h3>Documento Original (ou Referência)</h3>
-                        <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo (.pdf, .docx ou .txt) aqui</p>
+                        <h3 data-i18n="doc_drop_a_title">Documento Original (ou Referência)</h3>
+                        <p class="dropzone-hint" data-i18n="doc_drop_a_hint">Clique para selecionar ou arraste o arquivo (.pdf, .docx ou .txt) aqui</p>
                         <div class="doc-browse-pill">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                             </svg>
-                            <span>Procurar arquivo</span>
+                            <span data-i18n="doc_browse_file">Procurar arquivo</span>
                         </div>
                         <div class="file-meta" id="meta-doc-a" style="display: none;">
                             <span class="filename" id="filename-doc-a">documento_original.pdf</span>
@@ -170,13 +206,13 @@
                                 <path d="m9 15 3 3 3-3"/>
                             </svg>
                         </div>
-                        <h3>Documento Novo (ou Comparação)</h3>
-                        <p class="dropzone-hint">Clique para selecionar ou arraste o arquivo (.pdf, .docx ou .txt) aqui</p>
+                        <h3 data-i18n="doc_drop_b_title">Documento Novo (ou Comparação)</h3>
+                        <p class="dropzone-hint" data-i18n="doc_drop_b_hint">Clique para selecionar ou arraste o arquivo (.pdf, .docx ou .txt) aqui</p>
                         <div class="doc-browse-pill">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                             </svg>
-                            <span>Procurar arquivo</span>
+                            <span data-i18n="doc_browse_file">Procurar arquivo</span>
                         </div>
                         <div class="file-meta" id="meta-doc-b" style="display: none;">
                             <span class="filename" id="filename-doc-b">documento_novo.pdf</span>
@@ -195,11 +231,11 @@
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                 <polyline points="14 2 14 8 20 8"/>
                             </svg>
-                            <span>Texto Original (Referência)</span>
+                            <span data-i18n="paste_label_a">Texto Original (Referência)</span>
                         </label>
                         <span class="paste-counter" id="counter-doc-a">0 caracteres</span>
                     </div>
-                    <textarea id="textarea-doc-a" class="doc-textarea" placeholder="Cole ou digite aqui o texto original..."></textarea>
+                    <textarea id="textarea-doc-a" class="doc-textarea" placeholder="Cole ou digite aqui o texto original..." data-i18n-placeholder="paste_ph_a"></textarea>
                 </div>
                 <div class="paste-box">
                     <div class="paste-box-header">
@@ -208,11 +244,11 @@
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                 <polyline points="14 2 14 8 20 8"/>
                             </svg>
-                            <span>Texto Novo (Comparação)</span>
+                            <span data-i18n="paste_label_b">Texto Novo (Comparação)</span>
                         </label>
                         <span class="paste-counter" id="counter-doc-b">0 caracteres</span>
                     </div>
-                    <textarea id="textarea-doc-b" class="doc-textarea" placeholder="Cole ou digite aqui o texto novo para comparar..."></textarea>
+                    <textarea id="textarea-doc-b" class="doc-textarea" placeholder="Cole ou digite aqui o texto novo para comparar..." data-i18n-placeholder="paste_ph_b"></textarea>
                 </div>
             </div>
 
@@ -225,7 +261,7 @@
                             <path d="M3 9h18"/>
                             <path d="M9 21V9"/>
                         </svg>
-                        <span>Modo de Exibição das Diferenças</span>
+                        <span data-i18n="doc_mode_title">Modo de Exibição das Diferenças</span>
                     </h4>
                 </div>
 
@@ -246,10 +282,10 @@
                         </div>
                         <div class="doc-mode-info">
                             <div class="doc-mode-title-row">
-                                <h5>Rich text</h5>
+                                <h5 data-i18n="mode_rich_title">Rich text</h5>
                                 <span class="doc-mode-check">✓</span>
                             </div>
-                            <p>Marca as alterações em ambos os documentos separadamente lado a lado sem descaracterizá-los.</p>
+                            <p data-i18n="mode_rich_desc">Marca as alterações em ambos os documentos separadamente lado a lado sem descaracterizá-los.</p>
                         </div>
                     </div>
 
@@ -265,10 +301,10 @@
                         </div>
                         <div class="doc-mode-info">
                             <div class="doc-mode-title-row">
-                                <h5>Redline <span class="mode-pill-tag">UNIFICADO</span></h5>
+                                <h5><span data-i18n="mode_redline_title">Redline</span> <span class="mode-pill-tag" data-i18n="mode_redline_badge">UNIFICADO</span></h5>
                                 <span class="doc-mode-check">✓</span>
                             </div>
-                            <p>Compila os documentos em uma versão única contínua com todas as inserções e exclusões marcadas.</p>
+                            <p data-i18n="mode_redline_desc">Compila os documentos em uma versão única contínua com todas as inserções e exclusões marcadas.</p>
                         </div>
                     </div>
 
@@ -286,10 +322,10 @@
                         </div>
                         <div class="doc-mode-info">
                             <div class="doc-mode-title-row">
-                                <h5>Plain text</h5>
+                                <h5 data-i18n="mode_plain_title">Plain text</h5>
                                 <span class="doc-mode-check">✓</span>
                             </div>
-                            <p>Compara o conteúdo de ambos os documentos linha a linha como texto puro e direto.</p>
+                            <p data-i18n="mode_plain_desc">Compara o conteúdo de ambos os documentos linha a linha como texto puro e direto.</p>
                         </div>
                     </div>
                 </div>
@@ -303,36 +339,36 @@
                             <circle cx="12" cy="12" r="3"/>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
-                        <span>Opções de Precisão na Leitura (Evita falsos positivos)</span>
+                        <span data-i18n="doc_precision_title">Opções de Precisão na Leitura (Evita falsos positivos)</span>
                     </h4>
                 </div>
                 <div class="tolerance-options">
                     <label class="checkbox-card">
                         <input type="checkbox" id="opt-text-trim-spaces" checked>
                         <div>
-                            <strong>Ignorar Espaços Extras</strong>
-                            <p>Desconsidera espaços duplos ou no final das linhas.</p>
+                            <strong data-i18n="opt_trim_spaces_title">Ignorar Espaços Extras</strong>
+                            <p data-i18n="opt_trim_spaces_desc">Desconsidera espaços duplos ou no final das linhas.</p>
                         </div>
                     </label>
                     <label class="checkbox-card">
                         <input type="checkbox" id="opt-text-ignore-case">
                         <div>
-                            <strong>Ignorar Maiúsculas/Minúsculas</strong>
-                            <p>Considera "Cláusula" e "CLÁUSULA" como iguais.</p>
+                            <strong data-i18n="opt_ignore_case_title">Ignorar Maiúsculas/Minúsculas</strong>
+                            <p data-i18n="opt_ignore_case_desc">Considera "Cláusula" e "CLÁUSULA" como iguais.</p>
                         </div>
                     </label>
                     <label class="checkbox-card">
                         <input type="checkbox" id="opt-text-ignore-empty">
                         <div>
-                            <strong>Ignorar Linhas em Branco</strong>
-                            <p>Pula quebras de linha vazias entre parágrafos.</p>
+                            <strong data-i18n="opt_ignore_empty_title">Ignorar Linhas em Branco</strong>
+                            <p data-i18n="opt_ignore_empty_desc">Pula quebras de linha vazias entre parágrafos.</p>
                         </div>
                     </label>
                     <label class="checkbox-card">
                         <input type="checkbox" id="opt-text-word-level" checked>
                         <div>
-                            <strong>Destaque por Palavra</strong>
-                            <p>Grifa palavras inteiras (desmarque para caractere a caractere).</p>
+                            <strong data-i18n="opt_word_level_title">Destaque por Palavra</strong>
+                            <p data-i18n="opt_word_level_desc">Grifa palavras inteiras (desmarque para caractere a caractere).</p>
                         </div>
                     </label>
                 </div>
@@ -342,13 +378,13 @@
             <div class="action-footer action-footer-between">
                 <div class="action-footer-left">
                     <button type="button" class="btn btn-pill-outline" id="btn-text-try-example" title="Carregar dois documentos de exemplo para testar">
-                        <span class="btn-text">Testar Exemplo</span>
+                        <span class="btn-text" data-i18n="btn_try_example">Testar Exemplo</span>
                     </button>
                 </div>
 
                 <div class="action-footer-right">
                     <button type="button" class="btn btn-pill-gradient btn-lg" id="btn-text-find-diff" disabled>
-                        <span class="btn-text">Encontrar Diferenças</span>
+                        <span class="btn-text" data-i18n="btn_find_diff">Encontrar Diferenças</span>
                         <span class="spinner" style="display: none;"></span>
                         <span class="btn-circle-icon">→</span>
                     </button>
@@ -359,10 +395,10 @@
         <!-- ETAPA 2: Resultados, Analytics e Exportação PDF -->
         <section class="card step-card" id="text-step-results" style="display: none;">
             <div class="card-header">
-                <div class="step-indicator">Resultado</div>
+                <div class="step-indicator" data-i18n="text_step2_badge">Resultado</div>
                 <div>
-                    <h2>Diagnóstico e Analytics da Comparação</h2>
-                    <p class="subtext">Confira os indicadores de similaridade, navegue pelas alterações marcadas e baixe o relatório em PDF.</p>
+                    <h2 data-i18n="text_step2_title">Diagnóstico e Analytics da Comparação</h2>
+                    <p class="subtext" data-i18n="text_step2_desc">Confira os indicadores de similaridade, navegue pelas alterações marcadas e baixe o relatório em PDF.</p>
                 </div>
             </div>
 
@@ -375,8 +411,8 @@
                     </svg>
                 </div>
                 <div class="banner-content">
-                    <h3 id="text-identical-title">Excelente! Os documentos são 100% IDÊNTICOS!</h3>
-                    <p id="text-identical-desc">Nenhuma diferença foi encontrada entre os dois documentos com as regras selecionadas.</p>
+                    <h3 id="text-identical-title" data-i18n="text_banner_identical_title">Excelente! Os documentos são 100% IDÊNTICOS!</h3>
+                    <p id="text-identical-desc" data-i18n="text_banner_identical_desc">Nenhuma diferença foi encontrada entre os dois documentos com as regras selecionadas.</p>
                 </div>
             </div>
 
@@ -390,52 +426,52 @@
                     </svg>
                 </div>
                 <div class="banner-content">
-                    <h3 id="text-diffs-title">Atenção: Foram encontradas alterações entre os documentos!</h3>
-                    <p id="text-diffs-desc">Confira as marcações abaixo ou baixe o relatório em PDF com os trechos destacados.</p>
+                    <h3 id="text-diffs-title" data-i18n="text_banner_diffs_title">Atenção: Foram encontradas alterações entre os documentos!</h3>
+                    <p id="text-diffs-desc" data-i18n="text_banner_diffs_desc">Confira as marcações abaixo ou baixe o relatório em PDF com os trechos destacados.</p>
                 </div>
             </div>
 
             <!-- Grid de KPIs (2 linhas x 3 colunas idêntico ao Validador de Planilhas) -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">Índice de Similaridade</div>
+                    <div class="kpi-label" data-i18n="kpi_similarity">Índice de Similaridade</div>
                     <div class="kpi-val text-info" id="text-kpi-similarity">100%</div>
-                    <div class="kpi-sub" id="text-kpi-similarity-sub">grau de correspondência</div>
+                    <div class="kpi-sub" id="text-kpi-similarity-sub" data-i18n="kpi_similarity_sub">grau de correspondência</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Total de Linhas</div>
+                    <div class="kpi-label" data-i18n="kpi_total_lines">Total de Linhas</div>
                     <div class="kpi-val" id="text-kpi-lines">0 / 0</div>
-                    <div class="kpi-sub" id="text-kpi-pages-sub">Original vs Novo</div>
+                    <div class="kpi-sub" id="text-kpi-pages-sub" data-i18n="kpi_total_lines_sub">Original vs Novo</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Linhas Idênticas</div>
+                    <div class="kpi-label" data-i18n="kpi_identical_lines">Linhas Idênticas</div>
                     <div class="kpi-val text-success" id="text-kpi-identical">0</div>
-                    <div class="kpi-sub">sem nenhuma alteração</div>
+                    <div class="kpi-sub" data-i18n="kpi_identical_sub">sem nenhuma alteração</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Linhas com Divergências</div>
+                    <div class="kpi-label" data-i18n="kpi_diff_lines">Linhas com Divergências</div>
                     <div class="kpi-val text-danger" id="text-kpi-diff-lines">0</div>
                     <div class="kpi-sub" id="text-kpi-diff-breakdown">0 mod. | 0 adic. | 0 rem.</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Palavras Adicionadas (+)</div>
+                    <div class="kpi-label" data-i18n="kpi_words_added">Palavras Adicionadas (+)</div>
                     <div class="kpi-val text-success" id="text-kpi-words-added">+0</div>
-                    <div class="kpi-sub">inseridas no documento novo</div>
+                    <div class="kpi-sub" data-i18n="kpi_words_added_sub">inseridas no documento novo</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">Palavras Removidas (-)</div>
+                    <div class="kpi-label" data-i18n="kpi_words_removed">Palavras Removidas (-)</div>
                     <div class="kpi-val text-danger" id="text-kpi-words-removed">-0</div>
-                    <div class="kpi-sub">suprimidas do original</div>
+                    <div class="kpi-sub" data-i18n="kpi_words_removed_sub">suprimidas do original</div>
                 </div>
             </div>
 
             <!-- Seção de Download do Relatório em PDF (Padronizado com .download-section do index.html) -->
             <div class="download-section">
                 <a href="#" id="btn-download-text-pdf" class="btn btn-pill-gradient btn-lg" target="_blank">
-                    <span class="btn-text">Baixar Relatório em PDF (.pdf) com Alterações Destacadas</span>
+                    <span class="btn-text" data-i18n="btn_download_pdf">Baixar Relatório em PDF (.pdf) com Alterações Destacadas</span>
                     <span class="btn-circle-icon">↓</span>
                 </a>
-                <p class="download-hint">Documento PDF formatado com resumo executivo, métricas e destaque colorido do que foi adicionado ou removido.</p>
+                <p class="download-hint" data-i18n="download_pdf_hint">Documento PDF formatado com resumo executivo, métricas e destaque colorido do que foi adicionado ou removido.</p>
             </div>
 
             <!-- Abas de Navegação dos Resultados (Padronizado com .result-nav-tabs do index.html) -->
@@ -447,14 +483,14 @@
                         <path d="m6 12 2-2-2-2"/>
                         <path d="m18 12-2 2 2 2"/>
                     </svg>
-                    <span>Comparação Visual</span>
+                    <span data-i18n="tab_visual">Comparação Visual</span>
                 </button>
                 <button type="button" class="result-nav-tab-btn" data-tab="table">
                     <svg class="splitc-icon tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="7"/>
                         <line x1="21" y1="21" x2="16.5" y2="16.5"/>
                     </svg>
-                    <span>Divergências Detalhadas</span>
+                    <span data-i18n="tab_diff_details">Divergências Detalhadas</span>
                     <span class="tab-btn-badge" id="badge-text-diffs">0</span>
                 </button>
                 <button type="button" class="result-nav-tab-btn" data-tab="stats">
@@ -463,7 +499,7 @@
                         <line x1="12" y1="20" x2="12" y2="4"/>
                         <line x1="6" y1="20" x2="6" y2="14"/>
                     </svg>
-                    <span>Analytics e Métricas</span>
+                    <span data-i18n="tab_analytics">Analytics e Métricas</span>
                 </button>
             </div>
 
@@ -471,7 +507,7 @@
             <div class="diff-table-section" id="text-pane-visual">
                 <div class="text-viewer-toolbar">
                     <div class="viewer-mode-pills">
-                        <span class="toolbar-label">Modo de Exibição:</span>
+                        <span class="toolbar-label" data-i18n="toolbar_mode_label">Modo de Exibição:</span>
                         <div class="mode-toggle-pill viewer-pill-group">
                             <button type="button" class="mode-btn viewer-mode-btn active" data-mode="rich_text">Rich Text</button>
                             <button type="button" class="mode-btn viewer-mode-btn" data-mode="redline">Redline (Unificado)</button>
@@ -482,23 +518,23 @@
                     <div class="viewer-right-controls">
                         <label class="viewer-only-diff-toggle">
                             <input type="checkbox" id="chk-only-diffs">
-                            <span>Exibir apenas diferenças</span>
+                            <span data-i18n="chk_only_diffs">Exibir apenas diferenças</span>
                         </label>
                         <div class="table-search input-search-wrapper">
                             <svg class="splitc-icon input-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="11" cy="11" r="7"/>
                                 <line x1="21" y1="21" x2="16.5" y2="16.5"/>
                             </svg>
-                            <input type="text" id="text-visual-search" placeholder="Buscar trecho no documento..." class="search-input">
+                            <input type="text" id="text-visual-search" placeholder="Buscar trecho no documento..." data-i18n-placeholder="search_text_ph" class="search-input">
                         </div>
                     </div>
                 </div>
 
                 <!-- Legenda Rápida -->
                 <div class="diff-legend-bar">
-                    <span class="legend-item"><span class="legend-dot removed"></span> Removido do Original</span>
-                    <span class="legend-item"><span class="legend-dot added"></span> Adicionado no Novo</span>
-                    <span class="legend-item"><span class="legend-dot modified"></span> Linha Modificada</span>
+                    <span class="legend-item"><span class="legend-dot removed"></span> <span data-i18n="legend_removed">Removido do Original</span></span>
+                    <span class="legend-item"><span class="legend-dot added"></span> <span data-i18n="legend_added">Adicionado no Novo</span></span>
+                    <span class="legend-item"><span class="legend-dot modified"></span> <span data-i18n="legend_modified">Linha Modificada</span></span>
                 </div>
 
                 <!-- Container do Visualizador -->
@@ -569,7 +605,7 @@
 
             <div class="action-footer">
                 <button type="button" class="btn btn-pill-outline" id="btn-text-reset">
-                    <span class="btn-text">Comparar Novos Documentos</span>
+                    <span class="btn-text" data-i18n="btn_text_reset">Comparar Novos Documentos</span>
                     <span class="btn-circle-icon">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
@@ -591,7 +627,7 @@
 
     <footer class="footer">
         <div class="container footer-content">
-            <p>&copy; 2026 ValidAí. Todos os direitos reservados.</p>
+            <p data-i18n="footer_copyright">&copy; 2026 ValidAí. Todos os direitos reservados.</p>
         </div>
     </footer>
 

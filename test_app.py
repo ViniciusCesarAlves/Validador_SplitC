@@ -282,6 +282,35 @@ def test_full_pipeline():
     assert 'guide-view-texto' in html_guide
     print("[OK] GET /como-usar renderizado com toggle Validar Planilhas / Validar Texto e ambos os guias!")
 
+    # 12. Teste do Dropdown de Idiomas (PT, ES, EN) e Internacionalização (i18n) em todas as páginas
+    res_i18n_js = client.get('/static/js/i18n.js')
+    assert res_i18n_js.status_code == 200, f"Falha GET /static/js/i18n.js: {res_i18n_js.status_code}"
+    i18n_content = res_i18n_js.data.decode('utf-8')
+    assert 'pt:' in i18n_content, "Dicionário PT ausente em i18n.js"
+    assert 'es:' in i18n_content, "Dicionário ES ausente em i18n.js"
+    assert 'en:' in i18n_content, "Dicionário EN ausente em i18n.js"
+    print("[OK] Arquivo estático i18n.js carregado com sucesso contendo os 3 idiomas (PT, ES, EN)!")
+
+    # Checar presença do dropdown e scripts em /, /validador-texto e /como-usar
+    pages_to_check = [
+        ('/', 'Validador Planilhas'),
+        ('/validador-texto', 'Validador Texto'),
+        ('/como-usar', 'Como Usar')
+    ]
+    for path, label in pages_to_check:
+        res_p = client.get(path)
+        assert res_p.status_code == 200, f"Falha GET {path}: {res_p.status_code}"
+        html_p = res_p.data.decode('utf-8')
+        assert 'lang-dropdown-wrapper' in html_p, f"Dropdown de idiomas ausente na página {label} ({path})"
+        assert 'lang-toggle-btn' in html_p, f"Botão de alternância de idioma ausente na página {label} ({path})"
+        assert 'data-lang="pt"' in html_p, f"Opção Português ausente na página {label} ({path})"
+        assert 'data-lang="es"' in html_p, f"Opção Espanhol ausente na página {label} ({path})"
+        assert 'data-lang="en"' in html_p, f"Opção Inglês ausente na página {label} ({path})"
+        assert 'i18n.js' in html_p, f"Script i18n.js não importado na página {label} ({path})"
+        assert 'data-i18n=' in html_p, f"Atributos data-i18n ausentes na página {label} ({path})"
+        assert 'data-i18n="footer_copyright"' in html_p, f"Footer com data-i18n ausente na página {label} ({path})"
+        print(f"[OK] Página {label} ({path}) validada com dropdown de idiomas e i18n!")
+
     print("\nTODOS OS TESTES PASSARAM COM 100% DE SUCESSO!")
 
 if __name__ == '__main__':

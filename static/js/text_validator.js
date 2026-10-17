@@ -346,31 +346,65 @@ document.addEventListener('DOMContentLoaded', () => {
         const bannerIdentical = document.getElementById('text-banner-identical');
         const bannerDiffs = document.getElementById('text-banner-diffs');
 
+        const lang = (window.ValidAiI18n && window.ValidAiI18n.getCurrentLanguage) ? window.ValidAiI18n.getCurrentLanguage() : 'pt';
+        const numLocale = lang === 'en' ? 'en-US' : (lang === 'es' ? 'es-ES' : 'pt-BR');
+
         if (s.is_identical) {
             bannerIdentical.style.display = 'flex';
             bannerDiffs.style.display = 'none';
-            document.getElementById('text-identical-title').textContent = 'Excelente! Os documentos estão 100% IDÊNTICOS!';
-            document.getElementById('text-identical-desc').textContent =
-                `Todas as linhas e palavras coincidiram perfeitamente entre "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}).`;
+            if (lang === 'es') {
+                document.getElementById('text-identical-title').textContent = '¡Excelente! ¡Los documentos son 100% IDÉNTICOS!';
+                document.getElementById('text-identical-desc').textContent =
+                    `Todas las líneas y palabras coincidieron perfectamente entre "${s.filename_a}" (${s.file_type_a}) y "${s.filename_b}" (${s.file_type_b}).`;
+            } else if (lang === 'en') {
+                document.getElementById('text-identical-title').textContent = 'Great! The documents are 100% IDENTICAL!';
+                document.getElementById('text-identical-desc').textContent =
+                    `All lines and words matched perfectly between "${s.filename_a}" (${s.file_type_a}) and "${s.filename_b}" (${s.file_type_b}).`;
+            } else {
+                document.getElementById('text-identical-title').textContent = 'Excelente! Os documentos estão 100% IDÊNTICOS!';
+                document.getElementById('text-identical-desc').textContent =
+                    `Todas as linhas e palavras coincidiram perfeitamente entre "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}).`;
+            }
         } else {
             bannerIdentical.style.display = 'none';
             bannerDiffs.style.display = 'flex';
-            document.getElementById('text-diffs-title').textContent =
-                `Atenção: Foram encontradas ${s.total_diff_blocks} linhas com alterações (${s.similarity_pct}% de similaridade)!`;
-            document.getElementById('text-diffs-desc').textContent =
-                `Comparando "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}) — ${s.modified_lines_count} modificadas, ${s.added_lines_count} adicionadas e ${s.removed_lines_count} removidas.`;
+            if (lang === 'es') {
+                document.getElementById('text-diffs-title').textContent =
+                    `¡Atención: Se encontraron ${s.total_diff_blocks} líneas con alteraciones (${s.similarity_pct}% de similitud)!`;
+                document.getElementById('text-diffs-desc').textContent =
+                    `Comparando "${s.filename_a}" (${s.file_type_a}) y "${s.filename_b}" (${s.file_type_b}) — ${s.modified_lines_count} modificadas, ${s.added_lines_count} añadidas y ${s.removed_lines_count} eliminadas.`;
+            } else if (lang === 'en') {
+                document.getElementById('text-diffs-title').textContent =
+                    `Notice: ${s.total_diff_blocks} lines with changes found (${s.similarity_pct}% similarity)!`;
+                document.getElementById('text-diffs-desc').textContent =
+                    `Comparing "${s.filename_a}" (${s.file_type_a}) and "${s.filename_b}" (${s.file_type_b}) — ${s.modified_lines_count} modified, ${s.added_lines_count} added, and ${s.removed_lines_count} removed.`;
+            } else {
+                document.getElementById('text-diffs-title').textContent =
+                    `Atenção: Foram encontradas ${s.total_diff_blocks} linhas com alterações (${s.similarity_pct}% de similaridade)!`;
+                document.getElementById('text-diffs-desc').textContent =
+                    `Comparando "${s.filename_a}" (${s.file_type_a}) e "${s.filename_b}" (${s.file_type_b}) — ${s.modified_lines_count} modificadas, ${s.added_lines_count} adicionadas e ${s.removed_lines_count} removidas.`;
+            }
         }
 
         // KPIs (Grid 2x3 padronizado)
         document.getElementById('text-kpi-similarity').textContent = `${s.similarity_pct}%`;
         document.getElementById('text-kpi-lines').textContent = `${s.total_lines_a} / ${s.total_lines_b}`;
-        document.getElementById('text-kpi-pages-sub').textContent = `${s.pages_a} pág. vs ${s.pages_b} pág.`;
-        document.getElementById('text-kpi-identical').textContent = s.identical_lines_count.toLocaleString('pt-BR');
-        document.getElementById('text-kpi-diff-lines').textContent = s.total_diff_blocks.toLocaleString('pt-BR');
-        document.getElementById('text-kpi-diff-breakdown').textContent =
-            `${s.modified_lines_count} mod. | ${s.added_lines_count} adic. | ${s.removed_lines_count} rem.`;
-        document.getElementById('text-kpi-words-added').textContent = `+${s.words_added.toLocaleString('pt-BR')}`;
-        document.getElementById('text-kpi-words-removed').textContent = `-${s.words_removed.toLocaleString('pt-BR')}`;
+        const pageLabel = lang === 'en' ? 'pg.' : (lang === 'es' ? 'pág.' : 'pág.');
+        document.getElementById('text-kpi-pages-sub').textContent = `${s.pages_a} ${pageLabel} vs ${s.pages_b} ${pageLabel}`;
+        document.getElementById('text-kpi-identical').textContent = s.identical_lines_count.toLocaleString(numLocale);
+        document.getElementById('text-kpi-diff-lines').textContent = s.total_diff_blocks.toLocaleString(numLocale);
+        if (lang === 'en') {
+            document.getElementById('text-kpi-diff-breakdown').textContent =
+                `${s.modified_lines_count} mod. | ${s.added_lines_count} added | ${s.removed_lines_count} rem.`;
+        } else if (lang === 'es') {
+            document.getElementById('text-kpi-diff-breakdown').textContent =
+                `${s.modified_lines_count} mod. | ${s.added_lines_count} añad. | ${s.removed_lines_count} elim.`;
+        } else {
+            document.getElementById('text-kpi-diff-breakdown').textContent =
+                `${s.modified_lines_count} mod. | ${s.added_lines_count} adic. | ${s.removed_lines_count} rem.`;
+        }
+        document.getElementById('text-kpi-words-added').textContent = `+${s.words_added.toLocaleString(numLocale)}`;
+        document.getElementById('text-kpi-words-removed').textContent = `-${s.words_removed.toLocaleString(numLocale)}`;
 
         // Badge da aba de divergências
         document.getElementById('badge-text-diffs').textContent = s.total_diff_blocks;
@@ -751,4 +785,12 @@ document.addEventListener('DOMContentLoaded', () => {
         stepResults.style.display = 'none';
         document.getElementById('text-step-upload').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+
+    // --- 16. Reagir a mudanças de idioma ---
+    window.addEventListener('validaiLanguageChanged', () => {
+        if (comparisonData) {
+            renderAllResults(comparisonData);
+        }
+    });
 });
+
