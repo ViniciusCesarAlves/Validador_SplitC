@@ -12,9 +12,104 @@
             page_title: "ValidAí - O seu validador",
             nav_sheets: "Validador Planilhas",
             nav_text: "Validador Texto",
+            nav_solutions: "Mais Validadores",
+            badge_coming_soon: "Em breve",
+            module_cadastros_title: "Higienizador de Cadastros",
+            module_cadastros_sub: "Validação de CPF/CNPJ, e-mails e duplicados",
+            module_xml_title: "Conciliador de Notas Fiscais (XML)",
+            module_xml_sub: "Cruzamento de XMLs (NFe/NFSe) vs. Excel",
+            module_ofx_title: "Conciliação de Taxas e Extratos (.OFX)",
+            module_ofx_sub: "Auditoria de maquininhas, PIX e marketplaces",
+            module_rh_title: "Auditoria de Folha e RH",
+            module_rh_sub: "Batimento de folha de pagamento e benefícios",
+            module_json_title: "Comparador de JSON / APIs",
+            module_json_sub: "Diferenças estruturais entre payloads e objetos",
+            module_upcoming_notice: "está em fase de homologação e estará disponível em breve!",
             nav_how_to_use: "Como usar?",
             nav_toggle_theme: "Alternar tema claro/escuro",
             footer_copyright: "© 2026 ValidAí. Todos os direitos reservados.",
+            badge_new: "Novo",
+
+            // Higienizador de Cadastros
+            cadastros_page_title: "ValidAí - Higienizador e Auditor de Cadastros",
+            cadastros_hero_badge: "Módulo de Integridade Cadastral",
+            cadastros_hero_subtag: "Receita Federal Módulo 11",
+            cadastros_hero_title: "Higienizador e Auditor de Cadastros",
+            cadastros_hero_desc: "Audite CPFs e CNPJs com cálculo matemático real, recupere zeros à esquerda comidos pelo Excel, padronize nomes em Title Case, valide e-mails e telefones, e remova duplicados em segundos.",
+            cadastros_step1_badge: "Passo 1",
+            cadastros_step1_title: "Carregar a Base de Cadastros",
+            cadastros_step1_desc: "Arraste a planilha de clientes, fornecedores, leads ou funcionários (.xlsx, .xls ou .csv).",
+            cadastros_drop_title: "Selecionar Planilha de Cadastros",
+            cadastros_drop_hint: "Arraste o arquivo aqui ou clique para buscar no computador",
+            cadastros_btn_read: "Ler Cabeçalhos e Continuar",
+            cadastros_step2_badge: "Passo 2",
+            cadastros_step2_title: "Mapear Colunas e Escolher Regras de Limpeza",
+            cadastros_step2_desc: "O sistema pré-identificou as colunas da sua planilha. Ajuste as correspondências e ative as padronizações desejadas.",
+            cadastros_file_label: "Arquivo:",
+            cadastros_rows_label: "Total de Linhas:",
+            cadastros_cols_label: "Colunas Detectadas:",
+            cadastros_mapping_title: "Mapeamento das Colunas da Base",
+            cadastros_col_doc_label: "Coluna de Documento (CPF / CNPJ)",
+            cadastros_col_doc_hint: "Valida dígitos verificadores oficiais e recupera zeros à esquerda.",
+            cadastros_col_name_label: "Coluna de Nome / Razão Social",
+            cadastros_col_name_hint: "Padronização para Title Case e remoção de caracteres estranhos.",
+            cadastros_col_email_label: "Coluna de E-mail",
+            cadastros_col_email_hint: "Checagem de sintaxe RFC e detector de typos (@gmial.com, @hotmal.com).",
+            cadastros_col_phone_label: "Coluna de Telefone / Celular",
+            cadastros_col_phone_hint: "Validação de DDD e 9º dígito obrigatório para celulares.",
+            cadastros_select_placeholder: "-- Selecione a coluna --",
+            cadastros_duplicate_keys_label: "Buscar Duplicados Por:",
+            cadastros_dup_by_doc: "Mesmo CPF/CNPJ",
+            cadastros_dup_by_email: "Mesmo E-mail",
+            cadastros_dup_by_phone: "Mesmo Telefone",
+            cadastros_rules_title: "Regras de Padronização Automática",
+            cadastros_rule_doc_title: "Formato de CPF / CNPJ",
+            cadastros_doc_format_mask: "Aplicar máscara padrão (000.000.000-00)",
+            cadastros_doc_format_digits: "Apenas números (00000000000)",
+            cadastros_rule_zeros_title: "Recuperar Zeros à Esquerda nos Documentos",
+            cadastros_rule_zeros_desc: "Detecta CPFs de 9 ou 10 dígitos (onde o Excel engoliu os zeros iniciais) e preenche até 11 dígitos, validando o DV.",
+            cadastros_rule_name_title: "Padronizar Nomes em Title Case",
+            cadastros_rule_name_desc: "Converte \"JOÃO DA SILVA\" para \"João da Silva\", preservando partículas (\"de\", \"da\", \"do\") e removendo espaços duplicados.",
+            cadastros_rule_email_title: "Converter E-mails para Minúsculo e Checar Typos",
+            cadastros_rule_email_desc: "Remove espaços acidentais e avisa sobre provedores digitados com erro (ex: @gmial.com, @hotmal.com).",
+            cadastros_rule_phone_title: "Padronização de Telefones e WhatsApp",
+            cadastros_phone_format_mask: "(XX) 9XXXX-XXXX",
+            cadastros_phone_format_wa: "55XXXXXXXXXXX (WhatsApp)",
+            cadastros_rule_dedup_title: "Remover Linhas Duplicadas na Base Higienizada",
+            cadastros_rule_dedup_desc: "Mantém a primeira linha identificada e remove as repetições na planilha higienizada pronta para uso.",
+            btn_change_file: "Trocar Arquivo",
+            cadastros_btn_process: "Processar e Higienizar Base",
+            cadastros_step3_badge: "Passo 3",
+            cadastros_step3_title: "Dashboard de Auditoria e Downloads",
+            cadastros_step3_desc: "Auditoria concluída com sucesso. Visualize os indicadores, as inconsistências encontradas e baixe os arquivos finais.",
+            cadastros_kpi_total: "Total Analisado",
+            cadastros_kpi_total_hint: "Linhas na base enviada",
+            cadastros_kpi_valid: "Cadastros 100% Válidos",
+            cadastros_kpi_invalid_docs: "CPFs / CNPJs Inválidos",
+            cadastros_kpi_invalid_docs_hint: "Falha no Módulo 11 ou tamanho",
+            cadastros_kpi_duplicates: "Registros Duplicados",
+            cadastros_kpi_duplicates_hint: "Mesmo CPF, e-mail ou chave",
+            cadastros_kpi_contacts: "E-mails / Telefones Suspeitos",
+            cadastros_kpi_contacts_hint: "Typos, DDD ou dígitos incorretos",
+            cadastros_kpi_corrections: "Correções Automáticas",
+            cadastros_kpi_corrections_hint: "Zeros, nomes e máscaras aplicadas",
+            cadastros_dl_clean_title: "Base 100% Higienizada (Pronta para Uso)",
+            cadastros_dl_clean_desc: "Planilha completa com nomes padronizados em Title Case, zeros à esquerda recuperados nos CPFs, telefones e e-mails tratados.",
+            cadastros_btn_dl_clean: "Baixar Base Higienizada (.xlsx)",
+            cadastros_dl_audit_title: "Relatório de Auditoria (Células Pintadas)",
+            cadastros_dl_audit_desc: "Planilha com logo oficial, coluna Status_Validacao e células coloridas em vermelho/amarelo para envio à equipe de correção.",
+            cadastros_btn_dl_audit: "Baixar Relatório de Auditoria (.xlsx)",
+            cadastros_tab_docs: "Documentos Inválidos",
+            cadastros_tab_dups: "Duplicados Encontrados",
+            cadastros_tab_contacts: "E-mails e Telefones Suspeitos",
+            cadastros_tab_preview: "Prévia da Base Higienizada",
+            cadastros_btn_restart: "Auditar Outra Base de Cadastros",
+            badge_essential: "Essencial",
+            badge_exclusive: "Automático",
+            badge_optional: "Opcional",
+            badge_production: "Produção",
+            badge_audit_team: "Auditoria",
+            badge_active: "Ativo",
 
             // Validador Planilhas - Passo 1
             sheets_step1_badge: "Passo 1",
@@ -333,9 +428,104 @@
             page_title: "ValidAí - Tu validador de datos",
             nav_sheets: "Validador Hojas de Cálculo",
             nav_text: "Validador de Texto",
+            nav_solutions: "Más Validadores",
+            badge_coming_soon: "Próximamente",
+            module_cadastros_title: "Higienizador de Registros",
+            module_cadastros_sub: "Validación de CPF/CNPJ/RUT, e-mails y duplicados",
+            module_xml_title: "Conciliador de Facturas (XML)",
+            module_xml_sub: "Cruce de XMLs (Facturas electrónicas) vs. Excel",
+            module_ofx_title: "Conciliación de Comisiones y Extractos (.OFX)",
+            module_ofx_sub: "Auditoría de pasarelas de pago, transferencias y marketplaces",
+            module_rh_title: "Auditoría de Nómina y RRHH",
+            module_rh_sub: "Cotejo de nómina de sueldos y beneficios laborales",
+            module_json_title: "Comparador de JSON / APIs",
+            module_json_sub: "Diferencias estructurales entre payloads y objetos",
+            module_upcoming_notice: "¡está en fase de homologación y estará disponible próximamente!",
             nav_how_to_use: "¿Cómo usar?",
             nav_toggle_theme: "Cambiar tema claro/oscuro",
             footer_copyright: "© 2026 ValidAí. Todos los derechos reservados.",
+            badge_new: "Nuevo",
+
+            // Higienizador de Cadastros
+            cadastros_page_title: "ValidAí - Higienizador y Auditor de Registros",
+            cadastros_hero_badge: "Módulo de Integridad de Registros",
+            cadastros_hero_subtag: "Cálculo Oficial Módulo 11",
+            cadastros_hero_title: "Higienizador y Auditor de Registros",
+            cadastros_hero_desc: "Audite documentos de identidad fiscal, recupere ceros a la izquierda eliminados por Excel, estandarice nombres en formato Title Case, valide correos y teléfonos, y elimine duplicados en segundos.",
+            cadastros_step1_badge: "Paso 1",
+            cadastros_step1_title: "Cargar Base de Registros",
+            cadastros_step1_desc: "Arrastre la hoja de cálculo de clientes, proveedores, prospectos o empleados (.xlsx, .xls o .csv).",
+            cadastros_drop_title: "Seleccionar Hoja de Registros",
+            cadastros_drop_hint: "Arrastre el archivo aquí o haga clic para buscar en el equipo",
+            cadastros_btn_read: "Leer Encabezados y Continuar",
+            cadastros_step2_badge: "Paso 2",
+            cadastros_step2_title: "Mapear Columnas y Reglas de Limpieza",
+            cadastros_step2_desc: "El sistema preidentificó las columnas de su archivo. Ajuste los campos y active las reglas deseadas.",
+            cadastros_file_label: "Archivo:",
+            cadastros_rows_label: "Total de Filas:",
+            cadastros_cols_label: "Columnas Detectadas:",
+            cadastros_mapping_title: "Mapeo de Columnas de la Base",
+            cadastros_col_doc_label: "Columna de Documento Fiscal (CPF / CNPJ / RUT)",
+            cadastros_col_doc_hint: "Valida dígitos verificadores y recupera ceros iniciales.",
+            cadastros_col_name_label: "Columna de Nombre / Razón Social",
+            cadastros_col_name_hint: "Conversión a Title Case y remoción de caracteres extraños.",
+            cadastros_col_email_label: "Columna de Correo Electrónico",
+            cadastros_col_email_hint: "Validación sintáctica RFC y detector de errores comunes de dominio.",
+            cadastros_col_phone_label: "Columna de Teléfono / Móvil",
+            cadastros_col_phone_hint: "Validación de código de área y formato nacional.",
+            cadastros_select_placeholder: "-- Seleccione la columna --",
+            cadastros_duplicate_keys_label: "Buscar Duplicados Por:",
+            cadastros_dup_by_doc: "Mismo Documento",
+            cadastros_dup_by_email: "Mismo Correo",
+            cadastros_dup_by_phone: "Mismo Teléfono",
+            cadastros_rules_title: "Reglas de Estandarización Automática",
+            cadastros_rule_doc_title: "Formato de Documento",
+            cadastros_doc_format_mask: "Aplicar máscara oficial",
+            cadastros_doc_format_digits: "Solo dígitos numéricos",
+            cadastros_rule_zeros_title: "Recuperar Ceros a la Izquierda en Documentos",
+            cadastros_rule_zeros_desc: "Detecta documentos con ceros iniciales omitidos por Excel y los completa automáticamente validando el DV.",
+            cadastros_rule_name_title: "Estandarizar Nombres en Title Case",
+            cadastros_rule_name_desc: "Convierte nombres a mayúscula inicial respetando conectores (\"de\", \"la\", \"del\") y removiendo espacios dobles.",
+            cadastros_rule_email_title: "Convertir Correos a Minúscula y Detectar Errores",
+            cadastros_rule_email_desc: "Elimina espacios en blanco y alerta sobre dominios mal escritos (ej: @gmial.com, @hotmal.com).",
+            cadastros_rule_phone_title: "Estandarización de Teléfonos y WhatsApp",
+            cadastros_phone_format_mask: "Formato Nacional con Paréntesis",
+            cadastros_phone_format_wa: "Dígitos Internacionales (WhatsApp)",
+            cadastros_rule_dedup_title: "Remover Filas Duplicadas en la Base Depurada",
+            cadastros_rule_dedup_desc: "Mantiene la primera ocurrencia y remueve las filas repetidas en el archivo final.",
+            btn_change_file: "Cambiar Archivo",
+            cadastros_btn_process: "Procesar y Depurar Base",
+            cadastros_step3_badge: "Paso 3",
+            cadastros_step3_title: "Panel de Auditoría y Descargas",
+            cadastros_step3_desc: "Auditoría completada exitosamente. Revise los indicadores e inconsistencias y descargue los archivos.",
+            cadastros_kpi_total: "Total Analizado",
+            cadastros_kpi_total_hint: "Filas en el archivo cargado",
+            cadastros_kpi_valid: "Registros 100% Válidos",
+            cadastros_kpi_invalid_docs: "Documentos Inválidos",
+            cadastros_kpi_invalid_docs_hint: "Fallo en dígito verificador o longitud",
+            cadastros_kpi_duplicates: "Registros Duplicados",
+            cadastros_kpi_duplicates_hint: "Mismo documento, correo o clave",
+            cadastros_kpi_contacts: "Correos / Teléfonos con Error",
+            cadastros_kpi_contacts_hint: "Errores de tipeo o dígitos faltantes",
+            cadastros_kpi_corrections: "Correcciones Automáticas",
+            cadastros_kpi_corrections_hint: "Ceros recuperados y textos formateados",
+            cadastros_dl_clean_title: "Base 100% Depurada (Lista para Uso)",
+            cadastros_dl_clean_desc: "Archivo completo con nombres corregidos, ceros a la izquierda recuperados y duplicados resueltos.",
+            cadastros_btn_dl_clean: "Descargar Base Depurada (.xlsx)",
+            cadastros_dl_audit_title: "Informe de Auditoría (Celdas Coloreadas)",
+            cadastros_dl_audit_desc: "Archivo con logo oficial, columna de estado y celdas resaltadas en rojo/amarillo para su corrección.",
+            cadastros_btn_dl_audit: "Descargar Informe de Auditoría (.xlsx)",
+            cadastros_tab_docs: "Documentos Inválidos",
+            cadastros_tab_dups: "Duplicados Encontrados",
+            cadastros_tab_contacts: "Correos y Teléfonos Sospechosos",
+            cadastros_tab_preview: "Vista Previa de Base Depurada",
+            cadastros_btn_restart: "Auditar Otra Base de Registros",
+            badge_essential: "Esencial",
+            badge_exclusive: "Automático",
+            badge_optional: "Opcional",
+            badge_production: "Producción",
+            badge_audit_team: "Auditoría",
+            badge_active: "Activo",
 
             // Validador Planilhas - Passo 1
             sheets_step1_badge: "Paso 1",
@@ -654,9 +844,104 @@
             page_title: "ValidAí - Your Data Validator",
             nav_sheets: "Spreadsheet Validator",
             nav_text: "Text Validator",
+            nav_solutions: "More Validators",
+            badge_coming_soon: "Coming soon",
+            module_cadastros_title: "Data Cleanser & Deduplicator",
+            module_cadastros_sub: "Validation of Tax IDs, emails and duplicates",
+            module_xml_title: "Electronic Invoices & XML Reconciler",
+            module_xml_sub: "Cross-check XMLs (Invoices) vs. Excel sheets",
+            module_ofx_title: "Fees & Bank Statement Reconciliation (.OFX)",
+            module_ofx_sub: "Audit of POS fees, instant payments and marketplaces",
+            module_rh_title: "Payroll & HR Audit",
+            module_rh_sub: "Reconciliation of payroll, salaries and employee benefits",
+            module_json_title: "JSON & API Payload Comparator",
+            module_json_sub: "Structural diffs between payloads and nested objects",
+            module_upcoming_notice: "is currently in development and will be available soon!",
             nav_how_to_use: "How to use?",
             nav_toggle_theme: "Toggle light/dark theme",
             footer_copyright: "© 2026 ValidAí. All rights reserved.",
+            badge_new: "New",
+
+            // Higienizador de Cadastros
+            cadastros_page_title: "ValidAí - Data Cleanser & Records Auditor",
+            cadastros_hero_badge: "Records Integrity & Audit Module",
+            cadastros_hero_subtag: "Modulo 11 Verification Engine",
+            cadastros_hero_title: "Data Cleanser & Records Auditor",
+            cadastros_hero_desc: "Audit tax IDs and documents with real checksum verification, restore Excel-stripped leading zeros, format names to Title Case, validate emails and phones, and eliminate duplicate records in seconds.",
+            cadastros_step1_badge: "Step 1",
+            cadastros_step1_title: "Upload Customer / Records Sheet",
+            cadastros_step1_desc: "Drag and drop your spreadsheet of clients, suppliers, leads, or employees (.xlsx, .xls, or .csv).",
+            cadastros_drop_title: "Select Records Spreadsheet",
+            cadastros_drop_hint: "Drag file here or click to browse on computer",
+            cadastros_btn_read: "Read Headers and Continue",
+            cadastros_step2_badge: "Step 2",
+            cadastros_step2_title: "Map Columns & Select Cleansing Rules",
+            cadastros_step2_desc: "The system automatically suggested your column mapping. Adjust fields and enable desired standardizations.",
+            cadastros_file_label: "File:",
+            cadastros_rows_label: "Total Rows:",
+            cadastros_cols_label: "Detected Columns:",
+            cadastros_mapping_title: "Records Column Mapping",
+            cadastros_col_doc_label: "Tax ID / Document Column (CPF / CNPJ)",
+            cadastros_col_doc_hint: "Verifies official check digits and recovers lost leading zeros.",
+            cadastros_col_name_label: "Name / Company Name Column",
+            cadastros_col_name_hint: "Capitalizes into Title Case and strips noise characters.",
+            cadastros_col_email_label: "Email Column",
+            cadastros_col_email_hint: "RFC syntax verification and common domain typo detector.",
+            cadastros_col_phone_label: "Phone / Mobile Column",
+            cadastros_col_phone_hint: "Area code check and 9-digit mobile validation.",
+            cadastros_select_placeholder: "-- Select column --",
+            cadastros_duplicate_keys_label: "Search Duplicates By:",
+            cadastros_dup_by_doc: "Same Tax ID",
+            cadastros_dup_by_email: "Same Email",
+            cadastros_dup_by_phone: "Same Phone",
+            cadastros_rules_title: "Automatic Standardization Rules",
+            cadastros_rule_doc_title: "Document / Tax ID Format",
+            cadastros_doc_format_mask: "Apply standard punctuation mask",
+            cadastros_doc_format_digits: "Raw numbers only (no dots/dashes)",
+            cadastros_rule_zeros_title: "Recover Missing Leading Zeros in Tax IDs",
+            cadastros_rule_zeros_desc: "Detects Excel-truncated IDs (9 or 10 digits) and pads them to 11 digits when valid check digits match.",
+            cadastros_rule_name_title: "Format Names into Title Case",
+            cadastros_rule_name_desc: "Converts \"JOHN DOE\" to \"John Doe\", preserving lowercased prepositions (\"of\", \"de\") and removing extra spaces.",
+            cadastros_rule_email_title: "Lowercase Emails and Detect Domain Typos",
+            cadastros_rule_email_desc: "Strips whitespaces and warns about misspelled providers (e.g. @gmial.com, @hotmal.com).",
+            cadastros_rule_phone_title: "Phone and WhatsApp Standardization",
+            cadastros_phone_format_mask: "Masked Format (XX) 9XXXX-XXXX",
+            cadastros_phone_format_wa: "Direct WhatsApp Format 55XXXXXXXXXXX",
+            cadastros_rule_dedup_title: "Remove Duplicate Rows in Cleaned Output",
+            cadastros_rule_dedup_desc: "Keeps the first occurrence and removes redundant duplicate rows from final clean export.",
+            btn_change_file: "Change File",
+            cadastros_btn_process: "Process & Cleanse Dataset",
+            cadastros_step3_badge: "Step 3",
+            cadastros_step3_title: "Audit Dashboard & Downloads",
+            cadastros_step3_desc: "Cleansing and audit completed successfully. Inspect metrics and discrepancies, and download finalized files.",
+            cadastros_kpi_total: "Total Analyzed",
+            cadastros_kpi_total_hint: "Rows in uploaded dataset",
+            cadastros_kpi_valid: "100% Valid Records",
+            cadastros_kpi_invalid_docs: "Invalid Tax IDs",
+            cadastros_kpi_invalid_docs_hint: "Modulo 11 or length failure",
+            cadastros_kpi_duplicates: "Duplicate Records",
+            cadastros_kpi_duplicates_hint: "Same tax ID, email, or key",
+            cadastros_kpi_contacts: "Suspicious Emails / Phones",
+            cadastros_kpi_contacts_hint: "Typos, missing digits or area codes",
+            cadastros_kpi_corrections: "Automatic Corrections",
+            cadastros_kpi_corrections_hint: "Zeros recovered and text formatted",
+            cadastros_dl_clean_title: "100% Cleansed Dataset (Ready for Production)",
+            cadastros_dl_clean_desc: "Complete sheet with names formatted in Title Case, leading zeros restored in IDs, and contacts cleaned.",
+            cadastros_btn_dl_clean: "Download Cleansed Dataset (.xlsx)",
+            cadastros_dl_audit_title: "Audit Report (Highlighted Cells)",
+            cadastros_dl_audit_desc: "Workbook with official branding, Status column, and error cells highlighted in red/amber for review.",
+            cadastros_btn_dl_audit: "Download Audit Report (.xlsx)",
+            cadastros_tab_docs: "Invalid Tax IDs",
+            cadastros_tab_dups: "Duplicate Records Found",
+            cadastros_tab_contacts: "Suspicious Emails & Phones",
+            cadastros_tab_preview: "Cleaned Dataset Preview",
+            cadastros_btn_restart: "Audit Another Dataset",
+            badge_essential: "Essential",
+            badge_exclusive: "Automatic",
+            badge_optional: "Optional",
+            badge_production: "Production",
+            badge_audit_team: "Audit",
+            badge_active: "Active",
 
             // Validador Planilhas - Passo 1
             sheets_step1_badge: "Step 1",
@@ -1094,16 +1379,91 @@
         });
     }
 
+    function showUpcomingToast(msg) {
+        let toast = document.getElementById('validai-upcoming-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'validai-upcoming-toast';
+            toast.className = 'validai-upcoming-toast';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `
+            <div class="validai-toast-content">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4FD580" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>${msg}</span>
+            </div>
+        `;
+        toast.classList.add('show');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3600);
+    }
+
+    function initSolutionsDropdown() {
+        const wrapper = document.getElementById('nav-solutions-dropdown');
+        const btn = document.getElementById('nav-solutions-btn');
+        const menu = document.getElementById('nav-solutions-menu');
+
+        if (!wrapper || !btn || !menu) return;
+
+        // Toggle com clique (Touch / Mobile / Teclado)
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const isOpen = wrapper.classList.toggle('open');
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Fechar ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Fechar com Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && wrapper.classList.contains('open')) {
+                wrapper.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.focus();
+            }
+        });
+
+        // Intercepta cliques nos itens "Em breve"
+        wrapper.querySelectorAll('.nav-dropdown-item[data-upcoming="true"]').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                wrapper.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+
+                const titleEl = item.querySelector('.nav-dropdown-item-title');
+                const title = titleEl ? titleEl.textContent.trim() : 'Módulo';
+                const lang = getCurrentLanguage();
+                const noticeTemplate = TRANSLATIONS[lang]?.module_upcoming_notice || TRANSLATIONS.pt.module_upcoming_notice;
+                showUpcomingToast(`"${title}" ${noticeTemplate}`);
+            });
+        });
+    }
+
     // Inicialização
     const currentLang = getCurrentLanguage();
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             initLanguageDropdown();
+            initSolutionsDropdown();
             applyTranslations(currentLang);
         });
     } else {
         initLanguageDropdown();
+        initSolutionsDropdown();
         applyTranslations(currentLang);
     }
 

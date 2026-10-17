@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify, send_file
 import comparator
 import single_auditor
 import text_comparator
+import cadastros_cleaner
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # Suporta até 100MB de arquivo
@@ -27,6 +28,10 @@ def index():
 @app.route('/validador-texto')
 def validador_texto():
     return render_template('validador_texto.html')
+
+@app.route('/validador-cadastros')
+def validador_cadastros():
+    return render_template('validador_cadastros.html')
 
 @app.route('/como-usar')
 def como_usar():
@@ -445,6 +450,180 @@ def download_text_pdf_report(report_id):
         download_name=rep['filename'],
         mimetype=rep.get('mimetype', 'application/pdf')
     )
+
+# ========================================================
+# ROTAS DO HIGIENIZADOR DE CADASTROS (CPF, CNPJ, E-MAIL, ETC.)
+# ========================================================
+
+@app.route('/api/cadastros/upload-headers', methods=['POST'])
+def cadastros_upload_headers():
+    try:
+        file = request.files.get('file')
+        if not file:
+            return jsonify({'error': 'Nenhum arquivo enviado. Selecione uma planilha de cadastros (.xlsx, .xls ou .csv).'}), 400
+
+        session_id = str(uuid.uuid4())
+        session_folder = os.path.join(UPLOAD_DIR, session_id)
+        os.makedirs(session_folder, exist_ok=True)
+
+        filename = file.filename
+        filepath = os.path.join(session_folder, filename)
+        file.save(filepath)
+
+        df = comparator.read_tabular_file(filepath, filename)
+        cols = list(df.columns)
+
+        # Sugestão automática e inteligente de colunas
+        def find_col(keywords, exclude=None):
+            if exclude is None:
+                exclude = set()
+            for c in cols:
+                if c in exclude:
+                    continue
+                c_norm = comparator.normalize_column_name(c)
+                if any(k in c_norm for k in keywords):
+                    return c
+            return ""
+
+        col_doc = find_col(['CPF', 'CNPJ', 'DOC', 'DOCUMENTO', 'RUT', 'IDENTIFICACAO'])
+        col_email = find_col(['EMAIL', 'E-MAIL', 'CORREIO', 'MAIL'], exclude={col_doc})
+        col_phone = find_col(['TELEFONE', 'CELULAR', 'TEL', 'CEL', 'FONE', 'WHATSAPP'], exclude={col_doc, col_email})
+        col_name = find_col(['NOME', 'RAZAO', 'CLIENTE', 'FORNECEDOR', 'FUNCIONARIO', 'LEAD', 'TITULAR', 'CONTATO'], exclude={col_doc, col_email, col_phone})
+
+        suggested = {
+            'col_doc': col_doc,
+            'col_name': col_name,
+            'col_email': col_email,
+            'col_phone': col_phone
+        }
+
+        # Amostra das primeiras 5 linhas
+        sample_rows = []
+        for _, row in df.head(5).iterrows():
+            row_dict = {}
+            for c in cols:
+                val = row[c]
+                row_dict[c] = "" if (val is None or str(val) == 'nan') else str(val)
+            sample_rows.append(row_dict)
+
+        SESSIONS[session_id] = {
+            'mode': 'cadastros',
+            'path': filepath,
+            'filename': filename,
+            'cols': cols,
+            'total_rows': len(df)
+        }
+
+        return jsonify({
+            'session_id': session_id,
+            'filename': filename,
+            'total_rows': len(df),
+            'total_cols': len(cols),
+            'cols': cols,
+            'suggested': suggested,
+            'sample_data': sample_rows
+        })
+
+    except Exception as e:
+        return jsonify({'error': f'Falha ao carregar base de cadastros: {str(e)}'}), 500
+
+@app.route('/api/cadastros/process', methods=['POST'])
+def cadastros_process():
+    try:
+        data = request.json or {}
+        session_id = data.get('session_id')
+
+        if not session_id or session_id not in SESSIONS:
+            return jsonify({'error': 'Sessão inválida ou expirada. Faça o upload novamente.'}), 400
+
+        sess = SESSIONS[session_id]
+        df = comparator.read_tabular_file(sess['path'], sess['filename'])
+
+        options = {
+            'col_doc': data.get('col_doc'),
+            'col_name': data.get('col_name'),
+            'col_email': data.get('col_email'),
+            'col_phone': data.get('col_phone'),
+            'duplicate_keys': data.get('duplicate_keys', ['doc']),
+            'doc_format': data.get('doc_format', 'mask'),
+            'auto_recover_zero': bool(data.get('auto_recover_zero', True)),
+            'name_title_case': bool(data.get('name_title_case', True)),
+            'email_lowercase': bool(data.get('email_lowercase', True)),
+            'phone_format': data.get('phone_format', 'mask'),
+            'remove_duplicates': bool(data.get('remove_duplicates', False))
+        }
+
+        results = cadastros_cleaner.process_cadastros(df, options)
+
+        # Gera os 2 arquivos Excel (Base Higienizada e Relatório de Auditoria Pintado)
+        report_id = str(uuid.uuid4())
+        clean_filename = f"Base_Higienizada_{report_id[:8]}.xlsx"
+        clean_path = os.path.join(REPORT_DIR, clean_filename)
+        cadastros_cleaner.generate_clean_excel(results['df_clean'], clean_path)
+
+        audit_filename = f"Relatorio_Auditoria_Cadastros_{report_id[:8]}.xlsx"
+        audit_path = os.path.join(REPORT_DIR, audit_filename)
+        cadastros_cleaner.generate_audit_excel(
+            df_audit=results['df_audit'],
+            summary=results['summary'],
+            invalid_docs=results['invalid_docs'],
+            duplicates=results['duplicates'],
+            suspicious_contacts=results['suspicious_contacts'],
+            row_cell_errors=results['row_cell_errors'],
+            output_path=audit_path
+        )
+
+        REPORTS[f"cadastros_clean_{report_id}"] = {
+            'path': clean_path,
+            'filename': clean_filename
+        }
+        REPORTS[f"cadastros_audit_{report_id}"] = {
+            'path': audit_path,
+            'filename': audit_filename
+        }
+
+        return jsonify({
+            'success': True,
+            'report_id': report_id,
+            'summary': results['summary'],
+            'invalid_docs': results['invalid_docs'],
+            'duplicates': results['duplicates'],
+            'suspicious_contacts': results['suspicious_contacts'],
+            'preview_clean': results['preview_clean'],
+            'clean_columns': results['clean_columns']
+        })
+
+    except ValueError as ve:
+        return jsonify({
+            'error': str(ve),
+            'title': 'Coluna Incompatível com a Referência'
+        }), 400
+    except Exception as e:
+        return jsonify({'error': f'Erro ao processar higienização: {str(e)}'}), 500
+
+@app.route('/api/cadastros/download-clean/<report_id>', methods=['GET'])
+def cadastros_download_clean(report_id):
+    key = f"cadastros_clean_{report_id}"
+    if key in REPORTS and os.path.exists(REPORTS[key]['path']):
+        return send_file(
+            REPORTS[key]['path'],
+            as_attachment=True,
+            download_name=REPORTS[key]['filename'],
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    return jsonify({'error': 'Arquivo limpo expirado ou não encontrado.'}), 404
+
+@app.route('/api/cadastros/download-audit/<report_id>', methods=['GET'])
+def cadastros_download_audit(report_id):
+    key = f"cadastros_audit_{report_id}"
+    if key in REPORTS and os.path.exists(REPORTS[key]['path']):
+        return send_file(
+            REPORTS[key]['path'],
+            as_attachment=True,
+            download_name=REPORTS[key]['filename'],
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    return jsonify({'error': 'Relatório de auditoria expirado ou não encontrado.'}), 404
 
 if __name__ == '__main__':
     print("Iniciando Validador de Dados em http://127.0.0.1:5000")

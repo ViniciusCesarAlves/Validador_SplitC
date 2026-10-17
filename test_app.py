@@ -295,6 +295,7 @@ def test_full_pipeline():
     pages_to_check = [
         ('/', 'Validador Planilhas'),
         ('/validador-texto', 'Validador Texto'),
+        ('/validador-cadastros', 'Higienizador de Cadastros'),
         ('/como-usar', 'Como Usar')
     ]
     for path, label in pages_to_check:
@@ -310,6 +311,178 @@ def test_full_pipeline():
         assert 'data-i18n=' in html_p, f"Atributos data-i18n ausentes na página {label} ({path})"
         assert 'data-i18n="footer_copyright"' in html_p, f"Footer com data-i18n ausente na página {label} ({path})"
         print(f"[OK] Página {label} ({path}) validada com dropdown de idiomas e i18n!")
+
+    # 13. Teste do Menu Dropdown de Soluções ("Mais Validadores")
+    for path, label in pages_to_check:
+        res_p = client.get(path)
+        assert res_p.status_code == 200
+        html_p = res_p.data.decode('utf-8')
+        assert 'nav-solutions-dropdown' in html_p, f"Dropdown Mais Validadores ausente em {label}"
+        assert 'nav-solutions-btn' in html_p, f"Botão Mais Validadores ausente em {label}"
+        assert 'nav-solutions-menu' in html_p, f"Menu Mais Validadores ausente em {label}"
+        assert '/validador-cadastros' in html_p, f"Item Higienizador de Cadastros ausente em {label}"
+        assert '/validador-xml' in html_p, f"Item Conciliador XML ausente em {label}"
+        assert '/conciliador-taxas' in html_p, f"Item Conciliação Taxas OFX ausente em {label}"
+        assert '/auditoria-rh' in html_p, f"Item Auditoria RH ausente em {label}"
+        assert '/validador-json' in html_p, f"Item Comparador JSON ausente em {label}"
+        assert 'badge_coming_soon' in html_p, f"Badge 'Em breve' ausente em {label}"
+        assert 'Em breve' in html_p, f"Texto da badge 'Em breve' ausente em {label}"
+    print("[OK] Menu Dropdown 'Mais Validadores' validado com os 5 novos módulos em todas as páginas!")
+
+    # 14. Teste completo do Higienizador de Cadastros (/validador-cadastros)
+    # A. Renderização da página e seus elementos de UI
+    res_cad = client.get('/validador-cadastros')
+    assert res_cad.status_code == 200, f"Falha GET /validador-cadastros: {res_cad.status_code}"
+    html_cad = res_cad.data.decode('utf-8')
+    assert 'drop-cadastros' in html_cad, "Área de upload único ausente"
+    assert 'step-config-cadastros' in html_cad, "Card de configurações e regras ausente"
+    assert 'step-results-cadastros' in html_cad, "Seção de resultados ausente"
+    assert 'kpi-total-rows' in html_cad, "KPI total analisado ausente"
+    assert 'kpi-valid-rows' in html_cad, "KPI válidos ausente"
+    assert 'kpi-invalid-docs' in html_cad, "KPI docs inválidos ausente"
+    assert 'kpi-duplicate-rows' in html_cad, "KPI duplicados ausente"
+    assert 'kpi-suspicious-contacts' in html_cad, "KPI contatos suspeitos ausente"
+    assert 'kpi-auto-corrections' in html_cad, "KPI auto correções ausente"
+    assert 'btn-download-clean' in html_cad, "Botão download base limpa ausente"
+    assert 'btn-download-audit' in html_cad, "Botão download auditoria ausente"
+    print("[OK] Página /validador-cadastros renderizada com todos os elementos de UI!")
+
+    # B. Teste de Upload de Base de Cadastros e Leitura de Cabeçalhos
+    import pandas as pd
+    test_cadastros_df = pd.DataFrame({
+        'CPF_Cliente': [
+            '52998224725',        # 1: CPF Válido
+            '1234567890',         # 2: 10 dígitos (recupera zero à esquerda para '01234567890')
+            '529.982.247-25',     # 3: Duplicado da linha 1
+            '111.111.111-11',     # 4: CPF Inválido (dígitos repetidos)
+            '00.000.000/0001-91'  # 5: CNPJ Válido (Banco do Brasil)
+        ],
+        'Nome_Razao': [
+            'MARIA DA SILVA',
+            'joão  souza 123',
+            'Maria da Silva',
+            'Cliente Invalido ---',
+            'BANCO DO BRASIL S/A'
+        ],
+        'Email_Contato': [
+            'MARIA@GMAIL.COM',
+            'joao@gmial.com',     # Domínio com typo conhecido (@gmial.com)
+            'maria@gmail.com',
+            'carlos_invalido',    # Sem arroba
+            'contato@bb.com.br'
+        ],
+        'Telefone_Celular': [
+            '11987654321',        # Celular SP válido
+            '1187654321',         # Fixo SP válido (8 dígitos)
+            '11 98765-4321',      # Formatado
+            '001234',             # DDD inválido
+            '61 3493-9000'        # Fixo Brasília válido
+        ],
+        'Cidade': ['São Paulo', 'Campinas', 'São Paulo', 'Santos', 'Brasília']
+    })
+    
+    excel_buf = io.BytesIO()
+    test_cadastros_df.to_excel(excel_buf, index=False)
+    excel_buf.seek(0)
+
+    res_upload_cad = client.post(
+        '/api/cadastros/upload-headers',
+        data={'file': (excel_buf, 'clientes_teste.xlsx')},
+        content_type='multipart/form-data'
+    )
+    assert res_upload_cad.status_code == 200, f"Falha POST /api/cadastros/upload-headers: {res_upload_cad.status_code}"
+    cad_upload_json = res_upload_cad.get_json()
+    assert 'session_id' in cad_upload_json
+    session_id_cad = cad_upload_json['session_id']
+    assert cad_upload_json['total_rows'] == 5
+    assert len(cad_upload_json['cols']) == 5
+    mapping = cad_upload_json['suggested']
+    assert mapping['col_doc'] == 'CPF_Cliente'
+    assert mapping['col_name'] == 'Nome_Razao'
+    assert mapping['col_email'] == 'Email_Contato'
+    assert mapping['col_phone'] == 'Telefone_Celular'
+    print("[OK] Upload de base de cadastros e detecção automática de colunas realizado com sucesso!")
+
+    # C. Teste do Processamento e Regras de Higienização
+    process_payload = {
+        'session_id': session_id_cad,
+        'col_doc': 'CPF_Cliente',
+        'col_name': 'Nome_Razao',
+        'col_email': 'Email_Contato',
+        'col_phone': 'Telefone_Celular',
+        'duplicate_keys': ['doc'],
+        'doc_format': 'mask',
+        'auto_recover_zero': True,
+        'name_title_case': True,
+        'email_lowercase': True,
+        'phone_format': 'mask',
+        'remove_duplicates': False
+    }
+    res_proc = client.post('/api/cadastros/process', json=process_payload)
+    assert res_proc.status_code == 200, f"Falha POST /api/cadastros/process: {res_proc.status_code}"
+    proc_json = res_proc.get_json()
+    assert proc_json['success'] is True
+    summary = proc_json['summary']
+    assert summary['total_rows'] == 5
+    assert summary['invalid_docs_count'] >= 1, "Deveria detectar CPF inválido"
+    assert summary['duplicates_count'] >= 1, "Deveria detectar CPF duplicado"
+    assert summary['suspicious_contacts_count'] >= 1, "Deveria detectar typo no email e telefone com erro"
+    assert summary['auto_corrections_count'] >= 1, "Deveria registrar correções automáticas de zeros/nomes/emails"
+    print(f"[OK] Processamento de cadastros realizado: {summary['valid_count']} válidos, {summary['invalid_docs_count']} inválidos, {summary['duplicates_count']} duplicados, {summary['auto_corrections_count']} correções automáticas.")
+
+    # D. Teste de Download da Base 100% Higienizada (Excel)
+    report_id_cad = proc_json['report_id']
+    res_down_clean = client.get(f'/api/cadastros/download-clean/{report_id_cad}')
+    assert res_down_clean.status_code == 200, f"Falha GET download-clean: {res_down_clean.status_code}"
+    assert len(res_down_clean.data) > 3000, "Base limpa gerada está vazia"
+    wb_clean = openpyxl.load_workbook(io.BytesIO(res_down_clean.data))
+    assert 'Base Higienizada' in wb_clean.sheetnames
+    print("[OK] Download da Base 100% Higienizada gerado e validado com sucesso!")
+
+    # E. Teste de Download do Relatório de Auditoria com Células Pintadas e Logo
+    res_down_audit = client.get(f'/api/cadastros/download-audit/{report_id_cad}')
+    assert res_down_audit.status_code == 200, f"Falha GET download-audit: {res_down_audit.status_code}"
+    assert len(res_down_audit.data) > 5000, "Relatório de auditoria gerado está vazio"
+    wb_audit = openpyxl.load_workbook(io.BytesIO(res_down_audit.data))
+    assert 'Resumo da Auditoria' in wb_audit.sheetnames
+    assert any('Base Auditada' in s for s in wb_audit.sheetnames)
+    assert any('Inconsist' in s for s in wb_audit.sheetnames)
+    ws_aud_resumo = wb_audit['Resumo da Auditoria']
+    assert len(ws_aud_resumo._images) >= 1, "Logo ValidAí ausente no Resumo da Auditoria!"
+    print("[OK] Relatório de Auditoria gerado com células pintadas, 3 abas e Logo ValidAí!")
+
+    # F. Teste de Coluna Incompatível (ex: IDCOLABORADOR com números aleatórios curtos como '555722')
+    import pandas as pd
+    df_incompat = pd.DataFrame({
+        'IDCOLABORADOR': [555722, 10293, 88392, 44021, 99120],  # 5-6 dígitos (IDs numéricos com dtype int64)
+        'NMCLIENTE': ['MARIA SILVA', 'JOAO SOUZA', 'ANA COSTA', 'PEDRO LIMA', 'LUCAS DIAS'],
+        'EMAIL': ['m@test.com', 'j@test.com', 'a@test.com', 'p@test.com', 'l@test.com']
+    })
+    buf_incompat = io.BytesIO()
+    df_incompat.to_csv(buf_incompat, index=False)
+    buf_incompat.seek(0)
+    res_up_inc = client.post(
+        '/api/cadastros/upload-headers',
+        data={'file': (buf_incompat, 'base_com_ids.csv')},
+        content_type='multipart/form-data'
+    )
+    assert res_up_inc.status_code == 200
+    inc_json = res_up_inc.get_json()
+    sess_inc = inc_json['session_id']
+
+    # Tenta processar passando a coluna IDCOLABORADOR como CPF/CNPJ
+    res_proc_inc = client.post('/api/cadastros/process', json={
+        'session_id': sess_inc,
+        'col_doc': 'IDCOLABORADOR',
+        'col_name': 'NMCLIENTE',
+        'col_email': 'EMAIL',
+        'duplicate_keys': ['doc']
+    })
+    assert res_proc_inc.status_code == 400, f"Deveria rejeitar com 400, mas retornou {res_proc_inc.status_code}"
+    err_data = res_proc_inc.get_json()
+    assert 'não bate com a referência de CPF / CNPJ' in err_data['error']
+    assert 'IDCOLABORADOR' in err_data['error']
+    print(f"[OK] Detecção de coluna incompatível ('IDCOLABORADOR' com valores de 6 dígitos) validada: {err_data['error'][:80]}...")
 
     print("\nTODOS OS TESTES PASSARAM COM 100% DE SUCESSO!")
 
